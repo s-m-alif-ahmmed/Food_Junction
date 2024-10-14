@@ -1,0 +1,10 @@
+{{--Bootstrap 5--}}
+<link rel="stylesheet" href="{{ asset('/frontend/assets/bootstrap/css/bootstrap.min.css') }}">
+{{--style--}}
+<link rel="stylesheet" href="{{ asset('/frontend/assets/css/style.css') }}">
+{{--Font--}}
+<link rel="stylesheet" href="{{ asset('/frontend/assets/font/nirmala-ui/Nirmala.ttf') }}">
+{{--Jquery Slider--}}
+<link rel="stylesheet" href="{{ asset('/frontend/assets/jquery/Carousel/slick/slick.css') }}" />
+<link rel="stylesheet" href="{{ asset('/frontend/assets/jquery/Carousel/slick/slick-theme.css') }}">
+

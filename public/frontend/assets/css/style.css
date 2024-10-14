@@ -1,0 +1,322 @@
+/*All Start*/
+::selection{
+    color: white;
+    background-color: #FF2D20;
+}
+
+/*Fonts*/
+.fs-11{
+    font-size: 11px!important;
+}
+.fs-12{
+    font-size: 12px!important;
+}
+.fs-13{
+    font-size: 13px!important;
+}
+.fs-14{
+    font-size: 14px!important;
+}
+.fs-15{
+    font-size: 15px!important;
+}
+.fs-16{
+    font-size: 16px!important;
+}
+.fs-17{
+    font-size: 17px!important;
+}
+.fs-18{
+    font-size: 18px!important;
+}
+.fs-19{
+    font-size: 19px!important;
+}
+.fs-20{
+    font-size: 20px!important;
+}
+.fs-21{
+    font-size: 21px!important;
+}
+.fs-22{
+    font-size: 22px!important;
+}
+.fs-23{
+    font-size: 23px!important;
+}
+.fs-24{
+    font-size: 24px!important;
+}
+.fs-25{
+    font-size: 25px!important;
+}
+.fs-26{
+    font-size: 26px!important;
+}
+.fs-27{
+    font-size: 27px!important;
+}
+.fs-28{
+    font-size: 28px!important;
+}
+.fs-30{
+    font-size: 30px!important;
+}
+.fs-32{
+    font-size: 32px!important;
+}
+.fs-34{
+    font-size: 34px!important;
+}
+.fs-36{
+    font-size: 36px!important;
+}
+.fs-38{
+    font-size: 38px!important;
+}
+.fs-40{
+    font-size: 36px!important;
+}
+.fs-42{
+    font-size: 42px!important;
+}
+.fs-44{
+    font-size: 44px!important;
+}
+.fs-46{
+    font-size: 46px!important;
+}
+.fs-48{
+    font-size: 48px!important;
+}
+.fs-52{
+    font-size: 52px!important;
+}
+.fs-56{
+    font-size: 56px!important;
+}
+.fs-64{
+    font-size: 64px!important;
+}
+.fs-72{
+    font-size: 72px!important;
+}
+
+.text-justify{
+    text-align: justify !important;
+}
+
+.fsw-semibold{
+    font-weight: 500 !important;
+}
+
+.custom-shadow{
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/*All End*/
+
+/*Header Start*/
+.header-img{
+    width: auto;
+    height: 50px;
+}
+
+.header-menu{
+    color: #0a3622;
+}
+.header-menu:hover{
+    color: #f69942;
+}
+
+/*Header End*/
+
+/*Footer Start*/
+.footer-logo{
+    width: auto;
+    height: 50px;
+}
+
+#footer .social-icon ul>li{
+    margin: 3px;
+}
+
+#footer .social-icon ul>li>a {
+    height: 40px;
+    width: 40px;
+}
+
+#footer .social-icon ul>li>a>i{
+    font-size: 24px; padding: 0 0 0 8px;
+}
+
+@media screen and (max-width: 768px){
+    .footer-social-icon{
+        justify-content: center;
+    }
+    .footer-logo{
+        margin: 20px auto;
+        display: flex;
+        height: 60px;
+    }
+}
+
+/*Footer End*/
+
+/*Home Page Start*/
+
+/*Hero Banner Section Start*/
+
+.order-now-btn{
+    border-radius: 20px;
+    color: white;
+    background: linear-gradient(to right, #f69942, #EE3441);
+    text-decoration: none;
+    padding: 5px 35px 8px 35px;
+}
+.order-now-btn:hover{
+    border-radius: 20px;
+    color: white;
+    background: linear-gradient(to right, #f69942, #EE3441);
+    padding: 5px 35px 8px 35px;
+}
+
+.view-all-btn{
+    border-radius: 20px;
+    color: white;
+    background: linear-gradient(to right, #f69942, #EE3441);
+    text-decoration: none;
+    padding: 5px 35px 8px 35px;
+}
+.view-all-btn:hover{
+    border-radius: 20px;
+    color: white;
+    background: linear-gradient(to right, #f69942, #EE3441);
+    padding: 5px 35px 8px 35px;
+}
+
+.hero-header-div{
+    line-height: 50px;
+}
+.hero-header{
+    font-size: 48px!important;
+    font-weight: 700;
+    padding: 0;
+    margin: 0;
+    text-align: start;
+}
+.hero-text{
+    padding: 24px 0;
+    font-size: 20px;
+    font-weight: 400;
+    text-align: start;
+}
+.sweet-list-text{
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+}
+.special-sweet-card{
+    padding: 20px;
+}
+.order-3{
+    order: 1 !important;
+}
+.order-4{
+    order: 2 !important;
+}
+.order-5{
+    order: 1 !important;
+}
+.order-6{
+    order: 2 !important;
+}
+
+.row-fou-div{
+    padding: 0 0 0 15px;
+}
+
+
+@media screen and (min-width: 100px) and (max-width: 768px){
+
+    .row-three-btn{
+        text-align: center;
+        margin: 20px 0 40px 0;
+    }
+    .row-fou-div{
+        text-align: center;
+        padding: 10px 20px;
+    }
+    .hero-header-div{
+        line-height: 40px;
+    }
+    .hero-header{
+        font-size: 36px!important;
+        font-weight: 700;
+        padding: 10px 20px 5px 20px;
+        margin: 0;
+        text-align: center;
+    }
+    .hero-text{
+        padding: 15px 0;
+        font-size: 16px;
+        font-weight: 400;
+        text-align: center;
+        line-height: 25px;
+    }
+    .order-now-btn-div{
+        text-align: center;
+    }
+    .hero-left{
+        padding-top: 20px;
+    }
+    .order-1{
+        order: 2 !important;
+    }
+    .order-2{
+        order: 1 !important;
+    }
+    .order-3{
+        order: 2 !important;
+    }
+    .order-4{
+        order: 1 !important;
+    }
+    .order-5{
+        order: 2 !important;
+    }
+    .order-6{
+        order: 1 !important;
+    }
+    .sweet-list-text{
+        text-align: center;
+        font-size: 16px;
+        font-weight: 400;
+    }
+    .special-sweet-card{
+        margin: 15px;
+    }
+    .row-three-div{
+        margin-top: -75px !important;
+    }
+    .row-six-text{
+        padding: 30px 5px 0 5px ;
+    }
+    .row-six-text-header{
+        font-size: 28px;
+        text-align: center;
+        line-height: 36px;
+    }
+    .row-six-text-body{
+        font-size: 16px;
+        text-align: justify !important;
+    }
+    .row-six-btn{
+        text-align: center;
+    }
+
+}
+
+/*Hero Banner Section End*/
+
+/*Home Page End*/

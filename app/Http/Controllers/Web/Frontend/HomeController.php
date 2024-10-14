@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Http\Controllers\Web\Frontend;
+
+use App\Http\Controllers\Controller;
+use Illuminate\View\View;
+
+class HomeController extends Controller {
+    /**
+     * Display the welcome page.
+     *
+     * @return View
+     */
+    public function index(): View {
+        return view('frontend.pages.index');
+    }
+    public function welcome(): View {
+        return view('frontend.welcome');
+    }
+}
