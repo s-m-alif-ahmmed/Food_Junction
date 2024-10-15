@@ -5,7 +5,7 @@ use App\Http\Controllers\Web\Backend\UserController;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
 
 //! Route for Users Page
 Route::controller(UserController::class)->group(function () {

@@ -9,13 +9,16 @@
     @yield('meta_infos')
 
     {{--Favicon--}}
-    <link rel="icon" type="x-icon/images" href="{{ asset('/frontend/images/brands/food_junction.jpg') }}">
+    <link rel="icon" type="x-icon/images" href="{{ asset('/frontend/images/brands/food_junction_favicon.jpg') }}">
 
     <title>@yield('title')</title>
 
     @include('frontend.includes.css')
 
     @include('frontend.includes.codes.google-search-console')
+
+    @stack('styles')
+
 </head>
 <body>
 
@@ -26,6 +29,8 @@
 @include('frontend.includes.footer')
 
 @include('frontend.includes.js')
+
+@stack('scripts')
 
 </body>
 </html>

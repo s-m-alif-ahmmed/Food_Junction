@@ -138,16 +138,24 @@
 }
 
 #footer .social-icon ul>li{
-    margin: 3px;
+    /*margin: 3px;*/
 }
 
 #footer .social-icon ul>li>a {
-    height: 40px;
+    border: 1px solid #ccc;
+    color: #ffffff;
+    background-color: #B77128;
+    border-radius: 20%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 3px;
     width: 40px;
+    height: 40px;
 }
 
 #footer .social-icon ul>li>a>i{
-    font-size: 24px; padding: 0 0 0 8px;
+    /*font-size: 24px; padding: 0 0 0 8px;*/
 }
 
 @media screen and (max-width: 768px){
@@ -320,3 +328,14 @@
 /*Hero Banner Section End*/
 
 /*Home Page End*/
+
+/*Login & Signup Page start*/
+
+/**{*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    box-sizing: border-box;*/
+/*    font-family: "Montserrat", sans-serif;*/
+/*}*/
+
+/*Login & Signup Page End*/

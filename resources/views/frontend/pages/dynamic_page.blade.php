@@ -7,15 +7,13 @@
 @endsection
 
 @section('title')
-    User Dashboard
+    {{ $dynamic_page->page_title }}
 @endsection
 
 @section('content')
 
     <section class="user-dashboard-page py-5">
-        <div class="container">
-
-        </div>
+        {!! $dynamic_page->page_content !!}
     </section>
 
 @endsection
@@ -31,3 +29,4 @@
 
     </script>
 @endpush
+

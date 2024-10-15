@@ -31,9 +31,31 @@
 
         <div class="d-flex justify-content-end" id="navbarSupportedContent">
             <div class="d-none d-lg-block px-2">
-                <a href="{{ route('login') }}">
-                    <i class="fa-regular fa-user text-dark"></i>
-                </a>
+                @if(Auth::check())
+                    @if(Auth::user()->role == 'Super Admin')
+                    <a href="{{ route('dashboard') }}">
+                        <i class="fa-regular fa-user text-dark"></i>
+                    </a>
+                    @elseif(Auth::user()->role == 'Admin')
+                        <a href="{{ route('admin.dashboard') }}">
+                            <i class="fa-regular fa-user text-dark"></i>
+                        </a>
+                    @elseif(Auth::user()->role == 'User')
+                        <a href="{{ route('user.dashboard') }}">
+                            <i class="fa-regular fa-user text-dark"></i>
+                        </a>
+                        <a href="" onclick="event.preventDefault(); document.getElementById('logoutForm').submit()">
+                            Logout
+                        </a>
+                        <form action="{{ route('logout') }}" method="post" id="logoutForm">
+                            @csrf
+                        </form>
+                    @endif
+                @else
+                    <a href="{{ route('login') }}">
+                        <i class="fa-regular fa-user text-dark"></i>
+                    </a>
+                @endif
             </div>
             <div class="d-none d-lg-block px-2">
                 <a href="">

@@ -28,18 +28,23 @@
             <div class="col-md-2">
                 <p class="fw-bold fs-20">মেনু</p>
                 <ul class="navbar-nav">
+                    @php
+                        $dynamic_pages = \App\Models\DynamicPage::query()->where('status','active')->latest()->get();
+                    @endphp
+                    @foreach($dynamic_pages as $page)
                     <li class="nav-item">
-                        <a class="nav-link" href="">মেনু ১</a>
+                        <a class="nav-link" href="{{ route('user.dynamic.page', $page->page_slug) }}">{{ $page->page_title }}</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">মেনু ২</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">মেনু ৩</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">মেনু ৪</a>
-                    </li>
+                    @endforeach
+{{--                    <li class="nav-item">--}}
+{{--                        <a class="nav-link" href="">মেনু ২</a>--}}
+{{--                    </li>--}}
+{{--                    <li class="nav-item">--}}
+{{--                        <a class="nav-link" href="">মেনু ৩</a>--}}
+{{--                    </li>--}}
+{{--                    <li class="nav-item">--}}
+{{--                        <a class="nav-link" href="">মেনু ৪</a>--}}
+{{--                    </li>--}}
                 </ul>
             </div>
             <div class="col-md-4">
@@ -56,27 +61,27 @@
                 </p>
                 <div class="social-icon">
                     <ul class="navbar-nav flex-row footer-social-icon">
-                        <li class="nav-item bg-danger rounded-circle">
+                        <li class="nav-item">
                             <a class="nav-link" href="" style="">
                                 <i class="fa-brands fa-facebook" style=""></i>
                             </a>
                         </li>
-                        <li class="nav-item bg-danger rounded-circle">
+                        <li class="nav-item">
                             <a class="nav-link" href="">
                                 <i class="fa-brands fa-whatsapp" ></i>
                             </a>
                         </li>
-                        <li class="nav-item bg-danger rounded-circle">
+                        <li class="nav-item">
                             <a class="nav-link" href="">
                                 <i class="fa-brands fa-instagram"></i>
                             </a>
                         </li>
-                        <li class="nav-item bg-danger rounded-circle">
+                        <li class="nav-item">
                             <a class="nav-link" href="">
                                 <i class="fa-brands fa-youtube"></i>
                             </a>
                         </li>
-                        <li class="nav-item bg-danger rounded-circle">
+                        <li class="nav-item">
                             <a class="nav-link" href="">
                                 <i class="fa-brands fa-x-twitter"></i>
                             </a>

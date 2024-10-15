@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -18,15 +19,35 @@ class DashboardController extends Controller
 
     public function index(): View
     {
-
         // Get the current date and time
         $currentDate = Carbon::now()->format('Y-m-d');
         $currentTime = Carbon::now()->format('H:i:s');
 
 
         return view('backend.layouts.dashboard.index', [
-            'verifiedUsers'  => User::where('status','active')->count(),
-            'nonVerifiedUsers'  => User::where('status','inactive')->count(),
+            'verifiedUsers' => User::where('status', 'active')->count(),
+            'nonVerifiedUsers' => User::where('status', 'inactive')->count(),
         ]);
+
     }
+
+    public function adminDashboard(): View
+    {
+        // Get the current date and time
+        $currentDate = Carbon::now()->format('Y-m-d');
+        $currentTime = Carbon::now()->format('H:i:s');
+
+
+        return view('backend.layouts.dashboard.index', [
+            'verifiedUsers' => User::where('status', 'active')->count(),
+            'nonVerifiedUsers' => User::where('status', 'inactive')->count(),
+        ]);
+
+    }
+
+    public function userDashboard(): View
+    {
+        return view('frontend.dashboard.dashboard');
+    }
+
 }

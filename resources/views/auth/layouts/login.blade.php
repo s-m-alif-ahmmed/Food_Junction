@@ -7,6 +7,7 @@
         <div class="card-body">
             <form class="login100-form validate-form" action="{{ route('login') }}" method="POST">
                 @csrf
+
                 <span class="login100-form-title fw-bold">
                     Login
                 </span>
