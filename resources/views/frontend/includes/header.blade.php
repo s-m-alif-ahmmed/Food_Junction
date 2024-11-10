@@ -14,13 +14,13 @@
                     <a class="nav-link fw-bold" href="{{ route('home') }}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="#">Sweets</a>
+                    <a class="nav-link fw-bold" href="{{ route('sweets') }}">Sweets</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fw-bold" href="#">About Us</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold" href="#">Contact</a>
+                    <a class="nav-link fw-bold" href="{{ route('contact') }}">Contact</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fw-bold" href="#">Concept</a>

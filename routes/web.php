@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Route;
 //! Route for Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/food-junction/{page_slug}', [HomeController::class, 'dynamicPage'])->name('user.dynamic.page');
-Route::get('/welcome', [HomeController::class, 'welcome'])->name('welcome');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::get('/sweets', [HomeController::class, 'sweets'])->name('sweets');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'userDashboard'])->name('user.dashboard');

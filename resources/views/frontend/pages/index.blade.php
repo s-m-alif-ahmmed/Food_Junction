@@ -182,7 +182,7 @@
 
             <div class="row pt-5">
                 <div class="col-md-6 px-0">
-                    <img class="object-fit-cover img-fluid w-100" src="{{ asset('/frontend/images/section/home/image-1.png') }}" alt="..." >
+                    <img class="object-fit-cover img-fluid w-100" src="{{ asset('/frontend/images/section/home/image-1.jpg') }}" alt="..." >
                 </div>
                 <div class="col-md-6 d-flex align-items-center">
                     <div class="row overflow-hidden">
@@ -238,7 +238,7 @@
                 </div>
                 <div class="col-md-6 px-0 order-6">
                     <div class="">
-                        <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/image-1.png') }}" alt="">
+                        <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/image-1.jpg') }}" alt="">
                     </div>
                 </div>
 

@@ -57,6 +57,9 @@ class SystemSettingController extends Controller {
                     Helper::fileDelete(public_path($setting->logo));
                 }
                 $setting->logo = Helper::fileUpload($request->file('logo'), 'logo', $setting->logo);
+            } else {
+                // Retain the existing logo if no new file is uploaded
+                $setting->logo = $setting->logo ?? $setting->getOriginal('logo');
             }
 
             if ($request->hasFile('favicon')) {
@@ -64,6 +67,9 @@ class SystemSettingController extends Controller {
                     Helper::fileDelete(public_path($setting->favicon));
                 }
                 $setting->favicon = Helper::fileUpload($request->file('favicon'), 'favicon', $setting->favicon);
+            } else {
+                // Retain the existing favicon if no new file is uploaded
+                $setting->favicon = $setting->favicon ?? $setting->getOriginal('favicon');
             }
 
             $setting->save();

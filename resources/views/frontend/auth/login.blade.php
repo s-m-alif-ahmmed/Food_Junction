@@ -7,7 +7,7 @@
 @endsection
 
 @section('title')
-    Food Junction
+    Food Junction | Login & Signup
 @endsection
 
 @section('content')
@@ -32,19 +32,19 @@
 
                     <input type="text" name="name" placeholder="Full Name" required />
                     @error('name')
-                    <span class="textt-danger">{{ $message }}</span>
+                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
                     @enderror
                     <input type="email" name="email" placeholder="Email" required />
                     @error('email')
-                    <span class="textt-danger">{{ $message }}</span>
+                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
                     @enderror
                     <input type="password" name="password" placeholder="Password" required autocomplete="new-password" />
                     @error('password')
-                    <span class="textt-danger">{{ $message }}</span>
+                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
                     @enderror
                     <input type="password" name="password_confirmation" placeholder="Confirm Password" required autocomplete="new-password" />
                     @error('confirm_password')
-                    <span class="textt-danger">{{ $message }}</span>
+                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
                     @enderror
                     <button type="submit">Sign Up</button>
                 </form>
@@ -63,13 +63,13 @@
                     <span>or use your email and password</span>
                     <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required />
                     @error('email')
-                    <span class="textt-danger">{{ $message }}</span>
+                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
                     @enderror
                     <input type="password" name="password" placeholder="Password" required />
                     @error('password')
-                    <span class="textt-danger">{{ $message }}</span>
+                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
                     @enderror
-                    <a href="#">Forgot Password?</a>
+{{--                    <a href="#">Forgot Password?</a>--}}
                     <button type="submit">Sign In</button>
                 </form>
             </div>

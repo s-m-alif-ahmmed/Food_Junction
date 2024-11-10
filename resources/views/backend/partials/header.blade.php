@@ -2,10 +2,17 @@
     <div class="container-fluid main-container">
         <div class="d-flex">
             <a aria-label="Hide Sidebar" class="app-sidebar__toggle" data-bs-toggle="sidebar" href="#"></a>
-            <a class="logo-horizontal " href="{{ route('dashboard') }}">
-                <img src="{{ asset('frontend/eVento_logo.png') }}" class="header-brand-img desktop-logo" alt="logo">
-                <img src="{{ asset('frontend/eVento_logo.png') }}" class="header-brand-img light-logo1" alt="logo">
-            </a>
+            @if(Auth::user()->role == 'Super Admin')
+                <a class="logo-horizontal " href="{{ route('dashboard') }}">
+                    <img src="{{ asset('frontend/images/default/food_junction.png') }}" class="header-brand-img desktop-logo" alt="logo">
+                    <img src="{{ asset('frontend/images/default/food_junction.png') }}" class="header-brand-img light-logo1" alt="logo">
+                </a>
+            @elseif(Auth::user()->role == 'Admin')
+                <a class="logo-horizontal " href="{{ route('admin.dashboard') }}">
+                    <img src="{{ asset('frontend/images/default/food_junction.png') }}" class="header-brand-img desktop-logo" alt="logo">
+                    <img src="{{ asset('frontend/images/default/food_junction.png') }}" class="header-brand-img light-logo1" alt="logo">
+                </a>
+            @endif
 
             <div class="d-flex order-lg-2 ms-auto header-right-icons">
                 <div class="navbar navbar-collapse responsive-navbar p-0">

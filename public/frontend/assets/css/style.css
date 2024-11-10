@@ -114,6 +114,10 @@
     box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.3);
 }
 
+.background-gradient{
+    background: linear-gradient(to right, #f69942, #EE3441);
+}
+
 /*All End*/
 
 /*Header Start*/
@@ -339,3 +343,319 @@
 /*}*/
 
 /*Login & Signup Page End*/
+
+
+/*Contact Page Start*/
+
+.contact-page-section {
+    background: linear-gradient(90deg, #f69942 0%, rgba(238, 52, 65) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size:10px;
+    height: auto;
+    padding: 50px;
+}
+
+.contact-page-section .container {
+    background-color: rgb(255, 249, 249);
+    border-radius: 5px;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25),
+    0 10px 10px rgba(0,0,0,0.22);
+    position: relative;
+    overflow: hidden;
+    width: 60%;
+    max-width: 100%;
+    height: 80%;
+    padding: 50px 20px;
+}
+
+.contact-page-section .form-container {
+    display:flex;
+}
+
+.contact-page-section .right-container {
+    display:flex;
+    flex:1;
+    background-color: white;
+    justify-content:center;
+    align-items:center;
+}
+
+.contact-page-section .left-container {
+    display:flex;
+    flex:1;
+    justify-content:center;
+    align-items:center;
+    color: black;
+    background-color: transparent;
+}
+
+.contact-page-section .left-container p {
+    font-size:0.9rem;
+}
+
+.contact-page-section .left-container p {
+    font-size:0.9rem;
+}
+
+.contact-page-section .right-inner-container {
+    text-align:center;
+}
+
+.contact-page-section .left-inner-container{
+    height: 100%;
+    width: 80%;
+}
+
+.contact-page-section .left-inner-container h2 {
+    text-align: center;
+    line-height:22px;
+    padding: 10px;
+}
+
+.contact-page-section .left-inner-container .contact-infos{
+    text-align: start;
+}
+
+.contact-page-section input, textarea {
+    background-color: #eee;
+    border: none;
+    padding: 12px 15px;
+    margin: 8px 0;
+    width: 100%;
+    font-size:0.8rem;
+}
+
+.contact-page-section input:focus, textarea:focus{
+    outline:1px solid red;
+}
+
+.contact-page-section button {
+    border-radius: 20px;
+    border: none;
+    background: linear-gradient(90deg, #f69942 0%, rgba(238, 52, 65) 100%);
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in;
+    cursor:pointer;
+}
+
+.contact-page-section button:hover {
+    opacity:0.7;
+}
+@media only screen and (max-width: 600px) {
+    .contact-page-section .left-container{
+        display: none;
+    }
+    .contact-page-section .lg-view {
+        display:none;
+    }
+}
+
+@media only screen and (min-width: 600px) {
+    .contact-page-section .sm-view {
+        display:none;
+    }
+}
+
+.contact-page-section form p {
+    text-align:left;
+}
+
+/*Top Section*/
+
+.contact-page-section .sec-title-style1 {
+    position: relative;
+    display: block;
+    margin-top: -9px;
+    padding-bottom: 50px;
+}
+.contact-page-section .sec-title-style1.max-width{
+    position: relative;
+    display: block;
+    max-width: 770px;
+    margin: -9px auto 0;
+    padding-bottom: 52px;
+}
+.contact-page-section .sec-title-style1 {
+    padding-bottom: 42px;
+}
+.contact-page-section .sec-title-style1 .title {
+    position: relative;
+    display: block;
+    color: #131313;
+    font-size: 36px;
+    line-height: 46px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.contact-page-section .sec-title-style1 .title.clr-white{
+    color: #ffffff;
+}
+.contact-page-section .sec-title-style1 .decor {
+    position: relative;
+    display: block;
+    width: 70px;
+    height: 5px;
+    margin: 19px 0 0;
+}
+.contact-page-section .sec-title-style1 .decor:before{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 5px;
+    height: 5px;
+    background: #f69942;
+    border-radius: 50%;
+    content: "";
+}
+.contact-page-section .sec-title-style1 .decor:after{
+    position: absolute;
+    top: 0;
+    right: 10px;
+    bottom: 0;
+    width: 5px;
+    height: 5px;
+    background: #f69942;
+    border-radius: 50%;
+    content: "";
+}
+.contact-page-section .sec-title-style1 .decor span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 50px;
+    height: 1px;
+    background: #f69942;
+    margin: 2px 0;
+}
+
+
+.contact-page-section .sec-title-style1 .text{
+    position: relative;
+    display: block;
+    margin: 7px 0 0;
+}
+.contact-page-section .sec-title-style1 .text p{
+    position: relative;
+    display: inline-block;
+    padding: 0 15px;
+    color: #131313;
+    font-size: 14px;
+    line-height: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0;
+}
+.contact-page-section .sec-title-style1 .text.clr-yellow p{
+    color: #f69942;
+}
+.contact-page-section .sec-title-style1 .text .decor-left{
+    position: relative;
+    top: -2px;
+    display: inline-block;
+    width: 70px;
+    height: 5px;
+    background: transparent;
+}
+.contact-page-section .sec-title-style1 .text .decor-left span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 50px;
+    height: 1px;
+    background: #f69942;
+    content: "";
+    margin: 2px 0;
+}
+.contact-page-section .sec-title-style1 .text .decor-left:before{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 5px;
+    height: 5px;
+    background: #f69942;
+    border-radius: 50%;
+    content: "";
+}
+.contact-page-section .sec-title-style1 .text .decor-left:after{
+    position: absolute;
+    top: 0;
+    right: 10px;
+    bottom: 0;
+    width: 5px;
+    height: 5px;
+    background: #f69942;
+    border-radius: 50%;
+    content: "";
+}
+
+.contact-page-section .sec-title-style1 .text .decor-right{
+    position: relative;
+    top: -2px;
+    display: inline-block;
+    width: 70px;
+    height: 5px;
+    background: transparent;
+}
+.contact-page-section .sec-title-style1 .text .decor-right span {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 50px;
+    height: 1px;
+    background: #f69942;
+    content: "";
+    margin: 2px 0;
+}
+.contact-page-section .sec-title-style1 .text .decor-right:before{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 5px;
+    height: 5px;
+    background: #f69942;
+    border-radius: 50%;
+    content: "";
+}
+.contact-page-section .sec-title-style1 .text .decor-right:after{
+    position: absolute;
+    top: 0;
+    left: 10px;
+    bottom: 0;
+    width: 5px;
+    height: 5px;
+    background: #f69942;
+    border-radius: 50%;
+    content: "";
+}
+
+.contact-page-section .sec-title-style1 .bottom-text{
+    position: relative;
+    display: block;
+    padding-top: 16px;
+}
+.contact-page-section .sec-title-style1 .bottom-text p{
+    color: black;
+    font-size: 16px;
+    line-height: 26px;
+    font-weight: 400;
+    margin: 0;
+}
+.contact-page-section .sec-title-style1 .bottom-text.clr-gray p{
+    color: black;
+}
+
+/*Contact Page End*/

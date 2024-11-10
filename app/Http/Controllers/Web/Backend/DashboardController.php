@@ -19,29 +19,16 @@ class DashboardController extends Controller
 
     public function index(): View
     {
-        // Get the current date and time
-        $currentDate = Carbon::now()->format('Y-m-d');
-        $currentTime = Carbon::now()->format('H:i:s');
-
-
-        return view('backend.layouts.dashboard.index', [
-            'verifiedUsers' => User::where('status', 'active')->count(),
-            'nonVerifiedUsers' => User::where('status', 'inactive')->count(),
-        ]);
+        $users_count = User::where('role', 'User, Super Admin' )->count();
+        return view('backend.layouts.dashboard.index',compact('users_count'));
 
     }
 
     public function adminDashboard(): View
     {
-        // Get the current date and time
-        $currentDate = Carbon::now()->format('Y-m-d');
-        $currentTime = Carbon::now()->format('H:i:s');
+        $users_count = User::where('role', 'User')->count();
 
-
-        return view('backend.layouts.dashboard.index', [
-            'verifiedUsers' => User::where('status', 'active')->count(),
-            'nonVerifiedUsers' => User::where('status', 'inactive')->count(),
-        ]);
+        return view('backend.layouts.dashboard.index',compact('users_count'));
 
     }
 
