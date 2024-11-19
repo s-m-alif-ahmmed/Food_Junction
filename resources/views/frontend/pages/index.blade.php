@@ -26,14 +26,14 @@
                             laboriosam modi odio quo.
                         </p>
                         <div class="order-now-btn-div">
-                            <a class="fw-bold order-now-btn fs-20" href="">
+                            <a class="fw-bold order-now-btn fs-20" href="{{ route('sweets') }}">
                                 Order Now
                             </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 order-2 px-0">
-                    <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/image-2.png') }}" alt="">
+                    <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/image-7.jpg') }}" alt="">
                 </div>
             </div>
 
@@ -47,31 +47,37 @@
                 <div class="row py-3">
                     <div class="col-md-4 special-sweet-card">
                         <div class="card border-0 custom-shadow">
-                            <img src="{{ asset('/frontend/images/section/home/image-2.png') }}" class="card-img-top" alt="...">
+                            <div class="sweet-image">
+                                <img src="{{ asset('/frontend/images/section/home/image-4.jpg') }}" class="card-img-top" alt="...">
+                            </div>
                             <div class="card-body border-0 text-center mb-3 h-100">
                                 <h5 class="card-title">Sweet Name</h5>
                                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Lorem ipsum dolor sit amet.</p>
-                                <a href="#" class="order-now-btn fw-bold">Read More</a>
+                                <a href="{{ route('sweets.detail') }}" class="order-now-btn fw-bold">Read More</a>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4 special-sweet-card">
                         <div class="card border-0 custom-shadow">
-                            <img src="{{ asset('/frontend/images/section/home/image-2.png') }}" class="card-img-top" alt="...">
+                            <div class="sweet-image">
+                                <img src="{{ asset('/frontend/images/section/home/image-6.jpg') }}" class="card-img-top" alt="...">
+                            </div>
                             <div class="card-body border-0 text-center mb-3 h-100">
                                 <h5 class="card-title">Sweet Name</h5>
                                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Lorem ipsum dolor sit amet.</p>
-                                <a href="#" class="order-now-btn fw-bold">Read More</a>
+                                <a href="{{ route('sweets.detail') }}" class="order-now-btn fw-bold">Read More</a>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4 special-sweet-card">
                         <div class="card border-0 custom-shadow">
-                            <img src="{{ asset('/frontend/images/section/home/image-2.png') }}" class="card-img-top" alt="...">
+                            <div class="sweet-image">
+                                <img src="{{ asset('/frontend/images/section/home/image-11.jpg') }}" class="card-img-top" alt="...">
+                            </div>
                             <div class="card-body border-0 text-center mb-3 h-100">
                                 <h5 class="card-title">Sweet Name</h5>
                                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Lorem ipsum dolor sit amet.</p>
-                                <a href="#" class="order-now-btn fw-bold">Read More</a>
+                                <a href="{{ route('sweets.detail') }}" class="order-now-btn fw-bold">Read More</a>
                             </div>
                         </div>
                     </div>
@@ -81,7 +87,7 @@
             <div class="row py-5">
                 <div class="col-md-6 order-3 px-0">
                     <div class="">
-                        <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/image-2.png') }}" alt="">
+                        <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/image-3.jpg') }}" alt="">
                     </div>
                 </div>
                 <div class="col-md-6 d-flex align-items-center order-4">
@@ -95,7 +101,7 @@
                             Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                         </p>
                         <div class="row-three-btn">
-                            <a class="order-now-btn fw-bold fs-22" href="">Order Now</a>
+                            <a class="order-now-btn fw-bold fs-22" href="{{ route('sweets') }}">Order Now</a>
                         </div>
                     </div>
                 </div>
@@ -108,7 +114,7 @@
                         <p class="fw-normal text-justify">
                             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab, animi aspernatur atque beatae!Ab, animi aspernatur atque beatae itaque nesciunt!
                         </p>
-                        <a class="view-all-btn fw-bold fs-22" href="">View All</a>
+                        <a class="view-all-btn fw-bold fs-22" href="{{ route('sweets') }}">View All</a>
                     </div>
                 </div>
                 <div class="col-md-8">
@@ -116,60 +122,60 @@
                         <section class="center slider">
                             <div>
                                 <div class="card border-0 custom-shadow">
-                                    <div class="" style="height: 200px; overflow: hidden;">
-                                        <img src="{{ asset('/frontend/images/section/home/image-2.png') }}" class="card-img-top img-fluid w-100" alt="..." >
+                                    <div class="home--sweet-card">
+                                        <img src="{{ asset('/frontend/images/section/home/image-4.jpg') }}" class="card-img-top img-fluid" alt="..." >
                                     </div>
                                     <div class="card-body border-0 text-center h-100 pb-0">
                                         <h5 class="card-title p-0 m-0">Sweet Name</h5>
                                         <p class="card-text p-0 mb-2">Some quick example text to</p>
-                                        <div class="d-flex justify-content-between">
+                                        <div class="d-flex justify-content-between sweet-card-bottom">
                                             <p class="fw-bold fs-16">$10.00</p>
-                                            <a href="#" class="fs-16 p-0 m-0 fw-semibold text-decoration-none" style="color: #EE3441;">Read More <i class="fa-solid fa-arrow-right-long"></i> </a>
+                                            <a href="{{ route('sweets.detail') }}" class="fs-16 fw-semibold text-decoration-none" style="color: #EE3441;">Read More <i class="fa-solid fa-arrow-right-long"></i> </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div>
                                 <div class="card border-0 custom-shadow">
-                                    <div class="" style="height: 200px; overflow: hidden;">
-                                        <img src="{{ asset('/frontend/images/section/home/image-2.png') }}" class="card-img-top img-fluid w-100" alt="..." >
+                                    <div class="home--sweet-card">
+                                        <img src="{{ asset('/frontend/images/section/home/image-6.jpg') }}" class="card-img-top img-fluid" alt="..." >
                                     </div>
                                     <div class="card-body border-0 text-center h-100 pb-0">
                                         <h5 class="card-title p-0 m-0">Sweet Name</h5>
                                         <p class="card-text p-0 mb-2">Some quick example text to</p>
-                                        <div class="d-flex justify-content-between">
+                                        <div class="d-flex justify-content-between sweet-card-bottom">
                                             <p class="fw-bold fs-16">$10.00</p>
-                                            <a href="#" class="fs-16 p-0 m-0 fw-semibold text-decoration-none" style="color: #EE3441;">Read More <i class="fa-solid fa-arrow-right-long"></i> </a>
+                                            <a href="{{ route('sweets.detail') }}" class="fs-16 fw-semibold text-decoration-none" style="color: #EE3441;">Read More <i class="fa-solid fa-arrow-right-long"></i> </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div>
                                 <div class="card border-0 custom-shadow">
-                                    <div class="" style="height: 200px; overflow: hidden;">
-                                        <img src="{{ asset('/frontend/images/section/home/image-2.png') }}" class="card-img-top img-fluid w-100" alt="..." >
+                                    <div class="home--sweet-card">
+                                        <img src="{{ asset('/frontend/images/section/home/image-11.jpg') }}" class="card-img-top img-fluid" alt="..." >
                                     </div>
                                     <div class="card-body border-0 text-center h-100 pb-0">
                                         <h5 class="card-title p-0 m-0">Sweet Name</h5>
                                         <p class="card-text p-0 mb-2">Some quick example text to</p>
-                                        <div class="d-flex justify-content-between">
+                                        <div class="d-flex justify-content-between sweet-card-bottom">
                                             <p class="fw-bold fs-16">$10.00</p>
-                                            <a href="#" class="fs-16 p-0 m-0 fw-semibold text-decoration-none" style="color: #EE3441;">Read More <i class="fa-solid fa-arrow-right-long"></i> </a>
+                                            <a href="{{ route('sweets.detail') }}" class="fs-16 fw-semibold text-decoration-none" style="color: #EE3441;">Read More <i class="fa-solid fa-arrow-right-long"></i> </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div>
                                 <div class="card border-0 custom-shadow">
-                                    <div class="" style="height: 200px; overflow: hidden;">
-                                        <img src="{{ asset('/frontend/images/section/home/image-2.png') }}" class="card-img-top img-fluid w-100" alt="..." >
+                                    <div class="home--sweet-card">
+                                        <img src="{{ asset('/frontend/images/section/home/image-4.jpg') }}" class="card-img-top img-fluid" alt="..." >
                                     </div>
                                     <div class="card-body border-0 text-center h-100 pb-0">
                                         <h5 class="card-title p-0 m-0">Sweet Name</h5>
                                         <p class="card-text p-0 mb-2">Some quick example text to</p>
-                                        <div class="d-flex justify-content-between">
+                                        <div class="d-flex justify-content-between sweet-card-bottom">
                                             <p class="fw-bold fs-16">$10.00</p>
-                                            <a href="#" class="fs-16 p-0 m-0 fw-semibold text-decoration-none" style="color: #EE3441;">Read More <i class="fa-solid fa-arrow-right-long"></i> </a>
+                                            <a href="{{ route('sweets.detail') }}" class="fs-16 fw-semibold text-decoration-none" style="color: #EE3441;">Read More <i class="fa-solid fa-arrow-right-long"></i> </a>
                                         </div>
                                     </div>
                                 </div>
@@ -182,7 +188,7 @@
 
             <div class="row pt-5">
                 <div class="col-md-6 px-0">
-                    <img class="object-fit-cover img-fluid w-100" src="{{ asset('/frontend/images/section/home/image-1.jpg') }}" alt="..." >
+                    <img class="object-fit-cover img-fluid w-100" src="{{ asset('/frontend/images/section/home/image-12.jpg') }}" alt="..." >
                 </div>
                 <div class="col-md-6 d-flex align-items-center">
                     <div class="row overflow-hidden">
@@ -238,7 +244,7 @@
                 </div>
                 <div class="col-md-6 px-0 order-6">
                     <div class="">
-                        <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/image-1.jpg') }}" alt="">
+                        <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/image-12.jpg') }}" alt="">
                     </div>
                 </div>
 
@@ -348,6 +354,17 @@
                 slidesToShow: 3,
                 slidesToScroll: 1,
                 responsive: [
+                    {
+                        breakpoint: 992, // Mobile breakpoint
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 1,
+                            autoplay: true,        // Enable auto slide in mobile view
+                            autoplaySpeed: 2000,   // Auto slide every 2 seconds
+                            infinite: true,        // Infinite scrolling in mobile view
+                            dots: true             // Enable dots in mobile view if needed
+                        }
+                    },
                     {
                         breakpoint: 768, // Mobile breakpoint
                         settings: {

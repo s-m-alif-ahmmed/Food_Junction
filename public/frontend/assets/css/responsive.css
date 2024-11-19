@@ -1,0 +1,485 @@
+/*Desktop*/
+@media screen and (min-width: 1920px){
+    /*Home Page Start*/
+    .hero-section .home--sweet-card{
+        height: 100%;
+        overflow: hidden;
+    }
+    .hero-section .home--sweet-card img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+    /*Home Page End*/
+}
+
+/*Desktop*/
+@media screen and (max-width: 1920px){
+    /*Home Page Start*/
+    .hero-section .home--sweet-card{
+        height: 100%;
+        overflow: hidden;
+    }
+    .hero-section .home--sweet-card img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+    /*Home Page End*/
+}
+
+/*Desktop*/
+@media screen and (max-width: 1800px){
+    /*Home Page Start*/
+    .hero-section .home--sweet-card{
+        height: 100%;
+        overflow: hidden;
+    }
+    .hero-section .home--sweet-card img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+    /*Home Page End*/
+}
+
+/*Desktop*/
+@media screen and (max-width: 1600px){
+    /*Home Page Start*/
+    .special-sweet-card .sweet-image{
+        height: 360px;
+        width: 100%;
+        overflow: hidden;
+    }
+    .special-sweet-card .sweet-image img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+
+    .hero-section .home--sweet-card{
+        height: 100%;
+        overflow: hidden;
+    }
+    .hero-section .home--sweet-card img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+    /*Home Page End*/
+}
+
+/*Laptop*/
+@media screen and (max-width: 1440px){
+    /*Home Page Start*/
+    .special-sweet-card .sweet-image{
+        height: 350px;
+        width: 100%;
+        overflow: hidden;
+    }
+    .special-sweet-card .sweet-image img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+
+    .hero-section .home--sweet-card{
+        height: 100%;
+        overflow: hidden;
+    }
+    .hero-section .home--sweet-card img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+    /*Home Page End*/
+}
+
+/*Laptop*/
+@media screen and (max-width: 1200px){
+    /*Home Page Start*/
+    .special-sweet-card .sweet-image{
+        height: 280px;
+        width: 100%;
+        overflow: hidden;
+    }
+    .special-sweet-card .sweet-image img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+    .sweet-card-bottom{
+        flex-direction: column;
+    }
+    .sweet-card-bottom a{
+        margin: 0 0 10px 0;
+    }
+
+    .hero-section .home--sweet-card h5{
+        font-size: 16px;
+    }
+    .hero-section .home--sweet-card p{
+        font-size: 12px;
+        line-height: 16px;
+    }
+    .hero-section .home--sweet-card{
+        height: 100%;
+        overflow: hidden;
+    }
+    .hero-section .home--sweet-card img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+    /*Home Page End*/
+}
+
+/*Tab*/
+@media screen and (max-width: 992px){
+    /*Home Page Start*/
+    .special-sweet-card .sweet-image{
+        height: 240px;
+        width: 100%;
+        overflow: hidden;
+    }
+    .special-sweet-card .sweet-image img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+    .sweet-card-bottom{
+        flex-direction: column;
+    }
+    .sweet-card-bottom a{
+        margin: 0 0 10px 0;
+    }
+
+    .hero-section .home--sweet-card h5{
+        font-size: 16px;
+    }
+    .hero-section .home--sweet-card p{
+        font-size: 11px;
+        line-height: 14px;
+    }
+    .hero-section .home--sweet-card{
+        height: 100%;
+        overflow: hidden;
+    }
+    .hero-section .home--sweet-card img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+    /*Home Page End*/
+
+    /*Contact Page Start*/
+    .contact-page-section .container{
+        width: 80%;
+    }
+    .contact-page-section .form-container{
+        flex-direction: column;
+    }
+    .contact-page-section .form-container .left-inner-container{
+        text-align: center;
+    }
+    .contact-page-section .form-container .left-inner-container .contact-infos{
+        padding: 10px 0 20px 0;
+        text-align: center;
+    }
+    /*Contact Page End*/
+
+
+}
+
+/*Tab*/
+@media screen and (max-width: 768px){
+    /*Hero Banner Section Start*/
+    .special-sweet-card .sweet-image{
+        height: 360px;
+        width: 100%;
+        overflow: hidden;
+    }
+    .special-sweet-card .sweet-image img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+
+    .sweet-card-bottom{
+        flex-direction: column;
+    }
+    .sweet-card-bottom a{
+        margin: 0 0 10px 0;
+    }
+
+    .hero-section .home--sweet-card h5{
+        font-size: 18px;
+    }
+    .hero-section .home--sweet-card p{
+        font-size: 12px;
+    }
+    .hero-section .home--sweet-card{
+        height: 100%;
+        overflow: hidden;
+    }
+    .hero-section .home--sweet-card img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+
+    .row-three-btn{
+        text-align: center;
+        margin: 20px 0 40px 0;
+    }
+    .row-fou-div{
+        text-align: center;
+        padding: 10px 20px;
+    }
+    .hero-header-div{
+        line-height: 40px;
+    }
+    .hero-header{
+        font-size: 36px!important;
+        font-weight: 700;
+        padding: 10px 20px 5px 20px;
+        margin: 0;
+        text-align: center;
+    }
+    .hero-text{
+        padding: 15px 0;
+        font-size: 16px;
+        font-weight: 400;
+        text-align: center;
+        line-height: 25px;
+    }
+    .order-now-btn-div{
+        text-align: center;
+    }
+    .hero-left{
+        padding-top: 20px;
+    }
+    .order-1{
+        order: 2 !important;
+    }
+    .order-2{
+        order: 1 !important;
+    }
+    .order-3{
+        order: 2 !important;
+    }
+    .order-4{
+        order: 1 !important;
+    }
+    .order-5{
+        order: 2 !important;
+    }
+    .order-6{
+        order: 1 !important;
+    }
+    .sweet-list-text{
+        text-align: center;
+        font-size: 16px;
+        font-weight: 400;
+    }
+    .special-sweet-card{
+        margin: 15px;
+    }
+    .row-three-div{
+        margin-top: -75px !important;
+    }
+    .row-six-text{
+        padding: 30px 5px 0 5px ;
+    }
+    .row-six-text-header{
+        font-size: 28px;
+        text-align: center;
+        line-height: 36px;
+    }
+    .row-six-text-body{
+        font-size: 16px;
+        text-align: justify !important;
+    }
+    .row-six-btn{
+        text-align: center;
+    }
+    /*Hero Banner Section End*/
+
+    /*product detail page start*/
+    .cart-btn{
+        width: 100%;
+        color: white;
+        font-weight: 600;
+    }
+    .cart-btn:hover{
+        width: 100%;
+        color: white;
+        font-weight: 600;
+    }
+
+    .reviews{
+        margin: 0 3px;
+    }
+
+    /*product detail page end*/
+
+    /*Footer Start*/
+    .footer-social-icon{
+        justify-content: center;
+    }
+    .footer-logo{
+        margin: 20px auto;
+        display: flex;
+        height: 60px;
+    }
+    /*Footer End*/
+}
+
+/*Mobile*/
+@media screen and (max-width: 576px){
+
+    /*Home Page Start*/
+    .special-sweet-card .sweet-image{
+        height: 420px;
+        width: 100%;
+        overflow: hidden;
+    }
+    .special-sweet-card .sweet-image img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+
+    .sweet-card-bottom{
+        flex-direction: column;
+    }
+    .sweet-card-bottom a{
+        margin: 0 0 10px 0;
+    }
+
+    .hero-section .home--sweet-card h5{
+        font-size: 18px;
+    }
+    .hero-section .home--sweet-card p{
+        font-size: 12px;
+    }
+    .hero-section .home--sweet-card{
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+    }
+    .hero-section .home--sweet-card img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+    /*Home Page End*/
+
+    /*Contact Page Start*/
+    .contact-page-section .sm-view {
+        display:none;
+    }
+    /*Contact Page End*/
+
+    /*product detail page start*/
+    .cart-btn{
+        width: 100%;
+        color: white;
+        font-weight: 600;
+    }
+    .cart-btn:hover{
+        width: 100%;
+        color: white;
+        font-weight: 600;
+    }
+    /*product detail page end*/
+}
+
+/*Mobile*/
+@media screen and (max-width: 425px){
+    /*Home Page Start*/
+    .special-sweet-card .sweet-image{
+        height: 320px;
+        width: 100%;
+        overflow: hidden;
+    }
+    .special-sweet-card .sweet-image img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+
+    .sweet-card-bottom{
+        flex-direction: column;
+    }
+    .sweet-card-bottom a{
+        margin: 0 0 10px 0;
+    }
+
+    .hero-section .home--sweet-card h5{
+        font-size: 18px;
+    }
+    .hero-section .home--sweet-card p{
+        font-size: 12px;
+    }
+    .hero-section .home--sweet-card{
+        height: 320px;
+        width: 100%;
+        overflow: hidden;
+    }
+    .hero-section .home--sweet-card img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+    /*Home Page End*/
+
+    /*Contact Page Start*/
+    .contact-page-section .left-container{
+        display: none;
+    }
+    .contact-page-section .lg-view {
+        display:none;
+    }
+    /*Contact Page End*/
+}
+
+/*Mobile*/
+@media screen and (max-width: 320px){
+    /*Home Page Start*/
+    .special-sweet-card .sweet-image{
+        height: 360px;
+        width: 100%;
+        overflow: hidden;
+    }
+    .special-sweet-card .sweet-image img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+
+    .sweet-card-bottom{
+        flex-direction: column;
+    }
+    .sweet-card-bottom a{
+        margin: 0 0 10px 0;
+    }
+
+    .hero-section .home--sweet-card h5{
+        font-size: 18px;
+    }
+    .hero-section .home--sweet-card p{
+        font-size: 12px;
+    }
+    .hero-section .home--sweet-card{
+        height: 100%;
+        overflow: hidden;
+    }
+    .hero-section .home--sweet-card img{
+        height: 100%;
+        width: 100%;
+        object-fit: fill;
+    }
+    /*Home Page End*/
+}
+

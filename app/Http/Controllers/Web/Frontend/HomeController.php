@@ -24,6 +24,10 @@ class HomeController extends Controller {
         return view('frontend.pages.product');
     }
 
+    public function detail(): View {
+        return view('frontend.pages.detail');
+    }
+
     public function dynamicPage($page_slug): View {
         $dynamic_page = DynamicPage::where('page_slug', $page_slug)->first();
 

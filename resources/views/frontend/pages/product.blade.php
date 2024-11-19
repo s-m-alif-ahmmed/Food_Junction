@@ -12,54 +12,54 @@
 
 @section('content')
 
-    <section class="py-5">
+    <section class="sweet-page">
         <div class="container">
-
-            <div class="card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="{{ asset('/frontend/images/section/home/image-2.png') }}" class="img-fluid rounded-start" alt="...">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <p class="text-uppercase fw-bold fs-32">Our Special Sweets</p>
+                </div>
+                <div class="col-md-8 mx-auto">
+                    <p class="sweet-list-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad architecto commodi consequuntur rem sint tenetur.  consectetur adipisicing elit. Obcaecati, tenetur.</p>
+                </div>
+                <div class="row py-3">
+                    <div class="col-md-4 special-sweet-card">
+                        <div class="card border-0 custom-shadow">
+                            <div class="sweet-image">
+                                <img src="{{ asset('/frontend/images/section/home/image-4.jpg') }}" class="card-img-top" alt="...">
+                            </div>
+                            <div class="card-body border-0 text-center mb-3 h-100">
+                                <h5 class="card-title">Sweet Name</h5>
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Lorem ipsum dolor sit amet.</p>
+                                <a href="{{ route('sweets.detail') }}" class="order-now-btn fw-bold">Read More</a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                            <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+                    <div class="col-md-4 special-sweet-card">
+                        <div class="card border-0 custom-shadow">
+                            <div class="sweet-image">
+                                <img src="{{ asset('/frontend/images/section/home/image-6.jpg') }}" class="card-img-top" alt="...">
+                            </div>
+                            <div class="card-body border-0 text-center mb-3 h-100">
+                                <h5 class="card-title">Sweet Name</h5>
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Lorem ipsum dolor sit amet.</p>
+                                <a href="{{ route('sweets.detail') }}" class="order-now-btn fw-bold">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 special-sweet-card">
+                        <div class="card border-0 custom-shadow">
+                            <div class="sweet-image">
+                                <img src="{{ asset('/frontend/images/section/home/image-11.jpg') }}" class="card-img-top" alt="...">
+                            </div>
+                            <div class="card-body border-0 text-center mb-3 h-100">
+                                <h5 class="card-title">Sweet Name</h5>
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Lorem ipsum dolor sit amet.</p>
+                                <a href="{{ route('sweets.detail') }}" class="order-now-btn fw-bold">Read More</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                            <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <img src="{{ asset('/frontend/images/section/home/image-2.png') }}" class="img-fluid rounded-end" alt="...">
-                    </div>
-                </div>
-            </div>
-
-            <div class="card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="{{ asset('/frontend/images/section/home/image-2.png') }}" class="img-fluid rounded-start" alt="...">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                            <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </section>
 

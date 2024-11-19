@@ -28,7 +28,7 @@
                     <div class="left-inner-container">
                         <h2>Let's Chat</h2>
                         <p class="text-center">Lorem ipsum dolor sit amet, consectetur adi? Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci, corporis.</p>
-                        <div class="contact-infos py-5">
+                        <div class="contact-infos">
                             <p><span><i class="fa-brands fa-whatsapp"></i></span> Whatsapp: <span>+88 01799-999999</span> </p>
                             <p><span><i class="fa fa-mobile-phone"></i></span> Phone Number: <span>+88 01799-999999</span> </p>
                             <p><span><i class="fa fa-envelope"></i></span> Email: <span>foodjunction@gmail.com</span> </p>

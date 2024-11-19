@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="{{ asset('/frontend/assets/bootstrap/css/bootstrap.min.css') }}">
 {{--style--}}
 <link rel="stylesheet" href="{{ asset('/frontend/assets/css/style.css') }}">
+<link rel="stylesheet" href="{{ asset('/frontend/assets/css/responsive.css') }}">
 {{--Font--}}
 <link rel="stylesheet" href="{{ asset('/frontend/assets/font/nirmala-ui/Nirmala.ttf') }}">
 {{--Jquery Slider--}}

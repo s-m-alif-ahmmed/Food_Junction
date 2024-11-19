@@ -4,6 +4,14 @@
     background-color: #FF2D20;
 }
 
+:root {
+    --yellow: #FD9325;
+    --red: #FF2D20;
+    --star: #FFD43B;
+    --non-star: #bdbdbd;
+    --dark-black: #131313;
+}
+
 /*Fonts*/
 .fs-11{
     font-size: 11px!important;
@@ -115,7 +123,7 @@
 }
 
 .background-gradient{
-    background: linear-gradient(to right, #f69942, #EE3441);
+    background: linear-gradient(to right, #FD9325, #EE3441);
 }
 
 /*All End*/
@@ -130,7 +138,7 @@
     color: #0a3622;
 }
 .header-menu:hover{
-    color: #f69942;
+    color: #FD9325;
 }
 
 /*Header End*/
@@ -162,16 +170,6 @@
     /*font-size: 24px; padding: 0 0 0 8px;*/
 }
 
-@media screen and (max-width: 768px){
-    .footer-social-icon{
-        justify-content: center;
-    }
-    .footer-logo{
-        margin: 20px auto;
-        display: flex;
-        height: 60px;
-    }
-}
 
 /*Footer End*/
 
@@ -182,28 +180,28 @@
 .order-now-btn{
     border-radius: 20px;
     color: white;
-    background: linear-gradient(to right, #f69942, #EE3441);
+    background: linear-gradient(to right, #FD9325, #EE3441);
     text-decoration: none;
     padding: 5px 35px 8px 35px;
 }
 .order-now-btn:hover{
     border-radius: 20px;
     color: white;
-    background: linear-gradient(to right, #f69942, #EE3441);
+    background: linear-gradient(to right, #FD9325, #EE3441);
     padding: 5px 35px 8px 35px;
 }
 
 .view-all-btn{
     border-radius: 20px;
     color: white;
-    background: linear-gradient(to right, #f69942, #EE3441);
+    background: linear-gradient(to right, #FD9325, #EE3441);
     text-decoration: none;
     padding: 5px 35px 8px 35px;
 }
 .view-all-btn:hover{
     border-radius: 20px;
     color: white;
-    background: linear-gradient(to right, #f69942, #EE3441);
+    background: linear-gradient(to right, #FD9325, #EE3441);
     padding: 5px 35px 8px 35px;
 }
 
@@ -231,6 +229,17 @@
 .special-sweet-card{
     padding: 20px;
 }
+.special-sweet-card .sweet-image{
+    height: 400px;
+    width: 100%;
+    overflow: hidden;
+}
+.special-sweet-card .sweet-image img{
+    height: 100%;
+    width: 100%;
+    object-fit: fill;
+}
+
 .order-3{
     order: 1 !important;
 }
@@ -246,87 +255,6 @@
 
 .row-fou-div{
     padding: 0 0 0 15px;
-}
-
-
-@media screen and (min-width: 100px) and (max-width: 768px){
-
-    .row-three-btn{
-        text-align: center;
-        margin: 20px 0 40px 0;
-    }
-    .row-fou-div{
-        text-align: center;
-        padding: 10px 20px;
-    }
-    .hero-header-div{
-        line-height: 40px;
-    }
-    .hero-header{
-        font-size: 36px!important;
-        font-weight: 700;
-        padding: 10px 20px 5px 20px;
-        margin: 0;
-        text-align: center;
-    }
-    .hero-text{
-        padding: 15px 0;
-        font-size: 16px;
-        font-weight: 400;
-        text-align: center;
-        line-height: 25px;
-    }
-    .order-now-btn-div{
-        text-align: center;
-    }
-    .hero-left{
-        padding-top: 20px;
-    }
-    .order-1{
-        order: 2 !important;
-    }
-    .order-2{
-        order: 1 !important;
-    }
-    .order-3{
-        order: 2 !important;
-    }
-    .order-4{
-        order: 1 !important;
-    }
-    .order-5{
-        order: 2 !important;
-    }
-    .order-6{
-        order: 1 !important;
-    }
-    .sweet-list-text{
-        text-align: center;
-        font-size: 16px;
-        font-weight: 400;
-    }
-    .special-sweet-card{
-        margin: 15px;
-    }
-    .row-three-div{
-        margin-top: -75px !important;
-    }
-    .row-six-text{
-        padding: 30px 5px 0 5px ;
-    }
-    .row-six-text-header{
-        font-size: 28px;
-        text-align: center;
-        line-height: 36px;
-    }
-    .row-six-text-body{
-        font-size: 16px;
-        text-align: justify !important;
-    }
-    .row-six-btn{
-        text-align: center;
-    }
-
 }
 
 /*Hero Banner Section End*/
@@ -348,7 +276,7 @@
 /*Contact Page Start*/
 
 .contact-page-section {
-    background: linear-gradient(90deg, #f69942 0%, rgba(238, 52, 65) 100%);
+    background: linear-gradient(90deg, #FD9325 0%, rgba(238, 52, 65) 100%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -388,7 +316,7 @@
     flex:1;
     justify-content:center;
     align-items:center;
-    color: black;
+    color: var(--dark-black);
     background-color: transparent;
 }
 
@@ -417,6 +345,7 @@
 
 .contact-page-section .left-inner-container .contact-infos{
     text-align: start;
+    padding: 50px 0;
 }
 
 .contact-page-section input, textarea {
@@ -435,7 +364,7 @@
 .contact-page-section button {
     border-radius: 20px;
     border: none;
-    background: linear-gradient(90deg, #f69942 0%, rgba(238, 52, 65) 100%);
+    background: linear-gradient(90deg, #FD9325 0%, rgba(238, 52, 65) 100%);
     color: #FFFFFF;
     font-size: 14px;
     font-weight: bold;
@@ -448,20 +377,6 @@
 
 .contact-page-section button:hover {
     opacity:0.7;
-}
-@media only screen and (max-width: 600px) {
-    .contact-page-section .left-container{
-        display: none;
-    }
-    .contact-page-section .lg-view {
-        display:none;
-    }
-}
-
-@media only screen and (min-width: 600px) {
-    .contact-page-section .sm-view {
-        display:none;
-    }
 }
 
 .contact-page-section form p {
@@ -512,7 +427,7 @@
     bottom: 0;
     width: 5px;
     height: 5px;
-    background: #f69942;
+    background: #FD9325;
     border-radius: 50%;
     content: "";
 }
@@ -523,7 +438,7 @@
     bottom: 0;
     width: 5px;
     height: 5px;
-    background: #f69942;
+    background: #FD9325;
     border-radius: 50%;
     content: "";
 }
@@ -534,7 +449,7 @@
     bottom: 0;
     width: 50px;
     height: 1px;
-    background: #f69942;
+    background: #FD9325;
     margin: 2px 0;
 }
 
@@ -556,7 +471,7 @@
     margin: 0;
 }
 .contact-page-section .sec-title-style1 .text.clr-yellow p{
-    color: #f69942;
+    color: #FD9325;
 }
 .contact-page-section .sec-title-style1 .text .decor-left{
     position: relative;
@@ -573,7 +488,7 @@
     bottom: 0;
     width: 50px;
     height: 1px;
-    background: #f69942;
+    background: #FD9325;
     content: "";
     margin: 2px 0;
 }
@@ -584,7 +499,7 @@
     bottom: 0;
     width: 5px;
     height: 5px;
-    background: #f69942;
+    background: #FD9325;
     border-radius: 50%;
     content: "";
 }
@@ -595,7 +510,7 @@
     bottom: 0;
     width: 5px;
     height: 5px;
-    background: #f69942;
+    background: #FD9325;
     border-radius: 50%;
     content: "";
 }
@@ -615,7 +530,7 @@
     bottom: 0;
     width: 50px;
     height: 1px;
-    background: #f69942;
+    background: #FD9325;
     content: "";
     margin: 2px 0;
 }
@@ -626,7 +541,7 @@
     bottom: 0;
     width: 5px;
     height: 5px;
-    background: #f69942;
+    background: #FD9325;
     border-radius: 50%;
     content: "";
 }
@@ -637,7 +552,7 @@
     bottom: 0;
     width: 5px;
     height: 5px;
-    background: #f69942;
+    background: #FD9325;
     border-radius: 50%;
     content: "";
 }
@@ -648,14 +563,330 @@
     padding-top: 16px;
 }
 .contact-page-section .sec-title-style1 .bottom-text p{
-    color: black;
+    color: var(--dark-black);
     font-size: 16px;
     line-height: 26px;
     font-weight: 400;
     margin: 0;
 }
 .contact-page-section .sec-title-style1 .bottom-text.clr-gray p{
-    color: black;
+    color: var(--dark-black);
 }
 
 /*Contact Page End*/
+
+/*sweet detail page start*/
+.sweet-page{
+    background: url('/frontend/images/section/home/watercolor-splash-white-background.jpg');
+    background-size: cover; /* Ensures the background covers the entire element */
+    background-repeat: no-repeat; /* Prevents the background from repeating */
+    background-position: center; /* Centers the image */
+    padding: 50px 0;
+}
+
+.cart-btn{
+    width: 50%;
+    color: white;
+    font-weight: 600;
+}
+.cart-btn:hover{
+    width: 50%;
+    color: white;
+    font-weight: 600;
+}
+
+.star-yellow{
+    color: var(--star);
+}
+
+.star-non-yellow{
+    color: var(--non-star);
+}
+
+/*offer*/
+.offer {
+    border: 2px dashed #EE3441; /* Highlighted border */
+    background-color: #EE3441; /* Light gray background */
+    color: #EE3441;
+    font-size: 1rem;
+}
+
+.offer i {
+    font-size: 1.2rem;
+}
+
+.offer a {
+    color: #FD9325; /* Blue link */
+}
+
+.offer span {
+    font-weight: 600;
+    color: #FD9325;
+}
+
+.img-box{
+    max-height: 100%;
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.img-box img{
+    height: 100%;
+    width: 100%;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+/*.more-img-main-box{*/
+/*    display: flex;*/
+/*}*/
+
+/*.more-img-main-box .more-img-box{*/
+/*    max-height: 100%;*/
+/*    max-width: 100%;*/
+/*    padding: 10px 5px;*/
+/*}*/
+
+/*.more-img-main-box .more-img-box img{*/
+/*    height: 100%;*/
+/*    width: 100%;*/
+/*    object-fit: contain;*/
+/*}*/
+
+.price{
+    color: var(--dark-black);
+    font-weight: 500;
+    font-size: 18px;
+}
+.discount-price{
+    color: var(--red);
+    font-weight: 500;
+    font-size: 16px;
+}
+
+/*Star*/
+.rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    font-size: 1.2rem;
+    color: #dedede;
+    cursor: pointer;
+    padding: 0 0.1rem;
+}
+
+.rating label:before {
+    content: "\f005"; /* FontAwesome star character */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+}
+
+.rating input:checked ~ label {
+    color: var(--star);
+}
+
+.rating label:hover,
+.rating label:hover ~ label {
+    color: var(--star);
+}
+
+.sweet-price{
+    padding: 5px 0 0 0;
+}
+.sweet-price p{
+    margin-bottom: 0 !important;
+}
+
+.offer{
+    padding: 5px 0;
+}
+
+.sweet-wight{
+    font-size: 18px;
+    font-weight: 600;
+    margin: 5px 0 0 0;
+}
+
+/* Hide default radio button */
+.sweet-wight input[type="radio"] {
+    appearance: none; /* Remove default radio styling */
+    -webkit-appearance: none; /* Safari support */
+    -moz-appearance: none; /* Firefox support */
+    width: 14px;
+    height: 14px;
+    border: 1px solid #ccc;
+    border-radius: 50%; /* Make it round */
+    position: relative;
+    cursor: pointer;
+    background-color: #fff;
+    transition: all 0.1s ease;
+}
+
+/* Checked state with a checkmark */
+.sweet-wight input[type="radio"]:checked {
+    background-color: #EE3441FF;
+    border-color: #EE3441FF;
+}
+
+/* Add a checkmark */
+.sweet-wight input[type="radio"]:checked::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-color: #FD9325;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%; /* Make it a circular checkmark */
+}
+
+/* Style for the heading */
+.styled-heading {
+    font-size: 24px;
+    font-weight: bold;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+/* Beautiful underline */
+.text-underline {
+    width: 70px;
+    height: 3px;
+    margin: 0 auto;
+    background: linear-gradient(to right,#FF8800, #EE3441FF);
+    border-radius: 50px;
+    animation: slide-in 0.7s ease-in-out;
+}
+
+/* Animation for the underline */
+@keyframes slide-in {
+    0% {
+        width: 0;
+    }
+    100% {
+        width: 70px;
+    }
+}
+
+/*Review*/
+.review-box input{
+    outline: none !important;
+    box-shadow: none !important;
+}
+.review-box input:focus{
+    outline: none !important;
+    box-shadow: none !important;
+    border: 1px solid var(--red);
+}
+.review-box textarea{
+    outline: none !important;
+    box-shadow: none !important;
+}
+.review-box textarea:focus{
+    outline: none !important;
+    box-shadow: none !important;
+    border: 1px solid var(--red);
+}
+
+.review-box .error-message span{
+    font-size: 12px;
+    color: var(--red);
+    padding-left: 5px;
+}
+
+.review-btn{
+    background-color: var(--yellow);
+    font-size: 18px;
+    font-weight: 500;
+    color: white;
+}
+.review-btn:hover{
+    background-color: var(--red);
+    font-size: 18px;
+    font-weight: 500;
+    color: white;
+}
+
+/*Review display*/
+.reviews {
+    border: 1px solid var(--non-star); /* Maintain the border for the reviews section */
+    border-radius: 8px; /* Rounded corners */
+    max-height: 400px; /* Set maximum height for the reviews container */
+    overflow-y: auto; /* Enable vertical scrolling when content overflows */
+    padding: 15px; /* Add some padding inside the container */
+    background-color: #f9f9f9; /* Optional: Add a subtle background for the reviews */
+    position: relative; /* Maintain positioning context */
+}
+
+/* Add a scrollbar style (optional for better aesthetics) */
+.reviews::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+.reviews::-webkit-scrollbar-thumb {
+    background-color: var(--non-star); /* Color of the scrollbar thumb */
+    border-radius: 4px; /* Rounded scrollbar edges */
+}
+
+.reviews::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-color); /* Highlight scrollbar thumb on hover */
+}
+
+.reviews::-webkit-scrollbar-track {
+    background-color: #eaeaea; /* Background of the scrollbar track */
+    border-radius: 4px;
+}
+
+
+.avatar-img-box {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0; /* Ensures the avatar does not shrink */
+    border: 1px solid var(--yellow); /* Adds a border for emphasis */
+}
+
+.avatar-img-box img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover; /* Better cropping for profile images */
+}
+
+.reviewer-name {
+    font-size: 1.1rem;
+    color: var(--dark-black);
+}
+
+.review-date {
+    font-size: 0.6rem;
+}
+
+.star-yellow {
+    color: var(--star);
+    margin: 2px 0 0 2px;
+    font-size: 0.8rem;
+}
+
+.star-non-yellow {
+    color: var(--non-star);
+    margin: 2px 0 0 2px;
+    font-size: 0.8rem;
+}
+
+.review-info{
+    padding: 0;
+    margin: 0;
+    line-height: 12px;
+}
+
+/*sweet detail page end*/
