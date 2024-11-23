@@ -58,7 +58,7 @@
                 @endif
             </div>
             <div class="d-none d-lg-block px-2">
-                <a href="">
+                <a href="{{ route('cart') }}">
                     <i class="fa-solid fa-cart-shopping text-dark"></i>
                 </a>
             </div>

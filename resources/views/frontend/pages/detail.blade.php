@@ -19,7 +19,7 @@
                     <div class="row">
                         <div class="col-12 ">
                             <div class="img-box">
-                                <img src="{{ asset('/frontend/images/section/home/image-4.jpg') }}" alt="">
+                                <img src="{{ asset('/frontend/images/section/home/roshmonjuri-500x500.jpg') }}" alt="">
                             </div>
                         </div>
 {{--                        <div class="col-12 more-img-main-box">--}}
@@ -121,7 +121,7 @@
                         </span>
                     </div>
                     <div class="mt-4">
-                        <a class="btn cart-btn m-1" style="background-color: var(--yellow);" href="#"> <i class="fa-solid fa-shopping-cart"></i> Add to Cart</a>
+                        <a class="btn cart-btn m-1" style="background-color: var(--yellow);" href="{{ route('cart') }}"> <i class="fa-solid fa-shopping-cart"></i> Add to Cart</a>
                         <a class="btn cart-btn m-1" style="background-color: var(--red);" href="#"> <i class="fa-solid fa-money-check-dollar"></i> Purchase Now</a>
                     </div>
 
@@ -243,7 +243,7 @@
             </div>
             <div class="row reviews">
                 <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 shadow-sm rounded">
+                    <div class="d-flex align-items-center p-3 rounded">
                         <div class="avatar-img-box me-3">
                             <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
                         </div>
@@ -266,7 +266,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 shadow-sm rounded">
+                    <div class="d-flex align-items-center p-3 rounded">
                         <div class="avatar-img-box me-3">
                             <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
                         </div>
@@ -289,7 +289,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 shadow-sm rounded">
+                    <div class="d-flex align-items-center p-3 rounded">
                         <div class="avatar-img-box me-3">
                             <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
                         </div>
@@ -312,7 +312,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 shadow-sm rounded">
+                    <div class="d-flex align-items-center p-3 rounded">
                         <div class="avatar-img-box me-3">
                             <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
                         </div>
@@ -335,7 +335,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 shadow-sm rounded">
+                    <div class="d-flex align-items-center p-3 rounded">
                         <div class="avatar-img-box me-3">
                             <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
                         </div>
@@ -358,7 +358,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 shadow-sm rounded">
+                    <div class="d-flex align-items-center p-3 rounded">
                         <div class="avatar-img-box me-3">
                             <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
                         </div>
@@ -381,7 +381,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 shadow-sm rounded">
+                    <div class="d-flex align-items-center p-3 rounded">
                         <div class="avatar-img-box me-3">
                             <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
                         </div>
@@ -404,7 +404,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 shadow-sm rounded">
+                    <div class="d-flex align-items-center p-3 rounded">
                         <div class="avatar-img-box me-3">
                             <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
                         </div>

@@ -25,7 +25,7 @@
                     <div class="col-md-4 special-sweet-card">
                         <div class="card border-0 custom-shadow">
                             <div class="sweet-image">
-                                <img src="{{ asset('/frontend/images/section/home/image-4.jpg') }}" class="card-img-top" alt="...">
+                                <img src="{{ asset('/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top" alt="...">
                             </div>
                             <div class="card-body border-0 text-center mb-3 h-100">
                                 <h5 class="card-title">Sweet Name</h5>
@@ -37,7 +37,7 @@
                     <div class="col-md-4 special-sweet-card">
                         <div class="card border-0 custom-shadow">
                             <div class="sweet-image">
-                                <img src="{{ asset('/frontend/images/section/home/image-6.jpg') }}" class="card-img-top" alt="...">
+                                <img src="{{ asset('/frontend/images/section/home/Malaichop-500x500.jpg') }}" class="card-img-top" alt="...">
                             </div>
                             <div class="card-body border-0 text-center mb-3 h-100">
                                 <h5 class="card-title">Sweet Name</h5>
@@ -49,7 +49,7 @@
                     <div class="col-md-4 special-sweet-card">
                         <div class="card border-0 custom-shadow">
                             <div class="sweet-image">
-                                <img src="{{ asset('/frontend/images/section/home/image-11.jpg') }}" class="card-img-top" alt="...">
+                                <img src="{{ asset('/frontend/images/section/home/roshmonjuri-500x500.jpg') }}" class="card-img-top" alt="...">
                             </div>
                             <div class="card-body border-0 text-center mb-3 h-100">
                                 <h5 class="card-title">Sweet Name</h5>

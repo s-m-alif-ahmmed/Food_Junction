@@ -28,6 +28,14 @@ class HomeController extends Controller {
         return view('frontend.pages.detail');
     }
 
+    public function cart(): View {
+        return view('frontend.pages.cart');
+    }
+
+    public function checkout(): View {
+        return view('frontend.pages.checkout');
+    }
+
     public function dynamicPage($page_slug): View {
         $dynamic_page = DynamicPage::where('page_slug', $page_slug)->first();
 

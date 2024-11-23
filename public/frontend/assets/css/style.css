@@ -12,6 +12,10 @@
     --dark-black: #131313;
 }
 
+.yellow{
+    background-color: var(--yellow);
+}
+
 /*Fonts*/
 .fs-11{
     font-size: 11px!important;
@@ -116,6 +120,14 @@
 
 .fsw-semibold{
     font-weight: 500 !important;
+}
+
+.fsw-bold{
+    font-weight: 700 !important;
+}
+
+.fsw-bolder{
+    font-weight: 900 !important;
 }
 
 .custom-shadow{
@@ -890,3 +902,62 @@
 }
 
 /*sweet detail page end*/
+
+/*Cart Page Start*/
+.cart-page .sweet-name{
+    font-weight: 700;
+    font-size: 24px;
+    text-decoration: none;
+    color: var(--dark-black);
+}
+.cart-page .cart-wight{
+    font-size: 16px;
+    font-weight: 500;
+}
+.cart-page .cart-price{
+    font-size: 16px;
+    font-weight: 500;
+}
+.cart-page .cart-price .discount-price{
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--red);
+}
+
+.cart-img{
+    height: 100px;
+    width: 100px;
+    border-radius: 8px;
+    margin: auto;
+}
+.cart-img img{
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+.coupon-input:focus{
+    box-shadow: none;
+    outline: none;
+    border: 1px solid var(--red);
+}
+.coupon-btn{
+    border: 1px solid var(--red);
+}
+
+/*Cart Page End*/
+
+/*Checkout Page Start*/
+.checkout-page input:focus{
+    box-shadow: none;
+    outline: none;
+    border: 1px solid var(--red);
+}
+
+.checkout-page textarea:focus{
+    box-shadow: none;
+    outline: none;
+    border: 1px solid var(--red);
+}
+
+/*Checkout Page End*/

@@ -132,6 +132,40 @@
         object-fit: fill;
     }
     /*Home Page End*/
+
+    /*Cart Page Start*/
+    .cart-page .sweet-name{
+        font-weight: 700;
+        font-size: 24px;
+        text-decoration: none;
+        color: var(--dark-black);
+    }
+    .cart-page .cart-wight{
+        font-size: 16px;
+        font-weight: 500;
+    }
+    .cart-page .cart-price{
+        font-size: 16px;
+        font-weight: 500;
+    }
+    .cart-page .cart-price .discount-price{
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--red);
+    }
+    .cart-img{
+        height: 90px;
+        width: 90px;
+        border-radius: 8px;
+        margin: auto;
+    }
+    .cart-img img{
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+    /*Cart Page End*/
 }
 
 /*Tab*/
@@ -188,6 +222,39 @@
     }
     /*Contact Page End*/
 
+    /*Cart Page Start*/
+    .cart-page .sweet-name{
+        font-weight: 700;
+        font-size: 24px;
+        text-decoration: none;
+        color: var(--dark-black);
+    }
+    .cart-page .cart-wight{
+        font-size: 16px;
+        font-weight: 500;
+    }
+    .cart-page .cart-price{
+        font-size: 16px;
+        font-weight: 500;
+    }
+    .cart-page .cart-price .discount-price{
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--red);
+    }
+    .cart-img{
+        height: 90px;
+        width: 90px;
+        border-radius: 8px;
+        margin: auto;
+    }
+    .cart-img img{
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+    /*Cart Page End*/
 
 }
 
@@ -393,6 +460,41 @@
         font-weight: 600;
     }
     /*product detail page end*/
+
+    /*Cart Page Start*/
+    .cart-page .sweet-name{
+        font-weight: 700;
+        font-size: 18px;
+        text-decoration: none;
+        color: var(--dark-black);
+    }
+    .cart-page .cart-wight{
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .cart-page .cart-price{
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .cart-page .cart-price .discount-price{
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--red);
+    }
+    .cart-img{
+        height: 80px;
+        width: 80px;
+        border-radius: 8px;
+        margin: auto;
+    }
+    .cart-img img{
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+    /*Cart Page End*/
+
 }
 
 /*Mobile*/
@@ -442,6 +544,40 @@
         display:none;
     }
     /*Contact Page End*/
+
+    /*Cart Page Start*/
+    .cart-page .sweet-name{
+        font-weight: 500;
+        font-size: 16px;
+        text-decoration: none;
+        color: var(--dark-black);
+    }
+    .cart-page .cart-wight{
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .cart-page .cart-price{
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .cart-page .cart-price .discount-price{
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--red);
+    }
+    .cart-img{
+        height: 70px;
+        width: 70px;
+        border-radius: 8px;
+        margin: auto;
+    }
+    .cart-img img{
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+    /*Cart Page End*/
 }
 
 /*Mobile*/
@@ -481,5 +617,40 @@
         object-fit: fill;
     }
     /*Home Page End*/
+
+    /*Cart Page Start*/
+    .cart-page .sweet-name{
+        font-weight: 500;
+        font-size: 16px;
+        text-decoration: none;
+        color: var(--dark-black);
+    }
+    .cart-page .cart-wight{
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .cart-page .cart-price{
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .cart-page .cart-price .discount-price{
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--red);
+    }
+    .cart-img{
+        height: 70px;
+        width: 70px;
+        border-radius: 8px;
+        margin: auto;
+    }
+    .cart-img img{
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+    /*Cart Page End*/
+
 }
 

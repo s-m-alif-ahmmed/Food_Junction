@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="col-md-6 order-2 px-0">
-                    <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/image-7.jpg') }}" alt="">
+                    <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/Gaibandha-Poster-1-500x500.jpg') }}" alt="">
                 </div>
             </div>
 
@@ -48,7 +48,7 @@
                     <div class="col-md-4 special-sweet-card">
                         <div class="card border-0 custom-shadow">
                             <div class="sweet-image">
-                                <img src="{{ asset('/frontend/images/section/home/image-4.jpg') }}" class="card-img-top" alt="...">
+                                <img src="{{ asset('/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top" alt="...">
                             </div>
                             <div class="card-body border-0 text-center mb-3 h-100">
                                 <h5 class="card-title">Sweet Name</h5>
@@ -60,7 +60,7 @@
                     <div class="col-md-4 special-sweet-card">
                         <div class="card border-0 custom-shadow">
                             <div class="sweet-image">
-                                <img src="{{ asset('/frontend/images/section/home/image-6.jpg') }}" class="card-img-top" alt="...">
+                                <img src="{{ asset('/frontend/images/section/home/Malaichop-500x500.jpg') }}" class="card-img-top" alt="...">
                             </div>
                             <div class="card-body border-0 text-center mb-3 h-100">
                                 <h5 class="card-title">Sweet Name</h5>
@@ -72,7 +72,7 @@
                     <div class="col-md-4 special-sweet-card">
                         <div class="card border-0 custom-shadow">
                             <div class="sweet-image">
-                                <img src="{{ asset('/frontend/images/section/home/image-11.jpg') }}" class="card-img-top" alt="...">
+                                <img src="{{ asset('/frontend/images/section/home/roshmonjuri-500x500.jpg') }}" class="card-img-top" alt="...">
                             </div>
                             <div class="card-body border-0 text-center mb-3 h-100">
                                 <h5 class="card-title">Sweet Name</h5>
@@ -87,7 +87,7 @@
             <div class="row py-5">
                 <div class="col-md-6 order-3 px-0">
                     <div class="">
-                        <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/image-3.jpg') }}" alt="">
+                        <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/roshmonjuri-Poster-1-500x500.jpg') }}" alt="">
                     </div>
                 </div>
                 <div class="col-md-6 d-flex align-items-center order-4">
@@ -123,7 +123,7 @@
                             <div>
                                 <div class="card border-0 custom-shadow">
                                     <div class="home--sweet-card">
-                                        <img src="{{ asset('/frontend/images/section/home/image-4.jpg') }}" class="card-img-top img-fluid" alt="..." >
+                                        <img src="{{ asset('/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top img-fluid" alt="..." >
                                     </div>
                                     <div class="card-body border-0 text-center h-100 pb-0">
                                         <h5 class="card-title p-0 m-0">Sweet Name</h5>
@@ -138,7 +138,7 @@
                             <div>
                                 <div class="card border-0 custom-shadow">
                                     <div class="home--sweet-card">
-                                        <img src="{{ asset('/frontend/images/section/home/image-6.jpg') }}" class="card-img-top img-fluid" alt="..." >
+                                        <img src="{{ asset('/frontend/images/section/home/Malaichop-500x500.jpg') }}" class="card-img-top img-fluid" alt="..." >
                                     </div>
                                     <div class="card-body border-0 text-center h-100 pb-0">
                                         <h5 class="card-title p-0 m-0">Sweet Name</h5>
@@ -153,7 +153,7 @@
                             <div>
                                 <div class="card border-0 custom-shadow">
                                     <div class="home--sweet-card">
-                                        <img src="{{ asset('/frontend/images/section/home/image-11.jpg') }}" class="card-img-top img-fluid" alt="..." >
+                                        <img src="{{ asset('/frontend/images/section/home/roshmonjuri-500x500.jpg') }}" class="card-img-top img-fluid" alt="..." >
                                     </div>
                                     <div class="card-body border-0 text-center h-100 pb-0">
                                         <h5 class="card-title p-0 m-0">Sweet Name</h5>
@@ -168,7 +168,7 @@
                             <div>
                                 <div class="card border-0 custom-shadow">
                                     <div class="home--sweet-card">
-                                        <img src="{{ asset('/frontend/images/section/home/image-4.jpg') }}" class="card-img-top img-fluid" alt="..." >
+                                        <img src="{{ asset('/frontend/images/section/home/roshmonjuri-500x500.jpg') }}" class="card-img-top img-fluid" alt="..." >
                                     </div>
                                     <div class="card-body border-0 text-center h-100 pb-0">
                                         <h5 class="card-title p-0 m-0">Sweet Name</h5>
@@ -188,7 +188,7 @@
 
             <div class="row pt-5">
                 <div class="col-md-6 px-0">
-                    <img class="object-fit-cover img-fluid w-100" src="{{ asset('/frontend/images/section/home/image-12.jpg') }}" alt="..." >
+                    <img class="object-fit-cover img-fluid w-100" src="{{ asset('/frontend/images/section/home/Food-Junction-Thumbnail-500x500.jpg') }}" alt="..." >
                 </div>
                 <div class="col-md-6 d-flex align-items-center">
                     <div class="row overflow-hidden">
@@ -244,7 +244,7 @@
                 </div>
                 <div class="col-md-6 px-0 order-6">
                     <div class="">
-                        <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/image-12.jpg') }}" alt="">
+                        <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/Gaibandhar-mishti-dhakay-Poster-500x750.jpg') }}" alt="">
                     </div>
                 </div>
 
