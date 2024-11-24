@@ -7,7 +7,7 @@
 @endsection
 
 @section('title')
-    Food Junction | Sweets
+    Cart | Food Junction
 @endsection
 
 @section('content')

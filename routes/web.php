@@ -12,6 +12,7 @@ Route::get('/sweets', [HomeController::class, 'sweets'])->name('sweets');
 Route::get('/sweets/detail', [HomeController::class, 'detail'])->name('sweets.detail');
 Route::get('/cart', [HomeController::class, 'cart'])->name('cart');
 Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout');
+Route::get('/confirm-order', [HomeController::class, 'confirmOrder'])->name('confirm.order');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'userDashboard'])->name('user.dashboard');

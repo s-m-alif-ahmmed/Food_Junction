@@ -7,7 +7,7 @@
 @endsection
 
 @section('title')
-    Food Junction | Contact
+    Contact | Food Junction
 @endsection
 
 @section('content')

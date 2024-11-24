@@ -7,7 +7,7 @@
 @endsection
 
 @section('title')
-    Food Junction | Sweets
+    Checkout | Food Junction
 @endsection
 
 @section('content')
@@ -33,7 +33,7 @@
         <div class="container my-4">
             <form action="">
                 <div class="row">
-                    <div class="col-md-8 py-2">
+                    <div class="col-lg-8 col-md-12 col-sm-12 col-12 py-2">
                         <div class="card p-3">
                             <div class="">
                                 <p class="fs-24 fsw-semibold">Billing Details</p>
@@ -61,17 +61,17 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4 py-2">
+                    <div class="col-lg-4 col-md-12 col-sm-12 col-12 py-2">
                         <div class="card p-3 mb-2">
                             <div class="row py-2">
-                                <div class="col-lg-2 col-md-3 col-sm-3 col-3">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-3">
                                     <a href="">
                                         <div class="cart-img">
                                             <img src="{{ asset('/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
                                         </div>
                                     </a>
                                 </div>
-                                <div class="col-lg-8 col-md-7 col-sm-7 col-7">
+                                <div class="col-lg-8 col-md-7 col-sm-7 col-7 checkout-cart-sweets">
                                     <div>
                                         <div>
                                             <a href="" class="sweet-name">
@@ -84,7 +84,88 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
+                                <div class="col-lg-1 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
+                                    <button class="btn">
+                                        <i class="fa-solid fa-trash text-danger"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row py-2">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-3">
+                                    <a href="">
+                                        <div class="cart-img">
+                                            <img src="{{ asset('/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-lg-8 col-md-7 col-sm-7 col-7 checkout-cart-sweets">
+                                    <div>
+                                        <div>
+                                            <a href="" class="sweet-name">
+                                                Sweet Name Sweet Name
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <span class="cart-wight">1kg</span>
+                                            <p class="cart-price">730Tk <span class="discount-price">(<del>950Tk</del>)</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-1 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
+                                    <button class="btn">
+                                        <i class="fa-solid fa-trash text-danger"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row py-2">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-3">
+                                    <a href="">
+                                        <div class="cart-img">
+                                            <img src="{{ asset('/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-lg-8 col-md-7 col-sm-7 col-7 checkout-cart-sweets">
+                                    <div>
+                                        <div>
+                                            <a href="" class="sweet-name">
+                                                Sweet Name Sweet Name
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <span class="cart-wight">1kg</span>
+                                            <p class="cart-price">730Tk <span class="discount-price">(<del>950Tk</del>)</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-1 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
+                                    <button class="btn">
+                                        <i class="fa-solid fa-trash text-danger"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row py-2">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-3">
+                                    <a href="">
+                                        <div class="cart-img">
+                                            <img src="{{ asset('/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-lg-8 col-md-7 col-sm-7 col-7 checkout-cart-sweets">
+                                    <div>
+                                        <div>
+                                            <a href="" class="sweet-name">
+                                                Sweet Name Sweet Name
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <span class="cart-wight">1kg</span>
+                                            <p class="cart-price">730Tk <span class="discount-price">(<del>950Tk</del>)</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-1 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
                                     <button class="btn">
                                         <i class="fa-solid fa-trash text-danger"></i>
                                     </button>
@@ -101,7 +182,7 @@
                                     <p class="fsw-semibold">1440Tk</p>
                                 </div>
                                 <div class="col-md-12 d-flex justify-content-between">
-                                    <p>Discount</p>
+                                    <p>Login Discount</p>
                                     <p class="fsw-semibold">-140Tk</p>
                                 </div>
                                 <div class="col-md-12 d-flex justify-content-between">
@@ -123,7 +204,7 @@
                                     <p class="fsw-semibold">-140Tk</p>
                                 </div>
                                 <div class="col-md-12">
-                                    <a href="{{ route('checkout') }}" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">Place Order <i class="fa-solid fa-long-arrow-right"></i></a>
+                                    <a href="{{ route('confirm.order') }}" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">Place Order <i class="fa-solid fa-long-arrow-right"></i></a>
                                 </div>
                             </div>
                         </div>

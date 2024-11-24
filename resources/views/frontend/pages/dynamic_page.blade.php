@@ -7,7 +7,7 @@
 @endsection
 
 @section('title')
-    {{ $dynamic_page->page_title }}
+    {{ $dynamic_page->page_title }} | Food Junction
 @endsection
 
 @section('content')

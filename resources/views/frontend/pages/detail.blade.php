@@ -7,7 +7,7 @@
 @endsection
 
 @section('title')
-    Food Junction | Sweets
+    Sweet Name | Food Junction
 @endsection
 
 @section('content')

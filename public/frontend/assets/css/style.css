@@ -15,6 +15,12 @@
 .yellow{
     background-color: var(--yellow);
 }
+.text-yellow{
+    color: var(--yellow);
+}
+.text-red{
+    color: var(--red);
+}
 
 /*Fonts*/
 .fs-11{
@@ -136,6 +142,13 @@
 
 .background-gradient{
     background: linear-gradient(to right, #FD9325, #EE3441);
+}
+
+.error-message {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--red);
+    padding-left: 5px;
 }
 
 /*All End*/
@@ -960,4 +973,56 @@
     border: 1px solid var(--red);
 }
 
+.checkout-page .sweet-name{
+    font-weight: 500;
+    font-size: 16px;
+    text-decoration: none;
+    color: var(--dark-black);
+}
+.checkout-page .cart-wight{
+    font-size: 16px;
+    font-weight: 500;
+}
+.checkout-page .cart-price{
+    font-size: 12px;
+    font-weight: 500;
+}
+.checkout-page .cart-price .discount-price{
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--red);
+}
+.checkout-page .cart-img{
+    height: 80px;
+    width: 80px;
+    border-radius: 8px;
+    margin: auto;
+}
+.checkout-page .cart-img img{
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
 /*Checkout Page End*/
+
+/*User Dashboard Start*/
+.user-dashboard-page input:focus{
+    box-shadow: none;
+    outline: none;
+    border: 1px solid var(--red);
+}
+
+.user-dashboard-page textarea:focus{
+    box-shadow: none;
+    outline: none;
+    border: 1px solid var(--red);
+}
+
+#profileTab button:active{
+    background-color: var(--red);
+    color: white;
+}
+
+/*User Dashboard End*/

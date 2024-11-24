@@ -36,6 +36,10 @@ class HomeController extends Controller {
         return view('frontend.pages.checkout');
     }
 
+    public function confirmOrder(): View {
+        return view('frontend.pages.confirm-order');
+    }
+
     public function dynamicPage($page_slug): View {
         $dynamic_page = DynamicPage::where('page_slug', $page_slug)->first();
 
