@@ -10,47 +10,55 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 150);
-            $table->string('email', 150)->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+        if (!Schema::hasTable('users')) {
+            Schema::create('users', function (Blueprint $table) {
+                $table->id();
+                $table->string('name', 150);
+                $table->string('email', 150)->unique();
+                $table->timestamp('email_verified_at')->nullable();
+                $table->string('password');
 
-            $table->boolean('terms_and_policy')->default(false);
+                $table->boolean('terms_and_policy')->default(false);
 
-            $table->string('avatar')->nullable();
-            $table->enum('gender', ['male', 'female', 'other'])->nullable();
+                $table->string('avatar')->nullable();
+                $table->enum('gender', ['male', 'female', 'other'])->nullable();
 
-            $table->string('google_id')->nullable()->unique();
-            $table->string('apple_id')->nullable()->unique();
+                $table->string('google_id')->nullable()->unique();
+                $table->string('apple_id')->nullable()->unique();
 
-            $table->string('reset_code')->nullable();
-            $table->timestamp('reset_code_expires_at')->nullable();
+                $table->string('reset_code')->nullable();
+                $table->timestamp('reset_code_expires_at')->nullable();
 
-            $table->enum('role', ['Super Admin', 'Admin', 'User'])->default('User')->nullable(false);
-            $table->enum('status', ['active', 'inactive'])->default('inactive');
+                $table->enum('role', ['Super Admin', 'Admin', 'User'])->default('User')->nullable(false);
+                $table->enum('status', ['active', 'inactive'])->default('inactive');
 
-            $table->rememberToken();
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->softDeletes();
-        });
+                $table->rememberToken();
+                $table->timestamp('created_at')->useCurrent();
+                $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+                $table->softDeletes();
+            });
+        }
 
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
+        if (!Schema::hasTable('password_reset_tokens')) {
+            Schema::create('password_reset_tokens', function (Blueprint $table) {
+                $table->string('email')->primary();
+                $table->string('token');
+                $table->timestamp('created_at')->nullable();
+                $table->softDeletes();
+            });
+        }
 
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
-        });
+        if (!Schema::hasTable('sessions')) {
+            Schema::create('sessions', function (Blueprint $table) {
+                $table->string('id')->primary();
+                $table->foreignId('user_id')->nullable()->index();
+                $table->string('ip_address', 45)->nullable();
+                $table->text('user_agent')->nullable();
+                $table->longText('payload');
+                $table->integer('last_activity')->index();
+                $table->softDeletes();
+            });
+        }
     }
 
     /**

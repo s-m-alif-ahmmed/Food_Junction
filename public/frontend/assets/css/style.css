@@ -1020,9 +1020,11 @@
     border: 1px solid var(--red);
 }
 
-#profileTab button:active{
-    background-color: var(--red);
-    color: white;
+.user-dashboard-page .nav-tabs .nav-link.active {
+    background-color: var(--yellow);
+    color: white !important;
+    font-weight: 500;
 }
+
 
 /*User Dashboard End*/

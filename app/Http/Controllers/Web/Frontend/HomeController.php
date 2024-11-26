@@ -16,10 +16,6 @@ class HomeController extends Controller {
         return view('frontend.pages.index');
     }
 
-    public function contact(): View {
-        return view('frontend.pages.contact');
-    }
-
     public function sweets(): View {
         return view('frontend.pages.product');
     }

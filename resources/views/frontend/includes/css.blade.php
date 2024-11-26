@@ -9,3 +9,6 @@
 <link rel="stylesheet" href="{{ asset('/frontend/assets/jquery/Carousel/slick/slick.css') }}" />
 <link rel="stylesheet" href="{{ asset('/frontend/assets/jquery/Carousel/slick/slick-theme.css') }}">
 
+{{--Toast--}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+

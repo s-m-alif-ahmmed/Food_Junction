@@ -39,14 +39,20 @@
                 <div class="right-container">
                     <div class="right-inner-container">
                         <h2 class="lg-view">Contact</h2>
-                        <form action="#">
-                            <input type="text" placeholder="Name *"  />
-                            <input type="email" placeholder="Email *" />
-                            <input type="text" placeholder="Phone Number *" />
-                            <input type="phone" placeholder="Subject" />
-                            <textarea rows="4" placeholder="Message"></textarea>
-                            <button>Submit</button>
+                        <form action="{{ route('contact.store') }}" method="post">
+                            @csrf
+                            @method('POST')
+
+                            <input type="text" name="name" placeholder="Name *"  />
+                            <input type="email" name="email" placeholder="Email *" />
+                            <input type="text" name="number" placeholder="Phone Number *" />
+                            <input type="text" name="subject" placeholder="Subject" />
+                            <textarea name="message" rows="4" placeholder="Message"></textarea>
+
+                            <button type="submit">Submit</button>
+
                         </form>
+
                     </div>
                 </div>
             </div>
@@ -55,3 +61,16 @@
     </section>
 
 @endsection
+
+@push('scripts')
+    <script>
+        // Trigger toaster based on session messages
+        @if (session('t-success'))
+        showSuccessToast("{{ session('t-success') }}");
+        @endif
+
+        @if (session('t-error'))
+        showErrorToast("{{ session('t-error') }}");
+        @endif
+    </script>
+@endpush
