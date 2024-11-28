@@ -22,42 +22,20 @@
                     <p class="sweet-list-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad architecto commodi consequuntur rem sint tenetur.  consectetur adipisicing elit. Obcaecati, tenetur.</p>
                 </div>
                 <div class="row py-3">
+                    @foreach($products as $product)
                     <div class="col-md-4 special-sweet-card">
                         <div class="card border-0 custom-shadow">
                             <div class="sweet-image">
-                                <img src="{{ asset('/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top" alt="...">
+                                <img src="{{ asset($product->image ?? '/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top" alt="{{ $product->name ?? 'No Product' }}">
                             </div>
                             <div class="card-body border-0 text-center mb-3 h-100">
-                                <h5 class="card-title">Sweet Name</h5>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Lorem ipsum dolor sit amet.</p>
-                                <a href="{{ route('sweets.detail') }}" class="order-now-btn fw-bold">Read More</a>
+                                <h5 class="card-title fsw-bold">{{ $product->name }}</h5>
+                                <p class="card-text">{{ $product->short_description }}</p>
+                                <a href="{{ route('sweets.detail', $product->product_slug) }}" class="order-now-btn fw-bold">Read More</a>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 special-sweet-card">
-                        <div class="card border-0 custom-shadow">
-                            <div class="sweet-image">
-                                <img src="{{ asset('/frontend/images/section/home/Malaichop-500x500.jpg') }}" class="card-img-top" alt="...">
-                            </div>
-                            <div class="card-body border-0 text-center mb-3 h-100">
-                                <h5 class="card-title">Sweet Name</h5>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Lorem ipsum dolor sit amet.</p>
-                                <a href="{{ route('sweets.detail') }}" class="order-now-btn fw-bold">Read More</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 special-sweet-card">
-                        <div class="card border-0 custom-shadow">
-                            <div class="sweet-image">
-                                <img src="{{ asset('/frontend/images/section/home/roshmonjuri-500x500.jpg') }}" class="card-img-top" alt="...">
-                            </div>
-                            <div class="card-body border-0 text-center mb-3 h-100">
-                                <h5 class="card-title">Sweet Name</h5>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Lorem ipsum dolor sit amet.</p>
-                                <a href="{{ route('sweets.detail') }}" class="order-now-btn fw-bold">Read More</a>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>

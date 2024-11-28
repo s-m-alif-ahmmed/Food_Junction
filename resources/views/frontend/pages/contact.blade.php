@@ -44,10 +44,39 @@
                             @method('POST')
 
                             <input type="text" name="name" placeholder="Name *"  />
+                            @error('name')
+                            <div class="error-message">
+                                <span>{{ $message }}</span>
+                            </div>
+                            @enderror
+
                             <input type="email" name="email" placeholder="Email *" />
+                            @error('email')
+                            <div class="error-message">
+                                <span>{{ $message }}</span>
+                            </div>
+                            @enderror
+
                             <input type="text" name="number" placeholder="Phone Number *" />
+                            @error('number')
+                            <div class="error-message">
+                                <span>{{ $message }}</span>
+                            </div>
+                            @enderror
+
                             <input type="text" name="subject" placeholder="Subject" />
+                            @error('subject')
+                            <div class="error-message">
+                                <span>{{ $message }}</span>
+                            </div>
+                            @enderror
+
                             <textarea name="message" rows="4" placeholder="Message"></textarea>
+                            @error('message')
+                            <div class="error-message">
+                                <span>{{ $message }}</span>
+                            </div>
+                            @enderror
 
                             <button type="submit">Submit</button>
 

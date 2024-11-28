@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Web\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Contact;
+use App\Models\ProductReview;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,31 +11,28 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 
-class ContactController extends Controller
+class ProductReviewController extends Controller
 {
-    public function contact(): View {
-        return view('frontend.pages.contact');
-    }
-
     public function store(Request $request): RedirectResponse {
         try {
             $validator = Validator::make($request->all(), [
-                'name'      => 'nullable|string|max:100',
-                'email'     => 'required|email|max:100',
-                'number'    => 'required|string|min:10|max:14',
-                'subject'   => 'nullable|string',
-                'message'   => 'required|string',
+                'product_id'  => 'required',
+                'user_id'     => 'nullable',
+                'name'        => 'required|string|max:100',
+                'email'       => 'required|email|max:100',
+                'rating'      => 'required',
+                'review'      => 'required|string',
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            Contact::create($request->only(['name', 'email', 'number', 'subject', 'message']));
+            ProductReview::create($request->only(['product_id', 'user_id', 'name', 'email','rating', 'review']));
 
-            return redirect()->route('contact')->with('t-success', 'Message sent successfully.');
+            return redirect()->back()->with('t-success', 'Review sent successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('contact')->with('t-error', 'Message sending failed!');
+            return redirect()->back()->with('t-error', 'Review sending failed!');
         }
     }
 
@@ -47,19 +44,23 @@ class ContactController extends Controller
      */
     public function index(Request $request): JsonResponse | View {
         if ($request->ajax()) {
-            $data = Contact::whereNull('deleted_at')
+            $data = ProductReview::whereNull('deleted_at')
                 ->latest()
                 ->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('product_id', function ($data) {
+                    $product_name = $data->product->name;
+                    return $product_name;
+                })
+                ->addColumn('rating', function ($data) {
+                    $rating = $data->rating;
+                    return $rating;
+                })
                 ->addColumn('email', function ($data) {
                     $email = $data->email;
                     return $email;
-                })
-                ->addColumn('subject', function ($data) {
-                    $subject = $data->subject;
-                    return $subject;
                 })
                 ->addColumn('status', function ($data) {
                     $backgroundColor  = $data->status == "active" ? '#4CAF50' : '#ccc';
@@ -76,7 +77,7 @@ class ContactController extends Controller
                 })
                 ->addColumn('action', function ($data) {
                     return '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                                 <a href="' . route('contact.show', ['id' => $data->id]) . '" type="button" class="btn btn-primary fs-14 text-white edit-icn" title="Edit">
+                                 <a href="' . route('sweet.review.show', ['id' => $data->id]) . '" type="button" class="btn btn-primary fs-14 text-white edit-icn" title="Edit">
                                     <i class="fe fe-eye"></i>
                                 </a>
                                 <a href="#" type="button" onclick="showDeleteConfirm(' . $data->id . ')" class="btn btn-danger fs-14 text-white delete-icn" title="Delete">
@@ -84,15 +85,15 @@ class ContactController extends Controller
                                 </a>
                             </div>';
                 })
-                ->rawColumns(['email','subject', 'status', 'action'])
+                ->rawColumns(['product_id','rating','email', 'status', 'action'])
                 ->make();
         }
-        return view('backend.layouts.contact.index');
+        return view('backend.layouts.sweet-review.index');
     }
 
     public function show(int $id): View {
-        $data = Contact::find($id);
-        return view('backend.layouts.contact.detail', compact('data'));
+        $data = ProductReview::find($id);
+        return view('backend.layouts.sweet-review.detail', compact('data'));
     }
 
 
@@ -103,7 +104,7 @@ class ContactController extends Controller
      * @return JsonResponse
      */
     public function status(int $id): JsonResponse {
-        $data = Contact::findOrFail($id);
+        $data = ProductReview::findOrFail($id);
         if ($data->status == 'active') {
             $data->status = 'inactive';
             $data->save();
@@ -132,12 +133,11 @@ class ContactController extends Controller
      * @return JsonResponse
      */
     public function destroy(int $id): JsonResponse {
-        $data = Contact::findOrFail($id);
+        $data = ProductReview::findOrFail($id);
         $data->delete();
         return response()->json([
             't-success' => true,
             'message'   => 'Deleted successfully.',
         ]);
     }
-
 }

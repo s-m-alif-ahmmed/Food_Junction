@@ -1,0 +1,250 @@
+<?php
+
+namespace App\Http\Controllers\Web\Backend\Product;
+
+use App\Helpers\Helper;
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
+use Yajra\DataTables\DataTables;
+
+class ProductController extends Controller
+{
+    /**
+     * Display a listing of dynamic page content.
+     *
+     * @param Request $request
+     * @return View|JsonResponse
+     * @throws Exception
+     */
+    public function index(Request $request): View | JsonResponse {
+        if ($request->ajax()) {
+            $data = Product::latest()->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('name', function ($data) {
+                    $name = $data->name;
+                    return $name;
+                })
+                ->addColumn('status', function ($data) {
+                    $backgroundColor  = $data->status == "active" ? '#4CAF50' : '#ccc';
+                    $sliderTranslateX = $data->status == "active" ? '26px' : '2px';
+                    $sliderStyles     = "position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background-color: white; border-radius: 50%; transition: transform 0.3s ease; transform: translateX($sliderTranslateX);";
+
+                    $status = '<div class="form-check form-switch" style="margin-left:40px; position: relative; width: 50px; height: 24px; background-color: ' . $backgroundColor . '; border-radius: 12px; transition: background-color 0.3s ease; cursor: pointer;">';
+                    $status .= '<input onclick="showStatusChangeAlert(' . $data->id . ')" type="checkbox" class="form-check-input" id="customSwitch' . $data->id . '" getAreaid="' . $data->id . '" name="status" style="position: absolute; width: 100%; height: 100%; opacity: 0; z-index: 2; cursor: pointer;">';
+                    $status .= '<span style="' . $sliderStyles . '"></span>';
+                    $status .= '<label for="customSwitch' . $data->id . '" class="form-check-label" style="margin-left: 10px;"></label>';
+                    $status .= '</div>';
+
+                    return $status;
+                })
+                ->addColumn('action', function ($data) {
+                    return '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                                <a href="' . route('sweets.show', ['id' => $data->id]) . '" type="button" class="btn btn-secondary fs-14 text-white edit-icn" title="Edit">
+                                    <i class="fe fe-eye"></i>
+                                </a>
+                                <a href="' . route('sweets.edit', ['id' => $data->id]) . '" type="button" class="btn btn-primary fs-14 text-white edit-icn" title="Edit">
+                                    <i class="fe fe-edit"></i>
+                                </a>
+                                <a href="#" type="button" onclick="showDeleteConfirm(' . $data->id . ')" class="btn btn-danger fs-14 text-white delete-icn" title="Delete">
+                                    <i class="fe fe-trash"></i>
+                                </a>
+                            </div>';
+                })
+                ->rawColumns(['name', 'status', 'action'])
+                ->make();
+        }
+        return view('backend.layouts.sweet.index');
+    }
+
+    /**
+     * Show the form for creating a new sweet content.
+     *
+     * @return View
+     */
+    public function create(): View {
+        return view('backend.layouts.sweet.create');
+    }
+
+    /**
+     * Store a newly created sweet content in storage.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function store(Request $request): RedirectResponse {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name'              => 'required|string|max:100',
+                'short_description' => 'required|string|max:130',
+                'description'       => 'required|string',
+                'image'             => 'required|image|mimes:jpeg,png,jpg,gif|max:200', // Max 200KB
+                'price'             => 'required',
+                'discount_price'    => 'nullable',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $data                       = new Product();
+            $data->name                 = $request->name;
+            $data->short_description    = $request->short_description;
+            $data->description          = $request->description;
+            $data->price                = $request->price;
+            $data->discount_price       = $request->discount_price;
+            $data->product_slug         = Str::slug($request->name);
+
+            // Handle file upload
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
+                $imagePath = Helper::fileUpload($image, 'products', $imageName);
+
+                if ($imagePath === null) {
+                    throw new Exception('Failed to upload image.');
+                }
+
+                $data->image = $imagePath;
+            }
+            $data->save();
+
+            return redirect()->route('sweets.index')->with('t-success', 'Updated successfully');
+        } catch (Exception) {
+            return redirect()->route('sweets.index')->with('t-success', 'Sweet failed created.');
+        }
+    }
+
+    public function show(int $id): View {
+        $data = Product::find($id);
+        return view('backend.layouts.sweet.detail', compact('data'));
+    }
+
+    /**
+     * Show the form for editing the specified sweet content.
+     *
+     * @param int $id
+     * @return View
+     */
+    public function edit(int $id): View {
+        $data = Product::find($id);
+        return view('backend.layouts.sweet.edit', compact('data'));
+    }
+
+    /**
+     * Update the specified sweet content in storage.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function update(Request $request, int $id): RedirectResponse {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name'              => 'required|string|max:100',
+                'short_description' => 'required|string|max:130',
+                'description'       => 'required|string',
+                'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:200', // Max 200KB
+                'price'             => 'required',
+                'discount_price'    => 'nullable',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $data                       = Product::findOrFail($id);
+            $data->name                 = $request->name;
+            $data->short_description    = $request->short_description;
+            $data->description          = $request->description;
+            $data->price                = $request->price;
+            $data->discount_price       = $request->discount_price;
+            $data->product_slug         = Str::slug($request->name);
+
+            // Handle file upload if a new image is provided
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
+
+                // Delete existing image if it exists
+                if ($data->image && file_exists(public_path($data->image))) {
+                    Helper::fileDelete(public_path($data->image));
+                }
+
+                // Upload the new image
+                $imagePath = Helper::fileUpload($image, 'products', $imageName);
+
+                if ($imagePath === null) {
+                    throw new Exception('Failed to upload image.');
+                }
+
+                $data->image = $imagePath;
+            }
+
+            $data->update();
+
+            return redirect()->route('sweets.index')->with('t-success', 'Sweet Updated Successfully.');
+
+        } catch (Exception) {
+            return redirect()->route('sweets.index')->with('t-success', 'Sweet failed to update');
+        }
+    }
+
+    /**
+     * Change the status of the specified sweet content.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function status(int $id): JsonResponse {
+        $data = Product::findOrFail($id);
+        if ($data->status == 'active') {
+            $data->status = 'inactive';
+            $data->save();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Unpublished Successfully.',
+                'data'    => $data,
+            ]);
+        } else {
+            $data->status = 'active';
+            $data->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Published Successfully.',
+                'data'    => $data,
+            ]);
+        }
+    }
+
+    /**
+     * Remove the specified Sweet content from storage.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function destroy(int $id): JsonResponse {
+        try {
+            $data = Product::findOrFail($id);
+            $data->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Sweet deleted successfully.',
+            ]);
+        } catch (Exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete the Sweet.',
+            ]);
+        }
+    }
+}

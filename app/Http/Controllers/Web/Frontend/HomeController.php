@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Web\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\DynamicPage;
+use App\Models\Product;
+use App\Models\ProductReview;
 use Illuminate\View\View;
 
 class HomeController extends Controller {
@@ -13,15 +15,26 @@ class HomeController extends Controller {
      * @return View
      */
     public function index(): View {
-        return view('frontend.pages.index');
+        $products = Product::where('status','active')->latest()->get();
+        return view('frontend.pages.index',compact('products'));
     }
 
     public function sweets(): View {
-        return view('frontend.pages.product');
+        $products = Product::where('status','active')->latest()->get();
+        return view('frontend.pages.product',compact('products'));
     }
 
-    public function detail(): View {
-        return view('frontend.pages.detail');
+    public function detail($product_slug): View
+    {
+        // Find the product by slug and ensure it's active
+        $product = Product::where('status', 'active')
+            ->where('product_slug', $product_slug)
+            ->firstOrFail();
+
+        $product_reviews = ProductReview::where('status','active')->where('product_id', $product->id)->latest()->get();
+
+        // Pass the product data to the view
+        return view('frontend.pages.detail', compact('product','product_reviews'));
     }
 
     public function cart(): View {

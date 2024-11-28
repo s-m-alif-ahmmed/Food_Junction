@@ -29,3 +29,5 @@ Route::controller(DynamicPageController::class)->name('settings.')->group(functi
     Route::get('/dynamic-page/status/{id}', 'status')->name('dynamic_page.status');
     Route::delete('/dynamic-page/delete/{id}', 'destroy')->name('dynamic_page.destroy');
 });
+
+

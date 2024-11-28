@@ -19,11 +19,10 @@
                 <div class="col-md-6 d-flex align-items-center order-1">
                     <div class="hero-left">
                         <div class="hero-header-div">
-                            <p class="hero-header">Sweet Taste Better When You Eat It With Your Family</p>
+                            <p class="hero-header">ফুড জাংশন - মিষ্টির মোড়কে সততার প্রতিশ্রুতি</p>
                         </div>
                         <p class="hero-text">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore ducimus eaque fuga ipsam
-                            laboriosam modi odio quo.
+                            ফুড জাংশন আপনাদের জন্য নিয়ে এসেছে বাংলাদেশের ঐতিহ্যবাহী মিষ্টির স্বাদ। গাইবান্ধার বিখ্যাত রসমঞ্জরী, হাঁড়ি ভাঙা, এবং সুস্বাদু মালাইচপ (সুগার ফ্রি)-এর মাধ্যমে আমরা নিশ্চিত করি গুণগত মান ও স্বাদ। প্রতিটি মিষ্টির পেছনে রয়েছে আমাদের সততার গল্প এবং দেশজ ঐতিহ্যের ছোঁয়া।
                         </p>
                         <div class="order-now-btn-div">
                             <a class="fw-bold order-now-btn fs-20" href="{{ route('sweets') }}">
@@ -39,48 +38,28 @@
 
             <div class="row py-5">
                 <div class="col-md-12 text-center">
-                    <p class="text-uppercase fw-bold fs-32">Our Special Sweets</p>
+                    <p class="text-uppercase fw-bold fs-32">ঐতিহ্যের আসল স্বাদ</p>
                 </div>
                 <div class="col-md-8 mx-auto">
-                    <p class="sweet-list-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad architecto commodi consequuntur rem sint tenetur.  consectetur adipisicing elit. Obcaecati, tenetur.</p>
+                    <p class="sweet-list-text">
+                        ফুড জাংশন নিয়ে এলো সুস্বাদু ও স্বাস্থ্যকর মালাইচপ মিষ্টি, যা সম্পূর্ণ সুগার ফ্রি। ডায়াবেটিস রোগীদের জন্য উপযোগী এই মিষ্টি খেতে যেমন দারুণ, তেমনি স্বাস্থ্য সচেতনদের জন্য আদর্শ। ঐতিহ্যের স্বাদ এবং স্বাস্থ্য সচেতনতার মিলন এখন আপনার কাছেই!
+                    </p>
                 </div>
                 <div class="row py-3">
+                    @foreach($products as $product)
                     <div class="col-md-4 special-sweet-card">
                         <div class="card border-0 custom-shadow">
                             <div class="sweet-image">
-                                <img src="{{ asset('/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top" alt="...">
+                                <img src="{{ asset($product->image ?? '/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top" alt="{{ $product->name }}">
                             </div>
                             <div class="card-body border-0 text-center mb-3 h-100">
-                                <h5 class="card-title">Sweet Name</h5>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Lorem ipsum dolor sit amet.</p>
-                                <a href="{{ route('sweets.detail') }}" class="order-now-btn fw-bold">Read More</a>
+                                <h5 class="fsw-bold">{{ $product->name }}</h5>
+                                <p class="">{{ $product->short_description }}</p>
+                                <a href="{{ route('sweets.detail', $product->product_slug) }}" class="order-now-btn fw-bold">Read More</a>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 special-sweet-card">
-                        <div class="card border-0 custom-shadow">
-                            <div class="sweet-image">
-                                <img src="{{ asset('/frontend/images/section/home/Malaichop-500x500.jpg') }}" class="card-img-top" alt="...">
-                            </div>
-                            <div class="card-body border-0 text-center mb-3 h-100">
-                                <h5 class="card-title">Sweet Name</h5>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Lorem ipsum dolor sit amet.</p>
-                                <a href="{{ route('sweets.detail') }}" class="order-now-btn fw-bold">Read More</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 special-sweet-card">
-                        <div class="card border-0 custom-shadow">
-                            <div class="sweet-image">
-                                <img src="{{ asset('/frontend/images/section/home/roshmonjuri-500x500.jpg') }}" class="card-img-top" alt="...">
-                            </div>
-                            <div class="card-body border-0 text-center mb-3 h-100">
-                                <h5 class="card-title">Sweet Name</h5>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Lorem ipsum dolor sit amet.</p>
-                                <a href="{{ route('sweets.detail') }}" class="order-now-btn fw-bold">Read More</a>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
 
@@ -93,12 +72,10 @@
                 <div class="col-md-6 d-flex align-items-center order-4">
                     <div class="px-3 row-three-div">
                         <p class="fw-bold fs-32 text-uppercase">
-                            An Outstanding master of italian cusine
+                            স্বাস্থ্যসচেতনদের জন্য মিষ্টতা।
                         </p>
                         <p class="fs-18 py-3 text-lg-justify">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur dignissimos fuga fugiat quas! Ad asperiores consequuntur cupiditate ducimus est, nam.
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium aliquam aspernatur distinctio ipsum laudantium necessitatibus porro saepe tenetur veniam voluptatum.
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                            ফুড জাংশনের বিখ্যাত রসমঞ্জরী, হাঁড়ি ভাঙা, এবং মালাইচপ (সুগার ফ্রি) মিষ্টি নিয়ে গ্রাহকরা দারুণ প্রশংসা করেছেন। রসমঞ্জরীকে কেউ বলেছেন "স্বাদে অতুলনীয়", হাঁড়ি ভাঙাকে উল্লেখ করেছেন "ঐতিহ্যের মিষ্টি", আর মালাইচপ সম্পর্কে বলেছেন "স্বাস্থ্যসচেতন মিষ্টির আদর্শ উদাহরণ"। এই মিষ্টিগুলোর স্বাদ, গুণগত মান, আর সততার কারণে ফুড জাংশন দ্রুতই দেশের মিষ্টি প্রেমীদের কাছে প্রিয় হয়ে উঠেছে। আপনার প্রিয়জনের মুখে হাসি ফোটাতে আজই অর্ডার করুন!
                         </p>
                         <div class="row-three-btn">
                             <a class="order-now-btn fw-bold fs-22" href="{{ route('sweets') }}">Order Now</a>
@@ -120,66 +97,22 @@
                 <div class="col-md-8">
                     <div class="row m-3">
                         <section class="center slider">
-                            <div>
-                                <div class="card border-0 custom-shadow">
-                                    <div class="home--sweet-card">
-                                        <img src="{{ asset('/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top img-fluid" alt="..." >
-                                    </div>
-                                    <div class="card-body border-0 text-center h-100 pb-0">
-                                        <h5 class="card-title p-0 m-0">Sweet Name</h5>
-                                        <p class="card-text p-0 mb-2">Some quick example text to</p>
-                                        <div class="d-flex justify-content-between sweet-card-bottom">
-                                            <p class="fw-bold fs-16">$10.00</p>
-                                            <a href="{{ route('sweets.detail') }}" class="fs-16 fw-semibold text-decoration-none" style="color: #EE3441;">Read More <i class="fa-solid fa-arrow-right-long"></i> </a>
+                            @foreach($products as $product)
+                                <div>
+                                    <div class="card border-0 custom-shadow">
+                                        <div class="home--sweet-card">
+                                            <img src="{{ asset('/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top img-fluid" alt="..." >
+                                        </div>
+                                        <div class="card-body border-0 text-center h-100 pb-0">
+                                            <h6 class="card-title p-0 m-0 fsw-bold">{{ $product->name }}</h6>
+                                            <div class="justify-content-center sweet-card-bottom my-2">
+                                                <a href="{{ route('sweets.detail', $product->product_slug) }}" class="fs-16 fw-semibold text-decoration-none" style="color: #EE3441;">Read More <i class="fa-solid fa-arrow-right-long"></i> </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div>
-                                <div class="card border-0 custom-shadow">
-                                    <div class="home--sweet-card">
-                                        <img src="{{ asset('/frontend/images/section/home/Malaichop-500x500.jpg') }}" class="card-img-top img-fluid" alt="..." >
-                                    </div>
-                                    <div class="card-body border-0 text-center h-100 pb-0">
-                                        <h5 class="card-title p-0 m-0">Sweet Name</h5>
-                                        <p class="card-text p-0 mb-2">Some quick example text to</p>
-                                        <div class="d-flex justify-content-between sweet-card-bottom">
-                                            <p class="fw-bold fs-16">$10.00</p>
-                                            <a href="{{ route('sweets.detail') }}" class="fs-16 fw-semibold text-decoration-none" style="color: #EE3441;">Read More <i class="fa-solid fa-arrow-right-long"></i> </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="card border-0 custom-shadow">
-                                    <div class="home--sweet-card">
-                                        <img src="{{ asset('/frontend/images/section/home/roshmonjuri-500x500.jpg') }}" class="card-img-top img-fluid" alt="..." >
-                                    </div>
-                                    <div class="card-body border-0 text-center h-100 pb-0">
-                                        <h5 class="card-title p-0 m-0">Sweet Name</h5>
-                                        <p class="card-text p-0 mb-2">Some quick example text to</p>
-                                        <div class="d-flex justify-content-between sweet-card-bottom">
-                                            <p class="fw-bold fs-16">$10.00</p>
-                                            <a href="{{ route('sweets.detail') }}" class="fs-16 fw-semibold text-decoration-none" style="color: #EE3441;">Read More <i class="fa-solid fa-arrow-right-long"></i> </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="card border-0 custom-shadow">
-                                    <div class="home--sweet-card">
-                                        <img src="{{ asset('/frontend/images/section/home/roshmonjuri-500x500.jpg') }}" class="card-img-top img-fluid" alt="..." >
-                                    </div>
-                                    <div class="card-body border-0 text-center h-100 pb-0">
-                                        <h5 class="card-title p-0 m-0">Sweet Name</h5>
-                                        <p class="card-text p-0 mb-2">Some quick example text to</p>
-                                        <div class="d-flex justify-content-between sweet-card-bottom">
-                                            <p class="fw-bold fs-16">$10.00</p>
-                                            <a href="{{ route('sweets.detail') }}" class="fs-16 fw-semibold text-decoration-none" style="color: #EE3441;">Read More <i class="fa-solid fa-arrow-right-long"></i> </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            @endforeach
+
 
                         </section>
                     </div>
@@ -232,10 +165,10 @@
                 <div class="col-md-6 d-flex align-items-center order-5">
                     <div class="row-six-text px-3">
                         <p class="fw-bold fs-32 py-0 my-0 text-uppercase row-six-text-header">
-                            Now you can order on mobile phone
+                            আপনার পছন্দের মিষ্টি, এক ক্লিকেই আপনার দুয়ারে।
                         </p>
                         <p class="fs-18 py-3 text-justify row-six-text-body">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. consectetur adipisicing elit. Magnam, ratione! Aspernatur dignissimos fuga fugiat quas! Ad asperiores consequuntur cupiditate ducimus est, nam.
+                            বাংলাদেশের অন্যতম সেরা মিষ্টির অনলাইন প্ল্যাটফর্ম, যেখানে দেশের ঐতিহ্যবাহী এবং প্রিমিয়াম মানের মিষ্টি সহজেই পাওয়া যায়। খাঁটি উপাদান এবং সততার প্রতিশ্রুতি দিয়ে তৈরি প্রতিটি মিষ্টি গ্রাহকদের সন্তুষ্টি নিশ্চিত করে। দেশের যেকোনো প্রান্ত থেকে আপনার প্রিয় মিষ্টি অর্ডার করুন এবং উপভোগ করুন অনন্য স্বাদ। "আমাদেরটা" শুধু মিষ্টি নয়, এটি মিষ্টি খাওয়ার অভিজ্ঞতাকে বিশেষ করে তোলে।
                         </p>
                         <div class="row-six-btn">
                             <a class="view-all-btn fw-bold fs-22" href="">View All</a>

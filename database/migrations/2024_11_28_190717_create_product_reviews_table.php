@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('contacts')) {
-            Schema::create('contacts', function (Blueprint $table) {
+        if (!Schema::hasTable('product_reviews')) {
+            Schema::create('product_reviews', function (Blueprint $table) {
                 $table->id();
+                $table->foreignId('product_id')->nullable()->constrained('products')->cascadeOnDelete();
+                $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
                 $table->string('name')->nullable();
                 $table->string('email')->nullable();
-                $table->string('number')->nullable();
-                $table->string('subject')->nullable();
-                $table->string('message')->nullable();
-                $table->enum('status',['active','inactive'])->default('inactive');
+                $table->string('rating')->nullable();
+                $table->string('review')->nullable();
+                $table->enum('status',['active','inactive'])->default('active');
                 $table->timestamps();
                 $table->softDeletes();
             });
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('contacts');
+        Schema::dropIfExists('product_reviews');
     }
 };

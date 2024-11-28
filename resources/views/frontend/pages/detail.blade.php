@@ -7,7 +7,7 @@
 @endsection
 
 @section('title')
-    Sweet Name | Food Junction
+    {{ $product->name }} | Food Junction
 @endsection
 
 @section('content')
@@ -19,7 +19,7 @@
                     <div class="row">
                         <div class="col-12 ">
                             <div class="img-box">
-                                <img src="{{ asset('/frontend/images/section/home/roshmonjuri-500x500.jpg') }}" alt="">
+                                <img src="{{ asset($product->image ?? '/frontend/images/section/home/roshmonjuri-500x500.jpg') }}" alt="">
                             </div>
                         </div>
 {{--                        <div class="col-12 more-img-main-box">--}}
@@ -40,7 +40,7 @@
                 </div>
                 <div class="col-md-8 col-sm-12 col-12">
                     <div class="mt-2">
-                        <h2>Sweet Name</h2>
+                        <h2>{{ $product->name }}</h2>
                     </div>
                     <div class="d-flex justify-content-between">
                         <div class="d-flex">
@@ -68,8 +68,8 @@
                     </div>
                     <div class="sweet-price">
                         <div class="d-flex">
-                            <p class="price">100.00 Tk</p>
-                            <span class="discount-price">&nbsp;(<del>120.00 Tk</del>)</span>
+                            <p class="price">{{ $product->price }} Tk</p>
+                            <span class="discount-price">&nbsp;(<del>{{ $product->discount_price }} Tk</del>)</span>
                         </div>
                     </div>
                     <div class="sweet-wight">
@@ -142,28 +142,7 @@
                 <div class="col-12">
                     <div class="p-3">
                         <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Ab accusamus ad aperiam aspernatur atque consequatur corporis cumque
-                            ducimus illo impedit laborum magnam sed soluta
-                            tenetur vero vitae voluptas,
-                            voluptatibus voluptatum!
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Ab accusamus ad aperiam aspernatur atque consequatur corporis cumque
-                            ducimus illo impedit laborum magnam sed soluta
-                            tenetur vero vitae voluptas,
-                            voluptatibus voluptatum!
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Ab accusamus ad aperiam aspernatur atque consequatur corporis cumque
-                            ducimus illo impedit laborum magnam sed soluta
-                            tenetur vero vitae voluptas,
-                            voluptatibus voluptatum!
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Ab accusamus ad aperiam aspernatur atque consequatur corporis cumque
-                            ducimus illo impedit laborum magnam sed soluta
-                            tenetur vero vitae voluptas,
-                            voluptatibus voluptatum!
+                            {!! $product->description !!}
                         </p>
                     </div>
                 </div>
@@ -177,9 +156,16 @@
                     </div>
                 </div>
                 <div class="col-12 review-box">
-                    <form action="" class="">
+                    <form action="{{ route('sweet.review.store') }}" class="" method="POST">
                         @csrf
                         @method('POST')
+
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        @if(Auth::check())
+                        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
+                        @else
+                        <input type="hidden" name="user_id" value="">
+                        @endif
 
                         <div class="row py-1">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-12">
@@ -201,33 +187,44 @@
                                         <label for="star1" title="1 star"></label>
                                     </div>
                                 </div>
+                                @error('rating')
+                                <div class="error-message">
+                                    <span>{{ $message }}</span>
+                                </div>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="row py-1">
                             <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                                 <label for="name" class="pb-1">Name</label>
-                                <input type="text" class="form-control" name="name" id="name" placeholder="First name" aria-label="First name">
-{{--                                <div class="error-message">--}}
-{{--                                    <span>Required Field*</span>--}}
-{{--                                </div>--}}
+                                <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" aria-label="Enter name" required>
+                                @error('name')
+                                <div class="error-message">
+                                    <span>{{ $message }}</span>
+                                </div>
+                                @enderror
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                                 <label for="email" class="pb-1">Email</label>
-                                <input type="email" class="form-control" name="email" id="email" placeholder="Last name" aria-label="Last name">
-{{--                                <div class="error-message">--}}
-{{--                                    <span>Required Field*</span>--}}
-{{--                                </div>--}}
+                                <input type="email" class="form-control" name="email" id="email" placeholder="Enter name" aria-label="Enter name" required>
+                                @error('email')
+                                <div class="error-message">
+                                    <span>{{ $message }}</span>
+                                </div>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="row py-1">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                                 <label for="review" class="pb-1">Review</label>
-                                <textarea name="review" class="form-control" id="review" cols="30" rows="3"></textarea>
-{{--                                <div class="error-message">--}}
-{{--                                    <span>Required Field*</span>--}}
-{{--                                </div>--}}
+                                <textarea name="review" class="form-control" id="review" cols="30" rows="3" placeholder="Write review here" required></textarea>
+                                @error('review')
+                                <div class="error-message">
+                                    <span>{{ $message }}</span>
+                                </div>
+                                @enderror
                             </div>
                         </div>
 
@@ -242,193 +239,49 @@
                 </div>
             </div>
             <div class="row reviews">
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 rounded">
-                        <div class="avatar-img-box me-3">
-                            <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
-                        </div>
-                        <div class="review-info">
-                            <p class="reviewer-name fw-bold mb-1">John Doe</p>
-                            <div class="d-flex align-items-center">
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-non-yellow"></i>
+                @foreach($product_reviews as $review)
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center p-3 rounded">
+                            <div class="avatar-img-box me-3">
+                                <img src="{{ asset($review->user->avatar ?? 'frontend/images/section/home/image-2.png') }}" alt="Avatar">
                             </div>
-                            <span class="review-date text-muted">12 Nov, 2024</span>
-                        </div>
-                    </div>
-                    <div class="px-4">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur, consectetur dignissimos dolor laborum libero nihil optio possimus quaerat quas, quidem quod recusandae reprehenderit sunt velit voluptatum! Facere numquam possimus saepe.
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 rounded">
-                        <div class="avatar-img-box me-3">
-                            <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
-                        </div>
-                        <div class="review-info">
-                            <p class="reviewer-name fw-bold mb-1">John Doe</p>
-                            <div class="d-flex align-items-center">
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-non-yellow"></i>
+                            <div class="review-info">
+                                <p class="reviewer-name fw-bold mb-1">{{ $review->name }}</p>
+                                <div class="d-flex align-items-center">
+                                    @for ($i = 0; $i < $review->rating; $i++)
+                                        <i class="fa-solid fa-star star-yellow"></i>
+                                    @endfor
+                                    @for ($i = $review->rating; $i < 5; $i++)
+                                        <i class="fa-solid fa-star star-non-yellow"></i>
+                                    @endfor
+                                </div>
+                                <span class="review-date text-muted">{{ \Carbon\Carbon::parse($review->created_at)->format('M j, Y') }}</span>
                             </div>
-                            <span class="review-date text-muted">12 Nov, 2024</span>
+                        </div>
+                        <div class="px-4">
+                            <p>
+                                {{ $review->review }}
+                            </p>
                         </div>
                     </div>
-                    <div class="px-4">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur, consectetur dignissimos dolor laborum libero nihil optio possimus quaerat quas, quidem quod recusandae reprehenderit sunt velit voluptatum! Facere numquam possimus saepe.
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 rounded">
-                        <div class="avatar-img-box me-3">
-                            <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
-                        </div>
-                        <div class="review-info">
-                            <p class="reviewer-name fw-bold mb-1">John Doe</p>
-                            <div class="d-flex align-items-center">
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-non-yellow"></i>
-                            </div>
-                            <span class="review-date text-muted">12 Nov, 2024</span>
-                        </div>
-                    </div>
-                    <div class="px-4">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur, consectetur dignissimos dolor laborum libero nihil optio possimus quaerat quas, quidem quod recusandae reprehenderit sunt velit voluptatum! Facere numquam possimus saepe.
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 rounded">
-                        <div class="avatar-img-box me-3">
-                            <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
-                        </div>
-                        <div class="review-info">
-                            <p class="reviewer-name fw-bold mb-1">John Doe</p>
-                            <div class="d-flex align-items-center">
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-non-yellow"></i>
-                            </div>
-                            <span class="review-date text-muted">12 Nov, 2024</span>
-                        </div>
-                    </div>
-                    <div class="px-4">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur, consectetur dignissimos dolor laborum libero nihil optio possimus quaerat quas, quidem quod recusandae reprehenderit sunt velit voluptatum! Facere numquam possimus saepe.
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 rounded">
-                        <div class="avatar-img-box me-3">
-                            <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
-                        </div>
-                        <div class="review-info">
-                            <p class="reviewer-name fw-bold mb-1">John Doe</p>
-                            <div class="d-flex align-items-center">
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-non-yellow"></i>
-                            </div>
-                            <span class="review-date text-muted">12 Nov, 2024</span>
-                        </div>
-                    </div>
-                    <div class="px-4">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur, consectetur dignissimos dolor laborum libero nihil optio possimus quaerat quas, quidem quod recusandae reprehenderit sunt velit voluptatum! Facere numquam possimus saepe.
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 rounded">
-                        <div class="avatar-img-box me-3">
-                            <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
-                        </div>
-                        <div class="review-info">
-                            <p class="reviewer-name fw-bold mb-1">John Doe</p>
-                            <div class="d-flex align-items-center">
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-non-yellow"></i>
-                            </div>
-                            <span class="review-date text-muted">12 Nov, 2024</span>
-                        </div>
-                    </div>
-                    <div class="px-4">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur, consectetur dignissimos dolor laborum libero nihil optio possimus quaerat quas, quidem quod recusandae reprehenderit sunt velit voluptatum! Facere numquam possimus saepe.
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 rounded">
-                        <div class="avatar-img-box me-3">
-                            <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
-                        </div>
-                        <div class="review-info">
-                            <p class="reviewer-name fw-bold mb-1">John Doe</p>
-                            <div class="d-flex align-items-center">
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-non-yellow"></i>
-                            </div>
-                            <span class="review-date text-muted">12 Nov, 2024</span>
-                        </div>
-                    </div>
-                    <div class="px-4">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur, consectetur dignissimos dolor laborum libero nihil optio possimus quaerat quas, quidem quod recusandae reprehenderit sunt velit voluptatum! Facere numquam possimus saepe.
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center p-3 rounded">
-                        <div class="avatar-img-box me-3">
-                            <img src="{{ asset('frontend/images/section/home/image-2.png') }}" alt="Avatar">
-                        </div>
-                        <div class="review-info">
-                            <p class="reviewer-name fw-bold mb-1">John Doe</p>
-                            <div class="d-flex align-items-center">
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-non-yellow"></i>
-                            </div>
-                            <span class="review-date text-muted">12 Nov, 2024</span>
-                        </div>
-                    </div>
-                    <div class="px-4">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur, consectetur dignissimos dolor laborum libero nihil optio possimus quaerat quas, quidem quod recusandae reprehenderit sunt velit voluptatum! Facere numquam possimus saepe.
-                        </p>
-                    </div>
-                </div>
+                @endforeach
+
             </div>
 
         </div>
     </section>
 
 @endsection
+
+@push('scripts')
+    <script>
+        // Trigger toaster based on session messages
+        @if (session('t-success'))
+        showSuccessToast("{{ session('t-success') }}");
+        @endif
+
+        @if (session('t-error'))
+        showErrorToast("{{ session('t-error') }}");
+        @endif
+    </script>
+@endpush
