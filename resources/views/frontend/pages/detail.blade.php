@@ -2,8 +2,9 @@
 
 @section('meta_infos')
     <meta name="author" content="Food Junction">
-    <meta name="description" content="Food Junction">
-    <meta name="keywords" content="Food Junction, Food, Junction, Dhaka, Sweets">
+    <meta name="title" content="{{ $product->meta_title }}">
+    <meta name="description" content="{{ $product->meta_description }}">
+    <meta name="keywords" content="{{ $product->meta_keywords }}">
 @endsection
 
 @section('title')
@@ -72,64 +73,72 @@
                             <span class="discount-price">&nbsp;(<del>{{ $product->discount_price }} Tk</del>)</span>
                         </div>
                     </div>
-                    <div class="sweet-wight">
-                        <div class="d-flex">
-                            <div class="pe-3">
-                                <span>
-                                    Wight:
+                    <form id="add-to-cart-form" action="{{ route('new.cart') }}" method="POST">
+                        @csrf
+                        @method('POST')
+
+                        <input type="hidden" name="product_id" value="{{ $product->id }}" />
+                        @if(Auth::check())
+                            <input type="hidden" name="user_id" value="{{ Auth::user()->id }}" />
+                        @else
+                            <input type="hidden" name="user_id" value="" />
+                        @endif
+
+                        <div class="sweet-wight">
+                            <div class="d-flex">
+                                <div class="pe-3">
+                                    <span>
+                                        ওজন:
+                                    </span>
+                                </div>
+                                <div class="pe-3">
+                                    <select name="wight" id="" class="" style="width: 150px;">
+                                        <option value="500" selected>৫০০ গ্রাম</option>
+                                        <option value="1000">১ কেজি</option>
+                                        <option value="1500">১.৫ কেজি</option>
+                                        <option value="2000">২ কেজি</option>
+                                        <option value="2500">২.৫ কেজি</option>
+                                        <option value="3000">৩ কেজি</option>
+                                        <option value="4000">৪ কেজি</option>
+                                        <option value="5000">৫ কেজি</option>
+                                        <option value="6000">৬ কেজি</option>
+                                        <option value="7000">৭ কেজি</option>
+                                        <option value="8000">৮ কেজি</option>
+                                        <option value="9000">৯ কেজি</option>
+                                        <option value="10000">১০ কেজি</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                        @if(Auth::check())
+                            <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">
+                                <span class="">
+                                    <i class="fa-solid fa-tag me-2 text-warning"></i>Hurrah
+                                    you earn <strong>5% discount!</strong>
                                 </span>
                             </div>
-                            <div class="pe-3">
-                                <input type="radio" id="wight1" name="wight" />
-                                <label for="wight1">500gm</label>
+                        @else
+                            <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">
+                                <span class="">
+                                    <i class="fa-solid fa-tag me-2 text-warning"></i>
+                                    <a href="{{ route('login') }}" class="fw-bold text-decoration-underline">Login</a>
+                                    and get <strong>5% discount!</strong>
+                                </span>
                             </div>
-                            <div class="pe-3">
-                                <input type="radio" id="wight2" name="wight" />
-                                <label for="wight2">1kg</label>
-                            </div>
-                            <div class="pe-3">
-                                <input type="radio" id="wight3" name="wight" />
-                                <label for="wight3">1.5kg</label>
-                            </div>
-                            <div class="pe-3">
-                                <input type="radio" id="wight4" name="wight" />
-                                <label for="wight4">2kg</label>
-                            </div>
-
-                        </div>
-                    </div>
-                    @if(Auth::check())
-                        <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">
-                            <span class="">
-                                <i class="fa-solid fa-tag me-2 text-warning"></i>Hurrah
-                                you earn <strong>5% discount!</strong>
-                            </span>
-                        </div>
-                    @else
+                        @endif
                         <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">
                             <span class="">
                                 <i class="fa-solid fa-tag me-2 text-warning"></i>
-                                <a href="{{ route('login') }}" class="fw-bold text-decoration-underline">Login</a>
-                                and get <strong>5% discount!</strong>
+                                If you order <strong>2kg</strong> then <strong>delivery free</strong>!
                             </span>
                         </div>
-                    @endif
-                    <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">
-                        <span class="">
-                            <i class="fa-solid fa-tag me-2 text-warning"></i>
-                            If you order <strong>2kg</strong> then <strong>delivery free</strong>!
-                        </span>
-                    </div>
-                    <div class="mt-4">
-                        <a class="btn cart-btn m-1" style="background-color: var(--yellow);" href="{{ route('cart') }}"> <i class="fa-solid fa-shopping-cart"></i> Add to Cart</a>
-                        <a class="btn cart-btn m-1" style="background-color: var(--red);" href="#"> <i class="fa-solid fa-money-check-dollar"></i> Purchase Now</a>
-                    </div>
+                        <div class="mt-4">
+                            <button class="btn cart-btn m-1" style="background-color: var(--yellow);" type="submit" > <i class="fa-solid fa-shopping-cart"></i> Add to Cart</button>
+                            <button class="btn cart-btn m-1" style="background-color: var(--red);"> <i class="fa-solid fa-money-check-dollar"></i> Purchase Now</button>
+                        </div>
 
-                    <style>
-
-
-                    </style>
-
+                    </form>
                 </div>
             </div>
             <div class="row py-3">
@@ -274,6 +283,75 @@
 @endsection
 
 @push('scripts')
+    <script>
+        document.getElementById('add-to-cart-form').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            const form = this;
+            const formData = new FormData(form);
+            const product_id = formData.get('product_id');
+            const wight = formData.get('wight');
+            const user_id = formData.get('user_id');
+            const csrfToken = document.querySelector('input[name="_token"]').value;
+
+            if (user_id) {
+                // AJAX request for logged-in users
+                fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        product_id,
+                        wight,
+                        user_id,
+                    }),
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Failed to add item to cart');
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        if (data.success) {
+                            showSuccessToast(data.message); // Show success message in toaster
+                        } else {
+                            showErrorToast(data.message); // Show error message in toaster
+                        }
+                    })
+                    .catch((error) => {
+                        showErrorToast('Failed to add item to cart. Please try again.'); // Show error message in toaster
+                    });
+            } else {
+                // Save to sessionStorage for guests
+                try {
+                    const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+                    const existingProductIndex = cart.findIndex(item => item.product_id === product_id);
+
+                    if (existingProductIndex !== -1) {
+                        // Update the wight if product already exists
+                        cart[existingProductIndex].wight = wight;
+                        sessionStorage.setItem('cart', JSON.stringify(cart));
+                        showSuccessToast('Cart updated with new weight!');
+                    } else {
+                        // Otherwise, add new product to cart
+                        cart.push({ product_id, wight });
+                        sessionStorage.setItem('cart', JSON.stringify(cart));
+                        showSuccessToast('Item added to cart successfully!');
+                    }
+                } catch (error) {
+                    console.error('SessionStorage Error:', error);
+                    showErrorToast('Failed to save item to cart. Please try again.');
+                }
+            }
+        });
+
+
+    </script>
+
+
     <script>
         // Trigger toaster based on session messages
         @if (session('t-success'))

@@ -34,87 +34,41 @@
                 <div class="row">
                     <div class="col-md-8 py-2">
                         <div class="card p-3">
-                            <div class="row border-bottom py-2">
-                                <div class="col-lg-2 col-md-3 col-sm-3 col-3">
-                                    <a href="">
-                                        <div class="cart-img">
-                                            <img src="{{ asset('/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="col-lg-8 col-md-7 col-sm-7 col-7">
-                                    <div>
+                            @foreach($carts as $cart)
+                                <div class="row border-bottom py-2">
+                                    <div class="col-lg-2 col-md-3 col-sm-3 col-3">
+                                        <a href="">
+                                            <div class="cart-img">
+                                                <img src="{{ asset($cart['product']->image ?? '/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="col-lg-8 col-md-7 col-sm-7 col-7">
                                         <div>
-                                            <a href="" class="sweet-name">
-                                                Sweet Name Sweet Name
-                                            </a>
-                                        </div>
-                                        <div>
-                                            <span class="cart-wight">1kg</span>
-                                            <p class="cart-price">730Tk <span class="discount-price">(<del>950Tk</del>)</span></p>
+                                            <div>
+                                                <a href="" class="sweet-name">
+                                                    {{ $cart['product']->name ?? 'Product Name' }}
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <span class="cart-wight">
+                                                    {{ $cart['wight'] < 1000 ? $cart['wight'] . ' গ্রাম' : ($cart['wight'] / 1000) . ' কেজি' }}
+                                                </span>
+                                                <p class="cart-price">{{ $cart['product']->price ?? '0' }}Tk
+                                                    @if($cart['product']->discount_price)
+                                                        <span class="discount-price">(<del>{{ $cart['product']->discount_price }}Tk</del>)</span>
+                                                    @endif
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-2 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
-                                    <button class="btn">
-                                        <i class="fa-solid fa-trash text-danger"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="row border-bottom py-2">
-                                <div class="col-lg-2 col-md-3 col-sm-3 col-3">
-                                    <a href="">
-                                        <div class="cart-img">
-                                            <img src="{{ asset('/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="col-lg-8 col-md-7 col-sm-7 col-7">
-                                    <div>
-                                        <div>
-                                            <a href="" class="sweet-name">
-                                                Sweet Name
-                                            </a>
-                                        </div>
-                                        <div>
-                                            <span class="cart-wight">1kg</span>
-                                            <p class="cart-price">730Tk <span class="discount-price">(<del>950Tk</del>)</span></p>
-                                        </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
+                                        <button class="btn">
+                                            <i class="fa-solid fa-trash text-danger"></i>
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
-                                    <button class="btn">
-                                        <i class="fa-solid fa-trash text-danger"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="row border-bottom py-2">
-                                <div class="col-lg-2 col-md-3 col-sm-3 col-3">
-                                    <a href="">
-                                        <div class="cart-img">
-                                            <img src="{{ asset('/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="col-lg-8 col-md-7 col-sm-7 col-7">
-                                    <div>
-                                        <div>
-                                            <a href="" class="sweet-name">
-                                                Sweet Name
-                                            </a>
-                                        </div>
-                                        <div>
-                                            <span class="cart-wight">1kg</span>
-                                            <p class="cart-price">730Tk <span class="discount-price">(<del>950Tk</del>)</span></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-2 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
-                                    <button class="btn">
-                                        <i class="fa-solid fa-trash text-danger"></i>
-                                    </button>
-                                </div>
-                            </div>
+                            @endforeach
 
                         </div>
                     </div>

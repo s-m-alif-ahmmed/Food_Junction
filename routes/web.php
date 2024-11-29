@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\Frontend\HomeController;
 use App\Http\Controllers\Web\Backend\DashboardController;
 use App\Http\Controllers\Web\Frontend\ContactController;
 use App\Http\Controllers\Web\Frontend\ProductReviewController;
+use App\Http\Controllers\Web\Frontend\CartController;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Landing Page
@@ -21,6 +22,9 @@ Route::post('/contact/store', [ContactController::class, 'store'])->name('contac
 
 //Sweet Review
 Route::post('/sweet/review/store', [ProductReviewController::class, 'store'])->name('sweet.review.store');
+
+//Cart
+Route::post('/add-cart', [CartController::class, 'addToCart'])->name('new.cart');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'userDashboard'])->name('user.dashboard');

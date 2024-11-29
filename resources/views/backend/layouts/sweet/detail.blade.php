@@ -24,6 +24,31 @@
                 <div class="card-body">
 
                     <div class="form-group">
+                        <label for="meta_title" class="form-label">Meta Title:</label>
+                        <input type="text" class="form-control @error('meta_title') is-invalid @enderror"
+                               name="meta_title" placeholder="Meta Title" id="meta_title" value="{{ $data->meta_title ?? ' ' }}" disabled readonly >
+                        @error('meta_title')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="meta_description" class="form-label">Meta Description:</label>
+                        <p>{{ $data->meta_description ?? ' ' }}</p>
+                        @error('meta_description')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="meta_keywords" class="form-label">Meta Keywords:</label>
+                        <p>{{ $data->meta_keywords ?? ' ' }}</p>
+                        @error('meta_keywords')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
                         <label for="name" class="form-label">Sweet Name:</label>
                         <input type="text" class="form-control @error('name') is-invalid @enderror"
                                name="name" placeholder="sweet name" id="name" maxlength="100" value="{{ $data->name ?? ' ' }}" disabled readonly >

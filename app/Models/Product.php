@@ -11,6 +11,9 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
         'name',
         'short_description',
         'description',
@@ -24,5 +27,10 @@ class Product extends Model
     public function productReviews()
     {
         return $this->hasMany(ProductReview::class);
+    }
+
+    public function cart()
+    {
+        return $this->hasMany(Cart::class);
     }
 }

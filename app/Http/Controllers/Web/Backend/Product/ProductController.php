@@ -81,6 +81,9 @@ class ProductController extends Controller
     public function store(Request $request): RedirectResponse {
         try {
             $validator = Validator::make($request->all(), [
+                'meta_title'        => 'required|string',
+                'meta_description'  => 'required|string|min:160|max:255',
+                'meta_keywords'     => 'required|string',
                 'name'              => 'required|string|max:100',
                 'short_description' => 'required|string|max:130',
                 'description'       => 'required|string',
@@ -94,6 +97,9 @@ class ProductController extends Controller
             }
 
             $data                       = new Product();
+            $data->meta_title           = $request->meta_title;
+            $data->meta_description     = $request->meta_description;
+            $data->meta_keywords        = $request->meta_keywords;
             $data->name                 = $request->name;
             $data->short_description    = $request->short_description;
             $data->description          = $request->description;
@@ -147,6 +153,9 @@ class ProductController extends Controller
     public function update(Request $request, int $id): RedirectResponse {
         try {
             $validator = Validator::make($request->all(), [
+                'meta_title'        => 'required|string',
+                'meta_description'  => 'required|string|min:160|max:255',
+                'meta_keywords'     => 'required|string',
                 'name'              => 'required|string|max:100',
                 'short_description' => 'required|string|max:130',
                 'description'       => 'required|string',
@@ -160,6 +169,9 @@ class ProductController extends Controller
             }
 
             $data                       = Product::findOrFail($id);
+            $data->meta_title           = $request->meta_title;
+            $data->meta_description     = $request->meta_description;
+            $data->meta_keywords        = $request->meta_keywords;
             $data->name                 = $request->name;
             $data->short_description    = $request->short_description;
             $data->description          = $request->description;
