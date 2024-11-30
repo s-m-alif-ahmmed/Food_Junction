@@ -931,11 +931,16 @@
 .cart-page .cart-price{
     font-size: 16px;
     font-weight: 500;
+    margin: 0;
 }
 .cart-page .cart-price .discount-price{
     font-size: 14px;
     font-weight: 500;
     color: var(--red);
+}
+.cart-page .single-cart-total-price{
+    font-size: 16px;
+    font-weight: 500;
 }
 
 .cart-img{

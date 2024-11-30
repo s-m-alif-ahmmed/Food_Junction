@@ -294,60 +294,31 @@
             const user_id = formData.get('user_id');
             const csrfToken = document.querySelector('input[name="_token"]').value;
 
-            if (user_id) {
-                // AJAX request for logged-in users
-                fetch(this.action, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        product_id,
-                        wight,
-                        user_id,
-                    }),
-                })
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error('Failed to add item to cart');
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        if (data.success) {
-                            showSuccessToast(data.message); // Show success message in toaster
-                        } else {
-                            showErrorToast(data.message); // Show error message in toaster
-                        }
-                    })
-                    .catch((error) => {
-                        showErrorToast('Failed to add item to cart. Please try again.'); // Show error message in toaster
-                    });
-            } else {
-                // Save to sessionStorage for guests
-                try {
-                    const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
-                    const existingProductIndex = cart.findIndex(item => item.product_id === product_id);
-
-                    if (existingProductIndex !== -1) {
-                        // Update the wight if product already exists
-                        cart[existingProductIndex].wight = wight;
-                        sessionStorage.setItem('cart', JSON.stringify(cart));
-                        showSuccessToast('Cart updated with new weight!');
+            // Send the form data to the server
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    product_id,
+                    wight,
+                    user_id,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccessToast(data.message);
                     } else {
-                        // Otherwise, add new product to cart
-                        cart.push({ product_id, wight });
-                        sessionStorage.setItem('cart', JSON.stringify(cart));
-                        showSuccessToast('Item added to cart successfully!');
+                        showErrorToast(data.message);
                     }
-                } catch (error) {
-                    console.error('SessionStorage Error:', error);
-                    showErrorToast('Failed to save item to cart. Please try again.');
-                }
-            }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         });
-
 
     </script>
 

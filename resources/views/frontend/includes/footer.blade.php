@@ -8,24 +8,24 @@
                 </p>
             </div>
 
-            <div class="col-md-2">
-                <p class="fw-bold fs-20">মেনু</p>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="">Videos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">মেনু ২</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">মেনু ৩</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">মেনু ৪</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="col-md-2">
+{{--            <div class="col-md-2">--}}
+{{--                <p class="fw-bold fs-20">মেনু</p>--}}
+{{--                <ul class="navbar-nav">--}}
+{{--                    <li class="nav-item">--}}
+{{--                        <a class="nav-link" href="">Videos</a>--}}
+{{--                    </li>--}}
+{{--                    <li class="nav-item">--}}
+{{--                        <a class="nav-link" href="">মেনু ২</a>--}}
+{{--                    </li>--}}
+{{--                    <li class="nav-item">--}}
+{{--                        <a class="nav-link" href="">মেনু ৩</a>--}}
+{{--                    </li>--}}
+{{--                    <li class="nav-item">--}}
+{{--                        <a class="nav-link" href="">মেনু ৪</a>--}}
+{{--                    </li>--}}
+{{--                </ul>--}}
+{{--            </div>--}}
+            <div class="col-md-4">
                 <p class="fw-bold fs-20">মেনু</p>
                 <ul class="navbar-nav">
                     @php

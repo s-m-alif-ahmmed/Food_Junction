@@ -16,15 +16,15 @@
                 <li class="nav-item">
                     <a class="nav-link fw-bold" href="{{ route('sweets') }}">Sweets</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold" href="#">About Us</a>
-                </li>
+{{--                <li class="nav-item">--}}
+{{--                    <a class="nav-link fw-bold" href="#">About Us</a>--}}
+{{--                </li>--}}
                 <li class="nav-item">
                     <a class="nav-link fw-bold" href="{{ route('contact') }}">Contact</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-bold" href="#">Concept</a>
-                </li>
+{{--                <li class="nav-item">--}}
+{{--                    <a class="nav-link fw-bold" href="#">Concept</a>--}}
+{{--                </li>--}}
             </ul>
 
         </div>

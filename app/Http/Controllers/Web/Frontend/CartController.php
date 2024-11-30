@@ -7,9 +7,42 @@ use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
 
 class CartController extends Controller
 {
+    public function cart(): View
+    {
+        $carts = [];
+
+        if (Auth::check()) {
+            // Fetch the user's cart items from the database
+            $carts = Cart::where('user_id', Auth::user()->id)->latest()->get();
+        } else {
+            // Fetch cart items from session for guest users
+            $sessionCart = session()->get('carts', []);
+
+            // Prepare the cart data
+            $carts = array_map(function ($item) {
+                $product = Product::find($item['product_id']);
+
+                // Return the product and weight data
+                if ($product) {
+                    return [
+                        'product' => $product,
+                        'wight' => $item['wight'],
+                    ];
+                }
+                return null;
+            }, $sessionCart);
+            // Filter out any null values (products not found)
+            $carts = array_filter($carts);
+        }
+
+        return view('frontend.pages.cart', compact('carts'));
+    }
+
     public function addToCart(Request $request)
     {
         try {
@@ -50,40 +83,37 @@ class CartController extends Controller
                     ]);
                 }
             }
+            // For guest users, store cart items in session
+            $cart = session()->get('carts', []);
 
-            // For guest users, save to session
-            $cart = session()->get('cart', []);
-
-            // Check if the product already exists in the session cart
+            // Check if the product already exists in the session
             $found = false;
             foreach ($cart as $index => $item) {
                 if ($item['product_id'] == $productId) {
-                    // Update the weight
-                    $cart[$index]['wight'] += $newWight;
+                    // Update weight if product exists
+                    $cart[$index]['wight'] = $newWight;
                     $found = true;
                     break;
                 }
             }
 
-            // If the product was not found in the session cart, add it
+            // If product not found in session, add new item
             if (!$found) {
-                // Save product details in the session cart
                 $cart[] = [
                     'product_id' => $productId,
                     'wight' => $newWight,
-                    // Store necessary product attributes
                     'product' => [
                         'id' => $product->id,
                         'name' => $product->name,
                         'image' => $product->image,
                         'price' => $product->price,
-                        'discount_price' => $product->discount_price, // if available
-                    ],
+                        'discount_price' => $product->discount_price,
+                    ]
                 ];
             }
 
-            // Update the session with the new cart data
-            session()->put('cart', $cart);
+            // Store updated cart in session
+            session()->put('carts', $cart);
 
             return response()->json([
                 'success' => true,
@@ -99,5 +129,59 @@ class CartController extends Controller
         }
     }
 
+    public function removeFromCart(Request $request)
+    {
+        try {
+            // Get the product ID from the request
+            $productId = $request->input('product_id');
+
+            // Check if the user is logged in
+            if (Auth::check()) {
+                // For logged-in users, remove the item from the database
+                $userId = Auth::id();
+                $cart = Cart::where('user_id', $userId)
+                    ->where('product_id', $productId)
+                    ->first();
+
+                if ($cart) {
+                    $cart->delete();
+                    return redirect()->back()->with([
+                        'success' => true,
+                        't-success' => 'Item removed from cart.',
+                    ]);
+                } else {
+                    return redirect()->back()->with([
+                        'success' => false,
+                        't-error' => 'Item not found in cart.',
+                    ], 404);
+                }
+            } else {
+                // For guest users, remove the item from the session
+                $cart = session()->get('carts', []);
+
+                // Find the index of the item to be removed
+                foreach ($cart as $index => $item) {
+                    if ($item['product_id'] == $productId) {
+                        unset($cart[$index]);
+                        break;
+                    }
+                }
+
+                // Update the session with the new cart
+                session()->put('carts', $cart);
+
+                return redirect()->back()->with([
+                    'success' => true,
+                    't-success' => 'Item removed from cart.',
+                ]);
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'success' => false,
+                't-error' => 'Failed to remove item from cart.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 
 }
