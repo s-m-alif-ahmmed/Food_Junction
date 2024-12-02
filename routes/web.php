@@ -5,6 +5,8 @@ use App\Http\Controllers\Web\Backend\DashboardController;
 use App\Http\Controllers\Web\Frontend\ContactController;
 use App\Http\Controllers\Web\Frontend\ProductReviewController;
 use App\Http\Controllers\Web\Frontend\CartController;
+use App\Http\Controllers\Web\Frontend\OrderController;
+use App\Http\Controllers\Web\Frontend\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Landing Page
@@ -12,7 +14,6 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/food-junction/{page_slug}', [HomeController::class, 'dynamicPage'])->name('user.dynamic.page');
 Route::get('/sweets', [HomeController::class, 'sweets'])->name('sweets');
 Route::get('/sweets/detail/{product_slug}', [HomeController::class, 'detail'])->name('sweets.detail');
-Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout');
 Route::get('/confirm-order', [HomeController::class, 'confirmOrder'])->name('confirm.order');
 
 //Contact
@@ -27,8 +28,20 @@ Route::get('/cart', [CartController::class, 'cart'])->name('cart');
 Route::post('/add-cart', [CartController::class, 'addToCart'])->name('new.cart');
 Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('remove.cart');
 
+//Order
+Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+Route::post('/new/order', [OrderController::class, 'newOrder'])->name('new.order');
+Route::get('/order-complete', [OrderController::class, 'orderComplete'])->name('order.confirm');
+Route::get('/order-detail/{tracking_id}', [OrderController::class, 'orderDetails'])->name('order.details');
+
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'userDashboard'])->name('user.dashboard');
+
+//    User Profile Update
+    Route::patch('/dashboard/setting/update', [UserProfileController::class, 'UpdateProfile'])->name('user.update.profile');
+    Route::patch('/dashboard/setting/update/password', [UserProfileController::class, 'UpdatePassword'])->name('user.update.profile.password');
+
+
 });
 
 require __DIR__ . '/auth.php';

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Web\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +36,9 @@ class DashboardController extends Controller
 
     public function userDashboard(): View
     {
-        return view('frontend.dashboard.dashboard');
+        $orders = Order::where('user_id', Auth::user()->id)->get(); // Fetch all orders for the user
+
+        return view('frontend.dashboard.dashboard', compact('orders'));
     }
 
 }

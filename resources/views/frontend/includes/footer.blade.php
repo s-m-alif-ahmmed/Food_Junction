@@ -4,7 +4,7 @@
             <div class="col-md-4">
                 <img class="img-fluid footer-logo mx-sm-auto mb-2 mt-0" src="{{ asset('/frontend/images/brands/food_junction.png') }}" alt="">
                 <p class="text-justify fsw-semibold text-sm-center">
-                    জীবের মধ্যে সবচেয়ে সম্পূর্ণতা মানুষের। কিন্তু সবচেয়ে অসম্পূর্ণ হয়ে সে জন্মগ্রহণ করে। বাঘ ভালুক তার জীবনযাত্রার পনেরো- আনা মূলধন নিয়ে আসে প্রকৃতির মালখানা থেকে। জীবরঙ্গভূমিতে মানুষ এসে দেখা দেয় দুই শূন্য হাতে মুঠো বেঁধে।
+                    ঐতিহ্য, সততা, সুস্বাদ
                 </p>
             </div>
 

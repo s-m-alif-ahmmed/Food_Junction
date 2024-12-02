@@ -32,10 +32,13 @@
                     <div class="card p-3">
                         <p class="fs-32 fw-bold text-center">Thank You!</p>
                         <p class="px-lg-5 px-md-5 px-sm-2 px-2 fs-16 fw-semibold text-center">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam, assumenda illo quaerat sapiente temporibus voluptate. ovident quae totam.
+                            Thank you for your purchase! We are thrilled to have you as a customer. Your order has been successfully received, and we are now processing it with utmost care to ensure prompt delivery.
                         </p>
                         <p class="px-lg-5 px-md-5 px-sm-2 px-2 fs-18 fw-semibold text-center">
-                            Your Order ID: <span class="text-danger">"hSaD23dFa3sa"</span>. Save this order id for further information.
+                            Your Order ID: <span class="text-danger">"{{ $order->tracking_id }}"</span>. Save this order id for further information.
+                        </p>
+                        <p class="px-lg-5 px-md-5 px-sm-2 px-2 fs-16 fw-semibold text-center">
+                            We will notify you once your order is on its way. Thank you for shopping with us. We hope to serve you again soon!
                         </p>
                         <a class="btn background-gradient w-50 mx-auto text-white border-0" href="{{ route('home') }}">Back To Home</a>
                     </div>

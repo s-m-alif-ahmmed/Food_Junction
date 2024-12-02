@@ -938,7 +938,7 @@
     font-weight: 500;
     color: var(--red);
 }
-.cart-page .single-cart-total-price{
+.single-cart-total-price{
     font-size: 16px;
     font-weight: 500;
 }
@@ -992,6 +992,7 @@
 .checkout-page .cart-price{
     font-size: 12px;
     font-weight: 500;
+    margin: 0;
 }
 .checkout-page .cart-price .discount-price{
     font-size: 12px;

@@ -39,10 +39,6 @@ class HomeController extends Controller {
         return view('frontend.pages.detail', compact('product','product_reviews'));
     }
 
-    public function checkout(): View {
-        return view('frontend.pages.checkout');
-    }
-
     public function confirmOrder(): View {
         return view('frontend.pages.confirm-order');
     }

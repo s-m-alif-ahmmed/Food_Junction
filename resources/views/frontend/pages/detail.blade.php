@@ -84,7 +84,7 @@
                             <input type="hidden" name="user_id" value="" />
                         @endif
 
-                        <div class="sweet-wight">
+                        <div class="sweet-weight">
                             <div class="d-flex">
                                 <div class="pe-3">
                                     <span>
@@ -92,7 +92,7 @@
                                     </span>
                                 </div>
                                 <div class="pe-3">
-                                    <select name="wight" id="" class="" style="width: 150px;">
+                                    <select name="weight" id="" class="" style="width: 150px;">
                                         <option value="500" selected>৫০০ গ্রাম</option>
                                         <option value="1000">১ কেজি</option>
                                         <option value="1500">১.৫ কেজি</option>
@@ -290,7 +290,7 @@
             const form = this;
             const formData = new FormData(form);
             const product_id = formData.get('product_id');
-            const wight = formData.get('wight');
+            const weight = formData.get('weight');
             const user_id = formData.get('user_id');
             const csrfToken = document.querySelector('input[name="_token"]').value;
 
@@ -303,7 +303,7 @@
                 },
                 body: JSON.stringify({
                     product_id,
-                    wight,
+                    weight,
                     user_id,
                 }),
             })

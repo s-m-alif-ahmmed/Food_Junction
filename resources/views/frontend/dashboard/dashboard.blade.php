@@ -54,49 +54,112 @@
 
                                 <div class="col-md-12">
                                     <label for="inputPassword4" class="form-label">Name</label>
-                                    <input type="password" class="form-control" id="inputPassword4">
-                                    <p class="error-message">Error</p>
+                                    <input type="text" class="form-control" name="name" value="{{ Auth::user()->name }}" id="inputPassword4">
+                                    @error('name')
+                                    <p class="error-message">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div class="col-md-12">
                                     <label for="inputEmail4" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="inputEmail4">
-                                    <p class="error-message">Error</p>
+                                    <input type="email" class="form-control" name="email" value="{{ Auth::user()->email }}" id="inputEmail4">
+                                    @error('email')
+                                    <p class="error-message">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
-                                <div class="col-md-12">
-                                    <label for="inputCity" class="form-label">Phone Number</label>
-                                    <input type="text" class="form-control" id="inputCity">
-                                    <p class="error-message">Error</p>
+                                <div class="col-md-12 py-3 text-center">
+                                    <button type="submit" class="btn background-gradient border-0 text-white fsw-bold">Save Changes</button>
                                 </div>
+
+                            </form>
+
+                            <form action="#" method="POST" class="row">
+                                @csrf
 
                                 <p class="fs-20 fsw-bold text-red pt-3">Change Password</p>
 
                                 <div class="col-md-12">
                                     <label for="inputCity" class="form-label">Current Password</label>
-                                    <input type="text" class="form-control" id="inputCity">
-                                    <p class="error-message">Error</p>
+                                    <input type="password" class="form-control" name="current_password" value="" id="inputCity">
+                                    @error('current_password')
+                                    <p class="error-message">{{ $message }}</p>
+                                    @enderror
                                 </div>
                                 <div class="col-md-12">
                                     <label for="inputCity" class="form-label">New Password</label>
-                                    <input type="text" class="form-control" id="inputCity">
-                                    <p class="error-message">Error</p>
+                                    <input type="password" class="form-control" name="password" value="" id="inputCity">
+                                    @error('password')
+                                    <p class="error-message">{{ $message }}</p>
+                                    @enderror
                                 </div>
                                 <div class="col-md-12">
                                     <label for="inputCity" class="form-label">Confirm Password</label>
-                                    <input type="text" class="form-control" id="inputCity">
-                                    <p class="error-message">Error</p>
+                                    <input type="password" class="form-control" name="password_confirmation" value="" id="inputCity">
+                                    @error('password_confirmation')
+                                    <p class="error-message">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div class="col-md-12 py-3 text-center">
-                                    <button type="submit" class="btn background-gradient border-0 text-white fsw-bold">Save Changes</button>
+                                    <button type="submit" class="btn background-gradient border-0 text-white fsw-bold">Change Password</button>
                                 </div>
                             </form>
                         </div>
                         <!-- Order History Tab -->
                         <div class="tab-pane fade" id="order-history" role="tabpanel" aria-labelledby="order-history-tab">
                             <p class="fs-20 fsw-bold">Order History</p>
-                            <p>No orders found.</p>
+                            @if($orders->isNotEmpty())
+
+                                <div  class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Tracking ID</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Address</th>
+                                            <th scope="col">Number</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Total</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($orders as $order)
+                                            <tr>
+                                                <th scope="row">
+                                                    <a href="{{ route('order.details', $order->tracking_id) }}" class="text-black text-decoration-none">
+                                                        {{ $order->tracking_id }}
+                                                    </a>
+                                                </th>
+                                                <td>
+                                                    {{ $order->name }}
+                                                </td>
+                                                <td>
+                                                    {{ $order->email }}
+                                                </td>
+                                                <td>
+                                                    {{ $order->address }}
+                                                </td>
+                                                <td>
+                                                    {{ $order->number }}
+                                                </td>
+                                                <td>
+                                                    {{ $order->status }}
+                                                </td>
+                                                <td>
+                                                    {{ \Carbon\Carbon::parse($order->created_at)->format('d M, Y h:i a') }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            @else
+                                <p>No orders found.</p>
+                            @endif
+
                         </div>
                         <!-- Wishlist Tab -->
                         <div class="tab-pane fade" id="wishlist" role="tabpanel" aria-labelledby="wishlist-tab">

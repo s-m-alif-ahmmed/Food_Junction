@@ -31,7 +31,7 @@ class CartController extends Controller
                 if ($product) {
                     return [
                         'product' => $product,
-                        'wight' => $item['wight'],
+                        'weight' => $item['weight'],
                     ];
                 }
                 return null;
@@ -47,9 +47,9 @@ class CartController extends Controller
     {
         try {
             // Get the data from the request
-            $data = $request->only(['product_id', 'wight']);
+            $data = $request->only(['product_id', 'weight']);
             $productId = $data['product_id'];
-            $newWight = $data['wight'];
+            $newWeight = $data['weight'];
 
             // Fetch the product
             $product = Product::find($productId);
@@ -66,8 +66,8 @@ class CartController extends Controller
 
                 if ($existingCart) {
                     // If the product exists, sum the existing weight with the new weight
-                    $updatedWight = $existingCart->wight + $newWight;
-                    $existingCart->update(['wight' => $updatedWight]);
+                    $updatedWight = $existingCart->weight + $newWight;
+                    $existingCart->update(['weight' => $updatedWight]);
                     return response()->json([
                         'success' => true,
                         'message' => 'Cart updated with new weight!',
@@ -91,7 +91,7 @@ class CartController extends Controller
             foreach ($cart as $index => $item) {
                 if ($item['product_id'] == $productId) {
                     // Update weight if product exists
-                    $cart[$index]['wight'] = $newWight;
+                    $cart[$index]['weight'] = $newWeight;
                     $found = true;
                     break;
                 }
@@ -101,13 +101,14 @@ class CartController extends Controller
             if (!$found) {
                 $cart[] = [
                     'product_id' => $productId,
-                    'wight' => $newWight,
+                    'weight' => $newWeight,
                     'product' => [
                         'id' => $product->id,
                         'name' => $product->name,
                         'image' => $product->image,
                         'price' => $product->price,
                         'discount_price' => $product->discount_price,
+                        'product_slug' => $product->product_slug,
                     ]
                 ];
             }
