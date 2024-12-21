@@ -135,7 +135,7 @@
                         </div>
                         <div class="mt-4">
                             <button class="btn cart-btn m-1" style="background-color: var(--yellow);" type="submit" > <i class="fa-solid fa-shopping-cart"></i> Add to Cart</button>
-                            <button class="btn cart-btn m-1" style="background-color: var(--red);"> <i class="fa-solid fa-money-check-dollar"></i> Purchase Now</button>
+{{--                            <button class="btn cart-btn m-1" style="background-color: var(--red);"> <i class="fa-solid fa-money-check-dollar"></i> Purchase Now</button>--}}
                         </div>
 
                     </form>
@@ -247,35 +247,38 @@
 
                 </div>
             </div>
-            <div class="row reviews">
-                @foreach($product_reviews as $review)
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center p-3 rounded">
-                            <div class="avatar-img-box me-3">
-                                <img src="{{ asset($review->user->avatar ?? 'frontend/images/section/home/image-2.png') }}" alt="Avatar">
-                            </div>
-                            <div class="review-info">
-                                <p class="reviewer-name fw-bold mb-1">{{ $review->name }}</p>
-                                <div class="d-flex align-items-center">
-                                    @for ($i = 0; $i < $review->rating; $i++)
-                                        <i class="fa-solid fa-star star-yellow"></i>
-                                    @endfor
-                                    @for ($i = $review->rating; $i < 5; $i++)
-                                        <i class="fa-solid fa-star star-non-yellow"></i>
-                                    @endfor
+            @if($product_reviews->isNotEmpty())
+                <div class="row reviews">
+                    @foreach($product_reviews as $review)
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center p-3 rounded">
+                                <div class="avatar-img-box me-3">
+                                    <img src="{{ asset($review->user->avatar ?? 'frontend/images/section/home/image-2.png') }}" alt="Avatar">
                                 </div>
-                                <span class="review-date text-muted">{{ \Carbon\Carbon::parse($review->created_at)->format('M j, Y') }}</span>
+                                <div class="review-info">
+                                    <p class="reviewer-name fw-bold mb-1">{{ $review->name }}</p>
+                                    <div class="d-flex align-items-center">
+                                        @for ($i = 0; $i < $review->rating; $i++)
+                                            <i class="fa-solid fa-star star-yellow"></i>
+                                        @endfor
+                                        @for ($i = $review->rating; $i < 5; $i++)
+                                            <i class="fa-solid fa-star star-non-yellow"></i>
+                                        @endfor
+                                    </div>
+                                    <span class="review-date text-muted">{{ \Carbon\Carbon::parse($review->created_at)->format('M j, Y') }}</span>
+                                </div>
+                            </div>
+                            <div class="px-4">
+                                <p>
+                                    {{ $review->review }}
+                                </p>
                             </div>
                         </div>
-                        <div class="px-4">
-                            <p>
-                                {{ $review->review }}
-                            </p>
-                        </div>
-                    </div>
-                @endforeach
+                    @endforeach
 
-            </div>
+                </div>
+            @else
+            @endif
 
         </div>
     </section>

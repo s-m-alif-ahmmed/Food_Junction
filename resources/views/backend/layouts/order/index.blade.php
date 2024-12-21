@@ -151,7 +151,7 @@
 
 
         // Status Change Confirm Alert
-        function showStatusChangeAlert(id) {
+        function showStatusChangeAlert(id, newStatus) {
             event.preventDefault();
 
             Swal.fire({
@@ -163,31 +163,41 @@
                 cancelButtonText: 'No',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    statusChange(id);
+                    statusChange(id, newStatus);
+                } else {
+                    // If canceled, reset the select field to its previous value
+                    let currentStatus = document.querySelector(`[name="status"][data-id="${id}"]`).dataset.previousStatus;
+                    document.querySelector(`[name="status"][data-id="${id}"]`).value = currentStatus;
                 }
             });
         }
+
         // Status Change
-        function statusChange(id) {
+        function statusChange(id, status) {
             let url = '{{ route('orders.status', ':id') }}';
+            url = url.replace(':id', id);
+
             $.ajax({
-                type: "GET",
-                url: url.replace(':id', id),
+                type: "POST",
+                url: url,
+                data: {
+                    status: status,
+                    _token: '{{ csrf_token() }}',  // CSRF token for security
+                },
                 success: function(resp) {
                     console.log(resp);
-                    // Reloade DataTable
+                    // Reload DataTable (if necessary)
                     $('#datatable').DataTable().ajax.reload();
+
                     if (resp.success === true) {
-                        // show toast message
+                        // Show success toast message
                         toastr.success(resp.message);
-                    } else if (resp.errors) {
-                        toastr.error(resp.errors[0]);
                     } else {
                         toastr.error(resp.message);
                     }
                 },
                 error: function(error) {
-                    // location.reload();
+                    toastr.error("An error occurred while changing the status.");
                 }
             });
         }

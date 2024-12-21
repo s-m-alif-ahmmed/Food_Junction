@@ -47,22 +47,23 @@
                         <!-- Profile Tab -->
                         <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 
-                            <form action="#" method="POST" class="row">
+                            <form action="{{ route('user.update.profile') }}" method="POST" class="row">
                                 @csrf
+                                @method('PATCH')
 
                                 <p class="fs-20 fsw-bold text-red">Edit Your Profile</p>
 
                                 <div class="col-md-12">
-                                    <label for="inputPassword4" class="form-label">Name</label>
-                                    <input type="text" class="form-control" name="name" value="{{ Auth::user()->name }}" id="inputPassword4">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" name="name" value="{{ Auth::user()->name }}" id="name">
                                     @error('name')
                                     <p class="error-message">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <div class="col-md-12">
-                                    <label for="inputEmail4" class="form-label">Email</label>
-                                    <input type="email" class="form-control" name="email" value="{{ Auth::user()->email }}" id="inputEmail4">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" value="{{ Auth::user()->email }}" id="email">
                                     @error('email')
                                     <p class="error-message">{{ $message }}</p>
                                     @enderror
@@ -74,28 +75,29 @@
 
                             </form>
 
-                            <form action="#" method="POST" class="row">
+                            <form action="{{ route('user.update.profile.password') }}" method="POST" class="row">
                                 @csrf
+                                @method('PATCH')
 
                                 <p class="fs-20 fsw-bold text-red pt-3">Change Password</p>
 
                                 <div class="col-md-12">
-                                    <label for="inputCity" class="form-label">Current Password</label>
-                                    <input type="password" class="form-control" name="current_password" value="" id="inputCity">
+                                    <label for="current_password" class="form-label">Current Password</label>
+                                    <input type="password" class="form-control" name="current_password" value="" id="current_password">
                                     @error('current_password')
                                     <p class="error-message">{{ $message }}</p>
                                     @enderror
                                 </div>
                                 <div class="col-md-12">
-                                    <label for="inputCity" class="form-label">New Password</label>
-                                    <input type="password" class="form-control" name="password" value="" id="inputCity">
+                                    <label for="password" class="form-label">New Password</label>
+                                    <input type="password" class="form-control" name="password" value="" id="password">
                                     @error('password')
                                     <p class="error-message">{{ $message }}</p>
                                     @enderror
                                 </div>
                                 <div class="col-md-12">
-                                    <label for="inputCity" class="form-label">Confirm Password</label>
-                                    <input type="password" class="form-control" name="password_confirmation" value="" id="inputCity">
+                                    <label for="password_confirmation" class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" name="password_confirmation" value="" id="password_confirmation">
                                     @error('password_confirmation')
                                     <p class="error-message">{{ $message }}</p>
                                     @enderror
@@ -183,6 +185,13 @@
 
 @push('scripts')
     <script>
+        // Trigger toaster based on session messages
+        @if (session('t-success'))
+        showSuccessToast("{{ session('t-success') }}");
+        @endif
 
+        @if (session('t-error'))
+        showErrorToast("{{ session('t-error') }}");
+        @endif
     </script>
 @endpush

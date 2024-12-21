@@ -35,7 +35,7 @@ class UserProfileController extends Controller
             $user = User::find(auth()->user()->id);
 
             // Update the profile fields
-            $user->name         = $request->first_name;
+            $user->name         = $request->name;
             $user->email        = $request->email;
             $user->save();
 
@@ -56,8 +56,8 @@ class UserProfileController extends Controller
     {
         // Validation rules for password change
         $validator = Validator::make($request->all(), [
-            'old_password' => 'required', // Ensure the old password is entered
-            'password'     => 'required|confirmed|min:8', // New password must be confirmed and at least 8 characters
+            'current_password'  => 'required', // Ensure the old password is entered
+            'password'          => 'required|confirmed|min:8', // New password must be confirmed and at least 8 characters
         ]);
 
         if ($validator->fails()) {
@@ -70,7 +70,7 @@ class UserProfileController extends Controller
             $user = Auth::user();
 
             // Check if the entered old password matches the stored password
-            if (Hash::check($request->old_password, $user->password)) {
+            if (Hash::check($request->current_password, $user->password)) {
                 // Update the password with the new one (hashed)
                 $user->password = Hash::make($request->password);
                 $user->save();

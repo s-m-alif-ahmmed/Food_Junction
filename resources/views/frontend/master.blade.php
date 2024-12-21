@@ -22,6 +22,8 @@
 </head>
 <body>
 
+@include('frontend.includes.top-header')
+
 @include('frontend.includes.header')
 
 @yield('content')

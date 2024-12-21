@@ -12,29 +12,93 @@
 
 @section('content')
 
-    <section class="hero-section py-5">
-        <div class="container">
+    <section class="hero-section">
 
+        <div class="container">
             <div class="row">
-                <div class="col-md-6 d-flex align-items-center order-1">
-                    <div class="hero-left">
-                        <div class="hero-header-div">
-                            <p class="hero-header">ফুড জাংশন - মিষ্টির মোড়কে সততার প্রতিশ্রুতি</p>
-                        </div>
-                        <p class="hero-text">
-                            ফুড জাংশন আপনাদের জন্য নিয়ে এসেছে বাংলাদেশের ঐতিহ্যবাহী মিষ্টির স্বাদ। গাইবান্ধার বিখ্যাত রসমঞ্জরী, হাঁড়ি ভাঙা, এবং সুস্বাদু মালাইচপ (সুগার ফ্রি)-এর মাধ্যমে আমরা নিশ্চিত করি গুণগত মান ও স্বাদ। প্রতিটি মিষ্টির পেছনে রয়েছে আমাদের সততার গল্প এবং দেশজ ঐতিহ্যের ছোঁয়া।
-                        </p>
-                        <div class="order-now-btn-div">
-                            <a class="fw-bold order-now-btn fs-20" href="{{ route('sweets') }}">
-                                Order Now
-                            </a>
+                <ul class="navbar-nav categories">
+                    <li class="nav-item">
+                        <a href="" class="nav-link">
+                            All Categories
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link">
+                            Sweets
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link">
+                            All Categories
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link">
+                            Sweets
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link">
+                            All Categories
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link">
+                            Sweets
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 p-0">
+                    <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="{{ asset('/frontend/images/section/home/hero_banner.png') }}" class="d-block w-100" alt="...">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="{{ asset('/frontend/images/section/home/hero_banner.png') }}" class="d-block w-100" alt="...">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="{{ asset('/frontend/images/section/home/hero_banner.png') }}" class="d-block w-100" alt="...">
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 order-2 px-0">
-                    <img class="img-fluid w-100 object-fit-cover" src="{{ asset('/frontend/images/section/home/Gaibandha-Poster-1-500x500.jpg') }}" alt="">
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <p class="fs-40 fsw-semibold">Offer Products</p>
                 </div>
             </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                @foreach($products as $product)
+                    <div class="col-lg-3 special-sweet-card">
+                        <div class="card border-0 custom-shadow">
+                            <div class="sweet-image">
+                                <img src="{{ asset($product->image ?? '/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top" alt="{{ $product->name }}">
+                            </div>
+                            <div class="card-body border-0 mb-3 h-100">
+                                <h5 class="fsw-bold">{{ $product->name }}</h5>
+                                <p class="">{{ $product->price }}</p>
+                                <a href="{{ route('sweets.detail', $product->product_slug) }}" class="order-now-btn fw-bold">Order Now</a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="container">
 
             <div class="row py-5">
                 <div class="col-md-12 text-center">

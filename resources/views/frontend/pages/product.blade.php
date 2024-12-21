@@ -43,7 +43,7 @@
                             <div class="card-body border-0 text-center mb-3 h-100">
                                 <h5 class="card-title fsw-bold">{{ $product->name }}</h5>
                                 <p class="card-text">{{ $product->short_description }}</p>
-                                <a href="{{ route('sweets.detail', $product->product_slug) }}" class="order-now-btn fw-bold">Read More</a>
+                                <a href="{{ route('sweets.detail', $product->product_slug) }}" class="order-now-btn fw-bold">Shop Now</a>
                             </div>
                         </div>
                     </div>

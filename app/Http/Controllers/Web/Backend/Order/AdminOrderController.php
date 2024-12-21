@@ -54,8 +54,14 @@ class AdminOrderController extends Controller
                     return $order_total;
                 })
                 ->addColumn('status', function ($data) {
-                    $status = $data->status;
-                    return $status;
+                    return '
+                        <select name="status" data-id="' . $data->id . '" onchange="showStatusChangeAlert(' . $data->id . ', this.value)" class="form-control" data-previous-status="' . $data->status . '">
+                            <option value="Pending" ' . ($data->status == 'pending' ? 'selected' : '') . '>Pending</option>
+                            <option value="Complete" ' . ($data->status == 'complete' ? 'selected' : '') . '>Complete</option>
+                            <option value="Return" ' . ($data->status == 'return' ? 'selected' : '') . '>Return</option>
+                            <option value="Canceled" ' . ($data->status == 'canceled' ? 'selected' : '') . '>Canceled</option>
+                        </select>
+                    ';
                 })
                 ->addColumn('action', function ($data) {
                     return '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
@@ -80,13 +86,14 @@ class AdminOrderController extends Controller
 
     public function sweets(int $id): View {
         $data = Order::find($id);
-        $order_data = OrderDetail::where('order_id', $order->id)->latest()->get();
+        $order_data = OrderDetail::with('order','product')->where('order_id', $data->id)->latest()->get();
         return view('backend.layouts.order.order-sweets', compact('data','order_data'));
     }
 
     public function invoice(int $id): View {
         $data = Order::find($id);
-        return view('backend.layouts.order.invoice', compact('data'));
+        $order_data = OrderDetail::with('order','product')->where('order_id', $data->id)->latest()->get();
+        return view('backend.layouts.order.invoice', compact('data','order_data'));
     }
 
     /**
@@ -95,52 +102,26 @@ class AdminOrderController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function status(int $id): JsonResponse {
+
+    public function status(Request $request, $id): JsonResponse
+    {
+        // Find the order by ID
         $data = Order::findOrFail($id);
-        if ($data->status == 'active') {
-            $data->status = 'inactive';
-            $data->save();
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Unpublished Successfully.',
-                'data'    => $data,
-            ]);
-        } else {
-            $data->status = 'active';
-            $data->save();
+        // Get the new status from the request
+        $status = $request->input('status');
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Published Successfully.',
-                'data'    => $data,
-            ]);
-        }
+        // Update the order status
+        $data->update(['status' => $status]);
+
+        // Return success response
+        return response()->json([
+            'success' => true,
+            'message' => 'Status updated successfully.',
+            'data' => $data, // Send back the updated data to reflect the change
+        ]);
     }
 
-//    public function changeOrderStatus(Request $request, $id)
-//    {
-//        try {
-//            $order = Order::findOrFail($id);
-//            $status = $request->input('status');
-//            $order->update(['status' => $status]);
-//
-//            return back()->with('message', 'Order status changed successfully.');
-//        } catch (\Exception $e) {
-//            return view('error_pages.error');
-//        }
-//    }
-//<td>
-//<form action="{{ route('change.status.order', $order->id) }}" method="POST">
-//@csrf
-//<select name="status" onchange="this.form.submit()" class="form-control">
-//<option value="Pending" {{ $order->status == 'Pending' ? 'selected' : '' }}>Pending</option>
-//                                            <option value="Complete" {{ $order->status == 'Complete' ? 'selected' : '' }}>Complete</option>
-//                                            <option value="Return" {{ $order->status == 'Return' ? 'selected' : '' }}>Return</option>
-//                                            <option value="Canceled" {{ $order->status == 'Canceled' ? 'selected' : '' }}>Canceled</option>
-//                                        </select>
-//                                    </form>
-//                                </td>
 
     /**
      * Remove the specified Sweet content from storage.

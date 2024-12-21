@@ -2,109 +2,121 @@
 
 @section('title', 'Order')
 
+@push('styles')
+    <style>
+        @media print {
+            #invoiceFooter {
+                visibility: hidden;
+            }
+        }
+    </style>
+@endpush
+
 @section('content')
+    @php
+        $systemSetting = App\Models\SystemSetting::first();
+    @endphp
 
     <!-- ROW-1 OPEN -->
-    <div class="row">
+    <div class="row mt-3">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
                     <div class="clearfix">
                         <div class="float-start">
-                            <h3 class="card-title mb-0">#INV-773</h3>
+                            <h3 class="card-title mb-0">#INVOICE-{{ $data->tracking_id }}</h3>
                         </div>
                         <div class="float-end">
-                            <h3 class="card-title">Date: 21-10-2021</h3>
+                            <h3 class="card-title">Date & Time: {{ $data->created_at->setTimezone('Asia/Dhaka')->format('M d, Y, h:ia') ?? '' }}</h3>
                         </div>
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-lg-6 ">
-                            <p class="h3">Invoice Form:</p>
-                            <address>
-                                Street, Line<br>
-                                State, City<br>
-                                Country, Postal Code<br>
-                                invoice@spruko.com
-                            </address>
+                        <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 mb-3">
+                            <p class="h3">Invoice Form: Food Junction</p>
+                            <img src="{{ asset($systemSetting->logo ?? 'frontend/images/default/food_junction.png') }}"
+                                 class="header-brand-img desktop-logo" alt="logo">
+                            <p class="pt-2">Uttara, Dhaka</p>
+                            <p class="">https://www.foodjunctiondhaka.com</p>
                         </div>
-                        <div class="col-lg-6 text-end">
+                        <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12">
                             <p class="h3">Invoice To:</p>
                             <address>
-                                Street Address<br>
-                                State, City<br>
-                                Country, Postal Code<br>
-                                invoice@spruko.com
+                                {{ $data->address }}
                             </address>
                         </div>
                     </div>
                     <div class="table-responsive push">
                         <table class="table table-bordered table-hover mb-0 text-nowrap border-bottom">
-                            <tbody><tr class=" ">
-                                <th class="text-center"></th>
-                                <th>Item</th>
-                                <th class="text-center">Quantity</th>
-                                <th class="text-end">Unit Price</th>
+                            <thead>
+                            <tr>
+                                <th class="text-center">SL</th>
+                                <th>Sweet Name</th>
+                                <th class="text-center">Price</th>
+                                <th class="text-end">Weight</th>
                                 <th class="text-end">Sub Total</th>
                             </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($order_data as $product)
+                                    <?php
+                                    if (!function_exists('englishToBengali')) {
+                                        function englishToBengali($englishString) {
+                                            $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                                            $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+                                            return strtr($englishString, array_combine($englishNumbers, $bengaliNumbers));
+                                        }
+                                    }
+
+                                    if (!function_exists('banglaToEnglish')) {
+                                        function banglaToEnglish($bengaliString) {
+                                            $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                                            $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+                                            return strtr($bengaliString, array_combine($bengaliNumbers, $englishNumbers));
+                                        }
+                                    }
+
+                                    $price = banglaToEnglish($product->product->price);
+                                    $gm = $price / 1000;
+                                    $total = $gm * $product->weight;
+
+                                    ?>
+                                <tr>
+                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                    <td>
+                                        <p class="font-w600 mb-1">{{ $product->product->name }}</p>
+                                    </td>
+                                    <td class="text-center">{{ $product->product->price }} (<span><del>{{ $product->product->discount_price }}Tk</del></span>)</td>
+                                    <td class="text-end">
+                                        {{ $product->weight < 1000 ? englishToBengali($product->weight) . ' গ্রাম' : englishToBengali($product->weight / 1000) . ' কেজি' }}
+                                    </td>
+                                    <td class="text-end">{{ englishToBengali($total) ?? '0' }}Tk</td>
+                                </tr>
+                            @endforeach
                             <tr>
-                                <td class="text-center">1</td>
-                                <td>
-                                    <p class="font-w600 mb-1">Website wireframe for 2 pages</p>
-                                    <div class="text-muted"><div class="text-muted">doloremque laudantium unde ut perspiciatis  omnis iste natus voluptatem accusantium Sed error sit </div></div>
-                                </td>
-                                <td class="text-center">8</td>
-                                <td class="text-end">$2240</td>
-                                <td class="text-end">$4,480</td>
+                                <td colspan="4" class="text-end">Sub Total</td>
+                                <td class="text-end">{{ englishToBengali($data->order_total) }} Tk</td>
+                            </tr>
+                            @if($data->login_discount)
+                                <tr>
+                                    <td colspan="4" class="text-end">Login Discount</td>
+                                    <td class="text-end">- {{ englishToBengali($data->login_discount) }} Tk</td>
+                                </tr>
+                            @endif
+                            <tr>
+                                <td colspan="4" class="text-end">Delivery Charge</td>
+                                <td class="text-end">{{ englishToBengali( ($data->delivery_fee == 0) ? 'Free' : $data->delivery_fee.'Tk' ) }}</td>
                             </tr>
                             <tr>
-                                <td class="text-center">2</td>
-                                <td>
-                                    <p class="font-w600 mb-1">E-commerce Development</p>
-                                    <div class="text-muted">dignissimos  eos et ducimus et iusto odio At veroaccusamus praesentium qui blanditiis voluptatum</div>
-                                </td>
-                                <td class="text-center">15</td>
-                                <td class="text-end">$1,600</td>
-                                <td class="text-end">$6,400</td>
+                                <td colspan="4" class="text-end">Total</td>
+                                <td class="text-end">{{ englishToBengali($data->estimate_total) }} Tk</td>
                             </tr>
-                            <tr>
-                                <td class="text-center">3</td>
-                                <td>
-                                    <p class="font-w600 mb-1">Design and layout of 2 pages in Photoshop</p>
-                                    <div class="text-muted">Dolor in reprehenderit Duis in voluptate aute irure nulla esse cillum dolore eu fugiat pariatur velit</div>
-                                </td>
-                                <td class="text-center">14</td>
-                                <td class="text-end">$530</td>
-                                <td class="text-end">$1,060</td>
-                            </tr>
-                            <tr>
-                                <td class="text-center">4</td>
-                                <td>
-                                    <p class="font-w600 mb-1">Logo Design</p>
-                                    <div class="text-muted">Lorem ipsum dolor dignissimos, consectetur irure nulla esse cillum adipiscing elit, sed do eiusmod</div>
-                                </td>
-                                <td class="text-center">5</td>
-                                <td class="text-end">$820</td>
-                                <td class="text-end">$2,460</td>
-                            </tr>
-                            <tr>
-                                <td class="text-center">5</td>
-                                <td>
-                                    <p class="font-w600 mb-1">PSD to HTML coding</p>
-                                    <div class="text-muted">voluptate aute irure nulla sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore</div>
-                                </td>
-                                <td class="text-center">24</td>
-                                <td class="text-end">$630</td>
-                                <td class="text-end">$1,890</td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="fw-bold text-uppercase text-end">Total</td>
-                                <td class="fw-bold text-end h4">$11,160</td>
-                            </tr>
-                            </tbody></table>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="card-footer text-end">
+                <div class="card-footer text-end" id="invoiceFooter">
+                    <a href="{{ route('orders.show', $data->id) }}" class="btn btn-danger me-2">Back</a>
                     <button type="button" class="btn btn-info mb-1" onclick="javascript:window.print();"><i class="si si-printer"></i> Print Invoice</button>
                 </div>
             </div>
@@ -113,3 +125,9 @@
     <!-- ROW-1 CLOSED -->
 
 @endsection
+
+@push('scripts')
+    <script>
+
+    </script>
+@endpush
