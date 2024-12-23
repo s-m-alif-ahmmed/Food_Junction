@@ -4,19 +4,19 @@ namespace App\Http\Controllers\Web\Backend\Product;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
-use App\Models\Coupon;
+use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 
-class CouponController extends Controller
+class CategoryController extends Controller
 {
     /**
-     * Display a listing of coupon content.
+     * Display a listing of category content.
      *
      * @param Request $request
      * @return View|JsonResponse
@@ -24,25 +24,12 @@ class CouponController extends Controller
      */
     public function index(Request $request): View | JsonResponse {
         if ($request->ajax()) {
-            $data = Coupon::latest()->get();
+            $data = Category::latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('created_at', function ($data) {
-                    return $data->created_at->format('d M, Y, h:ia');
-                })
                 ->addColumn('name', function ($data) {
                     $name = $data->name;
                     return $name;
-                })
-                ->addColumn('code', function ($data) {
-                    $code = $data->code;
-                    return $code;
-                })
-                ->addColumn('starts_at', function ($data) {
-                    return Carbon::parse($data->starts_at)->format('d M, Y, h:ia');
-                })
-                ->addColumn('expires_at', function ($data) {
-                    return Carbon::parse($data->expires_at)->format('d M, Y, h:ia');
                 })
                 ->addColumn('status', function ($data) {
                     $backgroundColor  = $data->status == "active" ? '#4CAF50' : '#ccc';
@@ -59,10 +46,10 @@ class CouponController extends Controller
                 })
                 ->addColumn('action', function ($data) {
                     return '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                                <a href="' . route('coupons.show', ['id' => $data->id]) . '" type="button" class="btn btn-secondary fs-14 text-white edit-icn" title="Edit">
+                                <a href="' . route('categories.show', ['id' => $data->id]) . '" type="button" class="btn btn-secondary fs-14 text-white edit-icn" title="Edit">
                                     <i class="fe fe-eye"></i>
                                 </a>
-                                <a href="' . route('coupons.edit', ['id' => $data->id]) . '" type="button" class="btn btn-primary fs-14 text-white edit-icn" title="Edit">
+                                <a href="' . route('categories.edit', ['id' => $data->id]) . '" type="button" class="btn btn-primary fs-14 text-white edit-icn" title="Edit">
                                     <i class="fe fe-edit"></i>
                                 </a>
                                 <a href="#" type="button" onclick="showDeleteConfirm(' . $data->id . ')" class="btn btn-danger fs-14 text-white delete-icn" title="Delete">
@@ -70,23 +57,23 @@ class CouponController extends Controller
                                 </a>
                             </div>';
                 })
-                ->rawColumns(['created_at', 'name', 'code', 'starts_at', 'expires_at', 'status', 'action'])
+                ->rawColumns(['name', 'status', 'action'])
                 ->make();
         }
-        return view('backend.layouts.coupon.index');
+        return view('backend.layouts.category.index');
     }
 
     /**
-     * Show the form for creating a new sweet content.
+     * Show the form for creating a new category content.
      *
      * @return View
      */
     public function create(): View {
-        return view('backend.layouts.coupon.create');
+        return view('backend.layouts.category.create');
     }
 
     /**
-     * Store a newly created coupon content in storage.
+     * Store a newly created category content in storage.
      *
      * @param Request $request
      * @return RedirectResponse
@@ -94,59 +81,48 @@ class CouponController extends Controller
     public function store(Request $request): RedirectResponse {
         try {
             $validator = Validator::make($request->all(), [
-                'code'              => 'required|string|max:20',
+                'meta_title'        => 'required|string',
+                'meta_description'  => 'required|string|min:160|max:255',
+                'meta_keywords'     => 'required|string',
                 'name'              => 'required|string|max:100',
-                'max_uses'          => 'required',
-                'max_uses_user'     => 'nullable',
-                'type'              => 'required',
-                'discount_amount'   => 'required',
-                'min_amount'        => 'required', // Max 200KB
-                'starts_at'         => 'required',
-                'expires_at'        => 'required',
-                'status'            => 'nullable',
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $data                       = new Coupon();
-            $data->code                 = $request->code;
+            $data                       = new Category();
+            $data->meta_title           = $request->meta_title;
+            $data->meta_description     = $request->meta_description;
+            $data->meta_keywords        = $request->meta_keywords;
             $data->name                 = $request->name;
-            $data->max_uses             = $request->max_uses;
-            $data->max_uses_user        = $request->max_uses_user;
-            $data->type                 = $request->type;
-            $data->discount_amount      = $request->discount_amount;
-            $data->min_amount           = $request->min_amount;
-            $data->starts_at            = $request->starts_at;
-            $data->expires_at           = $request->expires_at;
-            $data->status               = $request->status;
+            $data->category_slug         = Str::slug($request->name);
             $data->save();
 
-            return redirect()->route('coupons.index')->with('t-success', 'Updated successfully');
+            return redirect()->route('categories.index')->with('t-success', 'Updated successfully');
         } catch (Exception) {
-            return redirect()->route('coupons.index')->with('t-success', 'Coupon failed created.');
+            return redirect()->route('categories.index')->with('t-success', 'Category failed created.');
         }
     }
 
     public function show(int $id): View {
-        $data = Coupon::find($id);
-        return view('backend.layouts.coupon.detail', compact('data'));
+        $data = Category::find($id);
+        return view('backend.layouts.category.detail', compact('data'));
     }
 
     /**
-     * Show the form for editing the specified coupon content.
+     * Show the form for editing the specified category content.
      *
      * @param int $id
      * @return View
      */
     public function edit(int $id): View {
-        $data = Coupon::find($id);
-        return view('backend.layouts.coupon.edit', compact('data'));
+        $data = Category::find($id);
+        return view('backend.layouts.category.edit', compact('data'));
     }
 
     /**
-     * Update the specified coupon content in storage.
+     * Update the specified sweet content in storage.
      *
      * @param Request $request
      * @param int $id
@@ -155,50 +131,39 @@ class CouponController extends Controller
     public function update(Request $request, int $id): RedirectResponse {
         try {
             $validator = Validator::make($request->all(), [
-                'code'              => 'required|string|max:20',
+                'meta_title'        => 'required|string',
+                'meta_description'  => 'required|string|min:160|max:255',
+                'meta_keywords'     => 'required|string',
                 'name'              => 'required|string|max:100',
-                'max_uses'          => 'required',
-                'max_uses_user'     => 'nullable',
-                'type'              => 'required',
-                'discount_amount'   => 'required',
-                'min_amount'        => 'required', // Max 200KB
-                'starts_at'         => 'required',
-                'expires_at'        => 'required',
-                'status'            => 'nullable',
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $data                       = Coupon::findOrFail($id);
-            $data->code                 = $request->code;
+            $data                       = Category::findOrFail($id);
+            $data->meta_title           = $request->meta_title;
+            $data->meta_description     = $request->meta_description;
+            $data->meta_keywords        = $request->meta_keywords;
             $data->name                 = $request->name;
-            $data->max_uses             = $request->max_uses;
-            $data->max_uses_user        = $request->max_uses_user;
-            $data->type                 = $request->type;
-            $data->discount_amount      = $request->discount_amount;
-            $data->min_amount           = $request->min_amount;
-            $data->starts_at            = $request->starts_at;
-            $data->expires_at           = $request->expires_at;
-            $data->status               = $request->status;
+            $data->category_slug         = Str::slug($request->name);
             $data->update();
 
-            return redirect()->route('coupons.index')->with('t-success', 'Coupon Updated Successfully.');
+            return redirect()->route('categories.index')->with('t-success', 'Category Updated Successfully.');
 
         } catch (Exception) {
-            return redirect()->route('coupons.index')->with('t-success', 'Coupon failed to update');
+            return redirect()->route('categories.index')->with('t-success', 'Category failed to update');
         }
     }
 
     /**
-     * Change the status of the specified coupon content.
+     * Change the status of the specified category content.
      *
      * @param int $id
      * @return JsonResponse
      */
     public function status(int $id): JsonResponse {
-        $data = Coupon::findOrFail($id);
+        $data = Category::findOrFail($id);
         if ($data->status == 'active') {
             $data->status = 'inactive';
             $data->save();
@@ -221,24 +186,24 @@ class CouponController extends Controller
     }
 
     /**
-     * Remove the specified coupon content from storage.
+     * Remove the specified category content from storage.
      *
      * @param int $id
      * @return JsonResponse
      */
     public function destroy(int $id): JsonResponse {
         try {
-            $data = Coupon::findOrFail($id);
+            $data = Category::findOrFail($id);
             $data->delete();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Coupon deleted successfully.',
+                'message' => 'Category deleted successfully.',
             ]);
         } catch (Exception) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete the Coupon.',
+                'message' => 'Failed to delete the Category.',
             ]);
         }
     }

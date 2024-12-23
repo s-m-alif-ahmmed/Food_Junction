@@ -6,6 +6,8 @@ use App\Http\Controllers\Web\Frontend\ContactController;
 use App\Http\Controllers\Web\Backend\Product\ProductController;
 use App\Http\Controllers\Web\Backend\Product\CouponController;
 use App\Http\Controllers\Web\Backend\Order\AdminOrderController;
+use App\Http\Controllers\Web\Backend\Product\CategoryController;
+use App\Http\Controllers\Web\Backend\Faq\FaqController;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Dashboard
@@ -24,6 +26,30 @@ Route::controller(ContactController::class)->group(function () {
     Route::get('/contact/show/{id}', 'show')->name('contact.show');
     Route::get('/contact/status/{id}', 'status')->name('contact.status');
     Route::delete('/contact/destroy/{id}', 'destroy')->name('contact.destroy');
+});
+
+//! Route for Category
+Route::controller(FaqController::class)->group(function () {
+    Route::get('/faqs', 'index')->name('faqs.index');
+    Route::get('/faqs/create', 'create')->name('faqs.create');
+    Route::post('/faqs/store', 'store')->name('faqs.store');
+    Route::get('/faqs/show/{id}', 'show')->name('faqs.show');
+    Route::get('/faqs/edit/{id}', 'edit')->name('faqs.edit');
+    Route::patch('/faqs/update/{id}', 'update')->name('faqs.update');
+    Route::get('/faqs/status/{id}', 'status')->name('faqs.status');
+    Route::delete('/faqs/delete/{id}', 'destroy')->name('faqs.destroy');
+});
+
+//! Route for Category
+Route::controller(CategoryController::class)->group(function () {
+    Route::get('/categories', 'index')->name('categories.index');
+    Route::get('/categories/create', 'create')->name('categories.create');
+    Route::post('/categories/store', 'store')->name('categories.store');
+    Route::get('/categories/show/{id}', 'show')->name('categories.show');
+    Route::get('/categories/edit/{id}', 'edit')->name('categories.edit');
+    Route::patch('/categories/update/{id}', 'update')->name('categories.update');
+    Route::get('/categories/status/{id}', 'status')->name('categories.status');
+    Route::delete('/categories/delete/{id}', 'destroy')->name('categories.destroy');
 });
 
 //! Route for Product
@@ -45,7 +71,7 @@ Route::controller(CouponController::class)->group(function () {
     Route::post('/coupons/store', 'store')->name('coupons.store');
     Route::get('/coupons/show/{id}', 'show')->name('coupons.show');
     Route::get('/coupons/edit/{id}', 'edit')->name('coupons.edit');
-    Route::patch('/coupons-page/update/{id}', 'update')->name('coupons.update');
+    Route::patch('/coupons/update/{id}', 'update')->name('coupons.update');
     Route::get('/coupons/status/{id}', 'status')->name('coupons.status');
     Route::delete('/coupons/delete/{id}', 'destroy')->name('coupons.destroy');
 });

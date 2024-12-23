@@ -6,21 +6,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Coupon extends Model
+class Category extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'code',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
         'name',
-        'max_uses',
-        'max_uses_user',
-        'type',
-        'discount_amount',
-        'min_amount',
-        'starts_at',
-        'expires_at',
+        'category_slug',
         'status',
     ];
 
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

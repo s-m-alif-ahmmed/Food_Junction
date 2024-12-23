@@ -18,96 +18,131 @@
     {{-- PAGE-HEADER END --}}
 
 
+    <!-- Create Category Form-->
     <div class="row">
-        <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
-            <div class="card box-shadow-0">
+        <div class="col-lg-12 mx-auto">
+            <div class="card">
+                <div class="card-header py-3 bg-transparent">
+                    <h5 class="mb-0">Add New Coupon </h5>
+                </div>
                 <div class="card-body">
-                    <form method="post" action="{{ route('coupons.store') }}" enctype="multipart/form-data">
-                        @csrf
+                    <div class="border-0 p-3 ">
+                        <form class="g-3" method="post" action="{{route('coupons.store')}}">
+                            @csrf
+                            @method('post')
 
-                        <div class="form-group">
-                            <label for="code" class="form-label">Code:</label>
-                            <input type="text" class="form-control @error('code') is-invalid @enderror"
-                                name="code" placeholder="Enter Code" id="code" value="{{ old('code') }}">
-                            @error('code')
+                            <div class="row mb-4">
+                                <label class="col-md-3 form-label">Code</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" name="code" placeholder="Enter coupon code" type="text" required />
+                                </div>
+                                @error('code')
                                 <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+                                @enderror
+                            </div>
 
-                        <div class="form-group">
-                            <label for="name" class="form-label">Coupon Name:</label>
-                            <textarea class="form-control @error('name') is-invalid @enderror" id="name" name="name">{{ old('name') }}</textarea>
-                            @error('name')
-                            <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="max_uses" class="form-label">Max Uses:</label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                   name="max_uses" placeholder="Max uses" id="max_uses" value="{{ old('max_uses') }}">
-                            @error('max_uses')
-                            <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="max_uses_user" class="form-label">Max User Uses:</label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                name="max_uses_user" placeholder="Max User Uses" id="max_uses_user" value="{{ old('max_uses_user') }}">
-                            @error('max_uses_user')
+                            <div class="row mb-4">
+                                <label class="col-md-3 form-label">Name</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" name="name" placeholder="Enter coupon code name" type="text">
+                                </div>
+                                @error('name')
                                 <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+                                @enderror
+                            </div>
 
-                        <div class="form-group">
-                            <label for="type" class="form-label">Coupon Image(500*500px):</label>
-                            <input type="text" class="form-control @error('image') is-invalid @enderror"
-                                name="type" placeholder="sweet name" id="type" value="{{ old('image') }}">
-                            @error('type')
+                            <div class="row mb-4">
+                                <label class="col-md-3 form-label">Max Uses</label>
+                                <div class="col-md-9">
+                                    <input type="number" class="form-control" name="max_uses" placeholder="Max Uses">
+                                </div>
+                                @error('max_uses')
                                 <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+                                @enderror
+                            </div>
 
-                        <div class="form-group">
-                            <label for="price" class="form-label">Price:</label>
-                            <input type="text" class="form-control @error('price') is-invalid @enderror"
-                                name="price" placeholder="sweet price" id="price" value="{{ old('price') }}">
-                            @error('price')
+                            <div class="row mb-4">
+                                <label class="col-md-3 form-label">Max Uses User</label>
+                                <div class="col-md-9">
+                                    <input type="number" class="form-control" name="max_uses_user" placeholder="Max Uses User">
+                                </div>
+                                @error('max_uses_user')
                                 <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+                                @enderror
+                            </div>
 
-                        <div class="form-group">
-                            <label for="discount_price" class="form-label">Discount Price (Optional):</label>
-                            <input type="text" class="form-control @error('discount_price') is-invalid @enderror"
-                                name="discount_price" placeholder="sweet discount price" id="discount_price" value="{{ old('discount_price') }}">
-                            @error('discount_price')
+                            <div class="row mb-4">
+                                <label for="type" class="col-md-3 form-label">Type</label>
+                                <div class="col-md-9">
+                                    <select name="type" id="type" class="form-control" required >
+                                        <option value="percent">Percent</option>
+                                        <option value="fixed">Fixed</option>
+                                    </select>
+                                </div>
+                                @error('type')
                                 <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+                                @enderror
+                            </div>
 
-                        <div class="form-group">
-                            <label for="short_description" class="form-label">Short Description:</label>
-                            <textarea class="form-control @error('short_description') is-invalid @enderror" maxlength="130" id="short_description" name="short_description">{{ old('short_description') }}</textarea>
-                            @error('short_description')
+                            <div class="row mb-4">
+                                <label class="col-md-3 form-label">Discount Amount</label>
+                                <div class="col-md-9">
+                                    <input type="number" class="form-control" name="discount_amount" placeholder="Enter discount amount" required/>
+                                </div>
+                                @error('discount_amount')
                                 <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+                                @enderror
+                            </div>
 
-                        <div class="form-group">
-                            <label for="summernote" class="form-label">Description:</label>
-                            <textarea class="form-control @error('description') is-invalid @enderror" id="summernote" name="description">{{ old('description') }}</textarea>
-                            @error('description')
+                            <div class="row mb-4">
+                                <label class="col-md-3 form-label">Minimum Amount</label>
+                                <div class="col-md-9">
+                                    <input type="number" class="form-control" name="min_amount" placeholder="Enter minimum amount" required/>
+                                </div>
+                                @error('min_amount')
                                 <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+                                @enderror
+                            </div>
 
-                        <div class="form-group">
-                            <button class="btn btn-primary" type="submit">Submit</button>
-                            <a href="{{ route('coupons.index') }}" class="btn btn-danger me-2">Cancel</a>
-                        </div>
-                    </form>
+                            <div class="row mb-4">
+                                <label for="status" class="col-md-3 form-label">Coupon Status</label>
+                                <div class="col-md-9">
+                                    <select name="status" id="status" class="form-control" required >
+                                        <option value="active">Active</option>
+                                        <option value="inActive">Inactive</option>
+                                    </select>
+                                </div>
+                                @error('status')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="row mb-4">
+                                <label for="starts_at" class="col-md-3 form-label">Starts At</label>
+                                <div class="col-md-9">
+                                    <input type="datetime-local" class="form-control" name="starts_at" id="starts_at" step="1">
+                                </div>
+                                @error('starts_at')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="row mb-4">
+                                <label for="expires_at" class="col-md-3 form-label">Expires At</label>
+                                <div class="col-md-9">
+                                    <input type="datetime-local" class="form-control" name="expires_at" id="expires_at" step="1">
+                                </div>
+                                @error('expires_at')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="col-12 text-center">
+                                <button class="btn btn-primary px-4" type="submit">Create</button>
+                            </div>
+
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

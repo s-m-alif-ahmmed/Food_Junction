@@ -11,21 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('products')) {
-            Schema::create('products', function (Blueprint $table) {
+        if (!Schema::hasTable('categories')) {
+            Schema::create('categories', function (Blueprint $table) {
                 $table->id();
                 $table->string('meta_title')->nullable();
                 $table->string('meta_description')->nullable();
                 $table->text('meta_keywords')->nullable();
-                $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('cascade');
-                $table->foreignId('coupon_id')->nullable();
                 $table->string('name')->nullable();
-                $table->string('short_description')->nullable();
-                $table->text('description')->nullable();
-                $table->text('image')->nullable();
-                $table->string('price')->nullable();
-                $table->string('discount_price')->nullable();
-                $table->string('product_slug')->nullable();
+                $table->string('category_slug')->nullable();
                 $table->enum('status',['active','inactive'])->default('active');
                 $table->timestamps();
                 $table->softDeletes();
@@ -38,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('categories');
     }
 };
