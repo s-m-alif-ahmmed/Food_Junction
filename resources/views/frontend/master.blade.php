@@ -26,6 +26,9 @@
 
 @include('frontend.includes.header')
 
+{{--        Categories--}}
+@include('frontend.includes.category-menu')
+
 @yield('content')
 
 @include('frontend.includes.footer')

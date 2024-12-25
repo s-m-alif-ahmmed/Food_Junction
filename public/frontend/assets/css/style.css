@@ -236,25 +236,37 @@
 .categories{
     display: contents;
 }
+
+.categories li{
+    padding: 0 0 0 20px;
+}
+
 /*Categories End*/
 
 /*Hero Banner Section Start*/
 
-.order-now-btn{
+.order-now-btn {
+    display: block; /* Ensures it behaves like a block element */
     border-radius: 5px;
     color: white;
     background: linear-gradient(to right, #FD9325, #EE3441);
     text-decoration: none;
-    width: 100%;
-    padding: 5px 35px 8px 35px;
+    width: calc(100% - 20px); /* Full width minus the 10px gap on each side */
+    margin: 0 10px 0 10px; /* Center horizontally and add 10px gap on top and bottom */
+    padding: 8px 35px; /* Adjust padding for better appearance */
+    text-align: center; /* Center text */
 }
+
 .order-now-btn:hover{
+    display: block; /* Ensures it behaves like a block element */
     border-radius: 5px;
     color: white;
     background: linear-gradient(to right, #FD9325, #EE3441);
     text-decoration: none;
-    width: 100%;
-    padding: 5px 35px 8px 35px;
+    width: calc(100% - 20px); /* Full width minus the 10px gap on each side */
+    margin: 0 10px 0 10px; /* Center horizontally and add 10px gap on top and bottom */
+    padding: 8px 35px; /* Adjust padding for better appearance */
+    text-align: center; /* Center text */
 }
 
 .view-all-btn{
@@ -316,6 +328,13 @@
 }
 
 /*Hero Banner Section End*/
+
+
+/*Bottom Banner Start*/
+.bottom-banner{
+    height: 400px;
+}
+/*Bottom Banner End*/
 
 /*Home Page End*/
 

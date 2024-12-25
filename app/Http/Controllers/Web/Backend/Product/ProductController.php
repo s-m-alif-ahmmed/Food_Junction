@@ -121,7 +121,7 @@ class ProductController extends Controller
             }
             $data->save();
 
-            return redirect()->route('sweets.index')->with('t-success', 'Updated successfully');
+            return redirect()->route('sweets.index')->with('t-success', 'Created successfully');
         } catch (Exception) {
             return redirect()->route('sweets.index')->with('t-success', 'Sweet failed created.');
         }
