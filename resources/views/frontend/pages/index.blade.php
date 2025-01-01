@@ -48,7 +48,7 @@
         <div class="container pb-5">
             <div class="row">
                 @foreach($products->take(4) as $product)
-                    <div class="col-lg-3 special-sweet-card">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-6 special-sweet-card">
                         <div class="card border-0 custom-shadow">
                             <div class="sweet-image">
                                 <img src="{{ asset($product->image ?? '/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top" alt="{{ $product->name }}">
@@ -76,7 +76,7 @@
             <div class="row pb-5">
                 <div class="row py-3">
                     @foreach($products as $product)
-                        <div class="col-lg-3 special-sweet-card">
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-6 special-sweet-card p-3">
                             <div class="card border-0 custom-shadow">
                                 <div class="sweet-image">
                                     <img src="{{ asset($product->image ?? '/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top" alt="{{ $product->name }}">

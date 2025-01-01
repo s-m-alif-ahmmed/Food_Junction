@@ -2,7 +2,7 @@
 $categories = \App\Models\Category::where('status', 'active')->latest()->get()
 ?>
 
-<div class="container">
+<div class="container d-lg-block d-md-none d-sm-none d-none">
     <div class="row">
         <ul class="navbar-nav navbar categories">
             <li class="nav-item">
