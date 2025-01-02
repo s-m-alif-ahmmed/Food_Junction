@@ -411,11 +411,15 @@
         width: 100%;
         object-fit: fill;
     }
-    .sweet-card-bottom{
-        flex-direction: column;
+
+    .special-sweet-card h5{
+        font-size: 16px;
     }
-    .sweet-card-bottom a{
-        margin: 0 0 10px 0;
+    .special-sweet-card p{
+        font-size: 12px;
+    }
+    .special-sweet-card a{
+        font-size: 12px;
     }
 
     .hero-section .home--sweet-card h5{
@@ -1037,11 +1041,30 @@
         object-fit: fill;
     }
 
-    .sweet-card-bottom{
-        flex-direction: column;
+    .order-now-btn {
+        display: block; /* Ensures it behaves like a block element */
+        border-radius: 5px;
+        color: white;
+        background: linear-gradient(to right, #FD9325, #EE3441);
+        text-decoration: none;
+        width: calc(100% - 20px); /* Full width minus the 10px gap on each side */
+        margin: 0 10px 0 10px; /* Center horizontally and add 10px gap on top and bottom */
+        padding: 8px 35px; /* Adjust padding for better appearance */
+        text-align: center; /* Center text */
+        font-size: 12px;
     }
-    .sweet-card-bottom a{
-        margin: 0 0 10px 0;
+
+    .order-now-btn:hover{
+        display: block; /* Ensures it behaves like a block element */
+        border-radius: 5px;
+        color: white;
+        background: linear-gradient(to right, #FD9325, #EE3441);
+        text-decoration: none;
+        width: calc(100% - 20px); /* Full width minus the 10px gap on each side */
+        margin: 0 10px 0 10px; /* Center horizontally and add 10px gap on top and bottom */
+        padding: 8px 35px; /* Adjust padding for better appearance */
+        text-align: center; /* Center text */
+        font-size: 12px;
     }
 
     .hero-section .home--sweet-card h5{
