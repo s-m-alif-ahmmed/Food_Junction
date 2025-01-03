@@ -401,6 +401,26 @@
 
     /*Home Page Start*/
 
+    .section-heading,
+    .section-heading * {
+        box-sizing: border-box;
+    }
+    .section-heading {
+        height: 80px;
+        position: relative;
+        overflow: hidden;
+    }
+    .heading-text {
+        color: #ffffff;
+        text-align: left;
+        font-size: 32px;
+        font-weight: 600;
+        position: absolute;
+        left: 50%;
+        translate: -50% -50%;
+        top: 50%;
+    }
+
     .special-sweet-card .sweet-image{
         height: 200px;
         width: 100%;
@@ -756,6 +776,26 @@
 
     /*Home Page Start*/
 
+    .section-heading,
+    .section-heading * {
+        box-sizing: border-box;
+    }
+    .section-heading {
+        height: 50px;
+        position: relative;
+        overflow: hidden;
+    }
+    .heading-text {
+        color: #ffffff;
+        text-align: left;
+        font-size: 24px;
+        font-weight: 600;
+        position: absolute;
+        left: 50%;
+        translate: -50% -50%;
+        top: 50%;
+    }
+
     .special-sweet-card .sweet-image{
         height: 260px;
         width: 100%;
@@ -899,6 +939,27 @@
     /*Top-Header End*/
 
     /*Home Page Start*/
+
+    .section-heading,
+    .section-heading * {
+        box-sizing: border-box;
+    }
+    .section-heading {
+        height: 50px;
+        position: relative;
+        overflow: hidden;
+    }
+    .heading-text {
+        color: #ffffff;
+        text-align: left;
+        font-size: 24px;
+        font-weight: 600;
+        position: absolute;
+        left: 50%;
+        translate: -50% -50%;
+        top: 50%;
+    }
+
     .special-sweet-card .sweet-image{
         height: 200px;
         width: 100%;
@@ -1030,6 +1091,27 @@
     /*Top-Header End*/
 
     /*Home Page Start*/
+
+    .section-heading,
+    .section-heading * {
+        box-sizing: border-box;
+    }
+    .section-heading {
+        height: 50px;
+        position: relative;
+        overflow: hidden;
+    }
+    .heading-text {
+        color: #ffffff;
+        text-align: left;
+        font-size: 20px;
+        font-weight: 600;
+        position: absolute;
+        left: 50%;
+        translate: -50% -50%;
+        top: 50%;
+    }
+
     .special-sweet-card .sweet-image{
         height: 160px;
         width: 100%;

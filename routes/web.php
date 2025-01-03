@@ -11,10 +11,12 @@ use Illuminate\Support\Facades\Route;
 
 //! Route for Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/food-junction/{page_slug}', [HomeController::class, 'dynamicPage'])->name('user.dynamic.page');
-Route::get('/sweets', [HomeController::class, 'sweets'])->name('sweets');
-Route::get('/sweets/detail/{product_slug}', [HomeController::class, 'detail'])->name('sweets.detail');
+Route::get('/products', [HomeController::class, 'products'])->name('products');
+Route::get('/products/{category_slug}', [HomeController::class, 'categoryProduct'])->name('category.products');
+Route::get('/product/detail/{product_slug}', [HomeController::class, 'detail'])->name('product.detail');
 Route::get('/confirm-order', [HomeController::class, 'confirmOrder'])->name('confirm.order');
+
+Route::get('/food-junction/{page_slug}', [HomeController::class, 'dynamicPage'])->name('user.dynamic.page');
 
 //Contact
 Route::get('/contact', [ContactController::class, 'contact'])->name('contact');

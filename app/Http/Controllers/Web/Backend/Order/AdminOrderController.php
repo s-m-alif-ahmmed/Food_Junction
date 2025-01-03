@@ -84,10 +84,10 @@ class AdminOrderController extends Controller
         return view('backend.layouts.order.detail', compact('data'));
     }
 
-    public function sweets(int $id): View {
+    public function products(int $id): View {
         $data = Order::find($id);
         $order_data = OrderDetail::with('order','product')->where('order_id', $data->id)->latest()->get();
-        return view('backend.layouts.order.order-sweets', compact('data','order_data'));
+        return view('backend.layouts.order.order-products', compact('data','order_data'));
     }
 
     public function invoice(int $id): View {

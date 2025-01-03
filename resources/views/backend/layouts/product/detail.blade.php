@@ -1,17 +1,17 @@
 @extends('backend.app')
 
-@section('title', 'Sweet Detail')
+@section('title', 'Product Detail')
 
 @section('content')
     {{-- PAGE-HEADER --}}
     <div class="page-header">
         <div>
-            <h1 class="page-title">Sweet Form</h1>
+            <h1 class="page-title">Product Form</h1>
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Sweet</li>
+                <li class="breadcrumb-item active" aria-current="page">Product</li>
             </ol>
         </div>
     </div>
@@ -49,7 +49,17 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="name" class="form-label">Sweet Name:</label>
+                        <label for="category_id" class="form-label">Category:</label>
+                        <select class="form-select select2" name="category_id" id="category_id" disabled readonly>
+                            <option>{{ $data->category->name }}</option>
+                        </select>
+                        @error('category_id')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name" class="form-label">Product Name:</label>
                         <input type="text" class="form-control @error('name') is-invalid @enderror"
                                name="name" placeholder="sweet name" id="name" maxlength="100" value="{{ $data->name ?? ' ' }}" disabled readonly >
                         @error('name')
@@ -58,7 +68,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="image" class="form-label">Sweet Image(500*500px):</label>
+                        <label for="image" class="form-label">Product Image(500*500px):</label>
                         <input type="file" class="form-control @error('image') is-invalid @enderror"
                                name="image" placeholder="sweet name" id="image" value="{{ $data->image ?? ' ' }}">
                         @if($data->image)
@@ -88,14 +98,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="short_description" class="form-label">Short Description:</label>
-                        <p>{{ $data->short_description ?? ' ' }}</p>
-                        @error('short_description')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
                         <label for="description" class="form-label">Description:</label>
                         <p>{!! $data->description ?? ' ' !!}</p>
                         @error('description')
@@ -104,7 +106,7 @@
                     </div>
 
                     <div class="form-group">
-                        <a href="{{ route('sweets.index') }}" class="btn btn-danger me-2">Back</a>
+                        <a href="{{ route('products.index') }}" class="btn btn-danger me-2">Back</a>
                     </div>
 
                 </div>

@@ -6,13 +6,13 @@
     {{-- PAGE-HEADER --}}
     <div class="page-header">
         <div>
-            <h1 class="page-title">Order Sweet's List -> #{{ $data->tracking_id }}</h1>
+            <h1 class="page-title">Order Product's List -> #{{ $data->tracking_id }}</h1>
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('orders.index') }}">Orders</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('orders.show', $data->id) }}">Order</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Order Sweet's</li>
+                <li class="breadcrumb-item active" aria-current="page">Order Product's</li>
             </ol>
         </div>
     </div>
@@ -28,7 +28,7 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">SL</th>
-                                    <th>Sweet Name</th>
+                                    <th>Product Name</th>
                                     <th class="text-center">Price</th>
                                     <th class="text-end">Weight</th>
                                     <th class="text-end">Sub Total</th>

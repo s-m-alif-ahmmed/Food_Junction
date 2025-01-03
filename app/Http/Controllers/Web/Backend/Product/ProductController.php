@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Backend\Product;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -16,7 +17,7 @@ use Yajra\DataTables\DataTables;
 class ProductController extends Controller
 {
     /**
-     * Display a listing of dynamic page content.
+     * Display a listing of product content.
      *
      * @param Request $request
      * @return View|JsonResponse
@@ -46,10 +47,10 @@ class ProductController extends Controller
                 })
                 ->addColumn('action', function ($data) {
                     return '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                                <a href="' . route('sweets.show', ['id' => $data->id]) . '" type="button" class="btn btn-secondary fs-14 text-white edit-icn" title="Edit">
+                                <a href="' . route('products.show', ['id' => $data->id]) . '" type="button" class="btn btn-secondary fs-14 text-white edit-icn" title="Edit">
                                     <i class="fe fe-eye"></i>
                                 </a>
-                                <a href="' . route('sweets.edit', ['id' => $data->id]) . '" type="button" class="btn btn-primary fs-14 text-white edit-icn" title="Edit">
+                                <a href="' . route('products.edit', ['id' => $data->id]) . '" type="button" class="btn btn-primary fs-14 text-white edit-icn" title="Edit">
                                     <i class="fe fe-edit"></i>
                                 </a>
                                 <a href="#" type="button" onclick="showDeleteConfirm(' . $data->id . ')" class="btn btn-danger fs-14 text-white delete-icn" title="Delete">
@@ -60,20 +61,21 @@ class ProductController extends Controller
                 ->rawColumns(['name', 'status', 'action'])
                 ->make();
         }
-        return view('backend.layouts.sweet.index');
+        return view('backend.layouts.product.index');
     }
 
     /**
-     * Show the form for creating a new sweet content.
+     * Show the form for creating a new product content.
      *
      * @return View
      */
     public function create(): View {
-        return view('backend.layouts.sweet.create');
+        $categories = Category::all();
+        return view('backend.layouts.product.create',compact('categories'));
     }
 
     /**
-     * Store a newly created sweet content in storage.
+     * Store a newly created product content in storage.
      *
      * @param Request $request
      * @return RedirectResponse
@@ -84,8 +86,8 @@ class ProductController extends Controller
                 'meta_title'        => 'required|string',
                 'meta_description'  => 'required|string|min:160|max:255',
                 'meta_keywords'     => 'required|string',
+                'category_id'       => 'required',
                 'name'              => 'required|string|max:100',
-                'short_description' => 'required|string|max:130',
                 'description'       => 'required|string',
                 'image'             => 'required|image|mimes:jpeg,png,jpg,gif|max:200', // Max 200KB
                 'price'             => 'required',
@@ -100,8 +102,8 @@ class ProductController extends Controller
             $data->meta_title           = $request->meta_title;
             $data->meta_description     = $request->meta_description;
             $data->meta_keywords        = $request->meta_keywords;
+            $data->category_id          = $request->category_id;
             $data->name                 = $request->name;
-            $data->short_description    = $request->short_description;
             $data->description          = $request->description;
             $data->price                = $request->price;
             $data->discount_price       = $request->discount_price;
@@ -121,26 +123,27 @@ class ProductController extends Controller
             }
             $data->save();
 
-            return redirect()->route('sweets.index')->with('t-success', 'Created successfully');
+            return redirect()->route('products.index')->with('t-success', 'Created successfully');
         } catch (Exception) {
-            return redirect()->route('sweets.index')->with('t-success', 'Sweet failed created.');
+            return redirect()->route('products.index')->with('t-success', 'Product failed created.');
         }
     }
 
     public function show(int $id): View {
         $data = Product::find($id);
-        return view('backend.layouts.sweet.detail', compact('data'));
+        return view('backend.layouts.product.detail', compact('data'));
     }
 
     /**
-     * Show the form for editing the specified sweet content.
+     * Show the form for editing the specified product content.
      *
      * @param int $id
      * @return View
      */
     public function edit(int $id): View {
+        $categories = Category::all();
         $data = Product::find($id);
-        return view('backend.layouts.sweet.edit', compact('data'));
+        return view('backend.layouts.product.edit', compact('data','categories'));
     }
 
     /**
@@ -156,8 +159,8 @@ class ProductController extends Controller
                 'meta_title'        => 'required|string',
                 'meta_description'  => 'required|string|min:160|max:255',
                 'meta_keywords'     => 'required|string',
+                'category_id'       => 'required',
                 'name'              => 'required|string|max:100',
-                'short_description' => 'required|string|max:130',
                 'description'       => 'required|string',
                 'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:200', // Max 200KB
                 'price'             => 'required',
@@ -172,8 +175,8 @@ class ProductController extends Controller
             $data->meta_title           = $request->meta_title;
             $data->meta_description     = $request->meta_description;
             $data->meta_keywords        = $request->meta_keywords;
+            $data->category_id          = $request->category_id;
             $data->name                 = $request->name;
-            $data->short_description    = $request->short_description;
             $data->description          = $request->description;
             $data->price                = $request->price;
             $data->discount_price       = $request->discount_price;
@@ -201,15 +204,15 @@ class ProductController extends Controller
 
             $data->update();
 
-            return redirect()->route('sweets.index')->with('t-success', 'Sweet Updated Successfully.');
+            return redirect()->route('products.index')->with('t-success', 'Product Updated Successfully.');
 
         } catch (Exception) {
-            return redirect()->route('sweets.index')->with('t-success', 'Sweet failed to update');
+            return redirect()->route('products.index')->with('t-success', 'Product failed to update');
         }
     }
 
     /**
-     * Change the status of the specified sweet content.
+     * Change the status of the specified product content.
      *
      * @param int $id
      * @return JsonResponse
@@ -238,7 +241,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Remove the specified Sweet content from storage.
+     * Remove the specified Product content from storage.
      *
      * @param int $id
      * @return JsonResponse
@@ -250,12 +253,12 @@ class ProductController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Sweet deleted successfully.',
+                'message' => 'Product deleted successfully.',
             ]);
         } catch (Exception) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete the Sweet.',
+                'message' => 'Failed to delete the Product.',
             ]);
         }
     }

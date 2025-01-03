@@ -1,42 +1,44 @@
 @extends('backend.app')
 
-@section('title', 'Sweet Create')
+@section('title', 'Product Edit')
 
 @section('content')
     {{-- PAGE-HEADER --}}
     <div class="page-header">
         <div>
-            <h1 class="page-title">Sweet Form</h1>
+            <h1 class="page-title">Product Form</h1>
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Sweet</li>
+                <li class="breadcrumb-item active" aria-current="page">Product</li>
             </ol>
         </div>
     </div>
-    {{-- PAGE-HEADER END --}}
+    {{-- PAGE-HEADER --}}
 
 
     <div class="row">
         <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
             <div class="card box-shadow-0">
                 <div class="card-body">
-                    <form method="post" action="{{ route('sweets.store') }}" enctype="multipart/form-data">
+                    <form method="post" action="{{ route('products.update', ['id' => $data->id]) }}"
+                        enctype="multipart/form-data">
                         @csrf
+                        @method('PATCH')
 
                         <div class="form-group">
                             <label for="meta_title" class="form-label">Meta Title:</label>
                             <input type="text" class="form-control @error('meta_title') is-invalid @enderror"
-                                name="meta_title" placeholder="Meta Title" id="meta_title" value="{{ old('meta_title') }}">
+                                   name="meta_title" placeholder="Meta Title" id="meta_title" value="{{ $data->meta_title ?? ' ' }}">
                             @error('meta_title')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="form-group">
                             <label for="meta_description" class="form-label">Meta Description:</label>
-                            <textarea class="form-control @error('meta_description') is-invalid @enderror" minlength="160" maxlength="255" id="meta_description" name="meta_description">{{ old('meta_description') }}</textarea>
+                            <textarea class="form-control @error('meta_description') is-invalid @enderror" minlength="160" maxlength="255" id="meta_description" name="meta_description">{{ $data->meta_description ?? ' ' }}</textarea>
                             @error('meta_description')
                             <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -44,67 +46,74 @@
 
                         <div class="form-group">
                             <label for="meta_keywords" class="form-label">Meta Keywords:</label>
-                            <textarea class="form-control @error('meta_keywords') is-invalid @enderror" id="meta_keywords" name="meta_keywords">{{ old('meta_keywords') }}</textarea>
+                            <textarea class="form-control @error('meta_keywords') is-invalid @enderror" id="meta_keywords" name="meta_keywords">{{ $data->meta_keywords ?? ' ' }}</textarea>
                             @error('meta_keywords')
                             <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <label for="name" class="form-label">Sweet Name:</label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                name="name" placeholder="sweet name" id="name" maxlength="100" value="{{ old('name') }}">
-                            @error('name')
-                                <span class="text-danger">{{ $message }}</span>
+                            <label for="category_id" class="form-label">Category:</label>
+                            <select class="form-select select2" name="category_id" id="category_id">
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" {{ $category->id == $data->category_id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('category_id')
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <label for="image" class="form-label">Sweet Image(500*500px):</label>
+                            <label for="name" class="form-label">Product Name:</label>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                   name="name" placeholder="sweet name" id="name" maxlength="100" value="{{ $data->name ?? ' ' }}">
+                            @error('name')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="image" class="form-label">Product Image(500*500px):</label>
                             <input type="file" class="form-control @error('image') is-invalid @enderror"
-                                name="image" placeholder="sweet name" id="image" value="{{ old('image') }}">
+                                   name="image" placeholder="sweet name" id="image" value="{{ $data->image ?? ' ' }}">
+                            @if($data->image)
+                            <img class="img-fluid rounded-1 my-1" height="80px" width="80px" src="{{ asset($data->image) }}" alt="{{ $data->name ? $data->image : 'No Image' }}">
+                            @endif
                             @error('image')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="form-group">
                             <label for="price" class="form-label">Price:</label>
                             <input type="text" class="form-control @error('price') is-invalid @enderror"
-                                name="price" placeholder="sweet price" id="price" value="{{ old('price') }}">
+                                   name="price" placeholder="sweet price" id="price" value="{{ $data->price ?? ' ' }}">
                             @error('price')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="form-group">
                             <label for="discount_price" class="form-label">Discount Price (Optional):</label>
                             <input type="text" class="form-control @error('discount_price') is-invalid @enderror"
-                                name="discount_price" placeholder="sweet discount price" id="discount_price" value="{{ old('discount_price') }}">
+                                   name="discount_price" placeholder="sweet discount price" id="discount_price" value="{{ $data->discount_price ?? ' ' }}">
                             @error('discount_price')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="short_description" class="form-label">Short Description:</label>
-                            <textarea class="form-control @error('short_description') is-invalid @enderror" maxlength="130" id="short_description" name="short_description">{{ old('short_description') }}</textarea>
-                            @error('short_description')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="form-group">
                             <label for="summernote" class="form-label">Description:</label>
-                            <textarea class="form-control @error('description') is-invalid @enderror" id="summernote" name="description">{{ old('description') }}</textarea>
+                            <textarea class="form-control @error('description') is-invalid @enderror" id="summernote" name="description">{{ $data->description ?? ' ' }}</textarea>
                             @error('description')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="form-group">
                             <button class="btn btn-primary" type="submit">Submit</button>
-                            <a href="{{ route('sweets.index') }}" class="btn btn-danger me-2">Cancel</a>
+                            <a href="{{ route('products.index') }}" class="btn btn-danger me-2">Cancel</a>
                         </div>
                     </form>
                 </div>

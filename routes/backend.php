@@ -54,14 +54,14 @@ Route::controller(CategoryController::class)->group(function () {
 
 //! Route for Product
 Route::controller(ProductController::class)->group(function () {
-    Route::get('/sweets', 'index')->name('sweets.index');
-    Route::get('/sweets/create', 'create')->name('sweets.create');
-    Route::post('/sweets/store', 'store')->name('sweets.store');
-    Route::get('/sweets/show/{id}', 'show')->name('sweets.show');
-    Route::get('/sweets/edit/{id}', 'edit')->name('sweets.edit');
-    Route::patch('/sweets-page/update/{id}', 'update')->name('sweets.update');
-    Route::get('/sweets/status/{id}', 'status')->name('sweets.status');
-    Route::delete('/sweets/delete/{id}', 'destroy')->name('sweets.destroy');
+    Route::get('/products', 'index')->name('products.index');
+    Route::get('/products/create', 'create')->name('products.create');
+    Route::post('/products/store', 'store')->name('products.store');
+    Route::get('/products/show/{id}', 'show')->name('products.show');
+    Route::get('/products/edit/{id}', 'edit')->name('products.edit');
+    Route::patch('/products/update/{id}', 'update')->name('products.update');
+    Route::get('/products/status/{id}', 'status')->name('products.status');
+    Route::delete('/products/delete/{id}', 'destroy')->name('products.destroy');
 });
 
 //! Route for coupon
@@ -80,7 +80,7 @@ Route::controller(CouponController::class)->group(function () {
 Route::controller(AdminOrderController::class)->group(function () {
     Route::get('/orders', 'index')->name('orders.index');
     Route::get('/orders/show/{id}', 'show')->name('orders.show');
-    Route::get('/orders/sweets/{id}', 'sweets')->name('orders.sweets');
+    Route::get('/orders/products/{id}', 'products')->name('orders.sweets');
     Route::get('/orders/invoice/{id}', 'invoice')->name('orders.invoice');
     Route::post('/orders/status/{id}', 'status')->name('orders.status');
     Route::delete('/orders/delete/{id}', 'destroy')->name('orders.destroy');

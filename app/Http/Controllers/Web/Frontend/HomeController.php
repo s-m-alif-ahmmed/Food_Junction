@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
+use App\Models\Category;
 use App\Models\DynamicPage;
 use App\Models\Product;
 use App\Models\ProductReview;
@@ -21,10 +22,30 @@ class HomeController extends Controller {
         return view('frontend.pages.index',compact('products'));
     }
 
-    public function sweets(): View {
+    public function products(): View {
         $products = Product::where('status','active')->latest()->get();
         return view('frontend.pages.product',compact('products'));
     }
+
+    public function categoryProduct(string $category_slug): View
+    {
+        // Fetch the category using the provided slug
+        $category = Category::where('category_slug', $category_slug)->where('status', 'active')->first();
+
+        // Check if the category exists
+        if (!$category) {
+            abort(404, 'Category not found');
+        }
+
+        // Fetch products related to the category
+        $products = Product::where('category_id', $category->id)
+            ->where('status', 'active')
+            ->latest()
+            ->get();
+
+        return view('frontend.pages.product', compact('products', 'category'));
+    }
+
 
     public function detail($product_slug): View
     {

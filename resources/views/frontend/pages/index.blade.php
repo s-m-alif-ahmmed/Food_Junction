@@ -37,9 +37,9 @@
         </div>
 
         <div class="container-fluid pb-3">
-            <div class="row background-gradient">
-                <div class="col-lg-12 text-center">
-                    <p class="fs-40 fsw-semibold text-white">Offer Products</p>
+            <div class="row">
+                <div class="col-lg-12 section-heading background-gradient">
+                    <p class="heading-text">Offer Products</p>
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@
                             <div class="card-body border-0 mb-3 h-100">
                                 <h5 class="fsw-bold">{{ $product->name }}</h5>
                                 <p class="fsw-semibold">{{ $product->price }} টাকা ( <span class="text-danger"><del>৮৫০ টাকা</del></span> )</p>
-                                <a href="{{ route('sweets.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
+                                <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
                             </div>
                         </div>
                     </div>
@@ -64,9 +64,9 @@
         </div>
 
         <div class="container-fluid pb-3">
-            <div class="row background-gradient">
-                <div class="col-lg-12 text-center">
-                    <p class="fs-40 fsw-semibold text-white">All Products</p>
+            <div class="row">
+                <div class="col-lg-12 section-heading background-gradient">
+                    <p class="heading-text">All Products</p>
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@
                             <div class="card-body border-0 mb-3 h-100">
                                 <h5 class="fsw-bold">{{ $product->name }}</h5>
                                 <p class="fsw-semibold">{{ $product->price }} টাকা ( <span class="text-danger"><del>৮৫০ টাকা</del></span> )</p>
-                                <a href="{{ route('sweets.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
+                                <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
                             </div>
                         </div>
                     </div>
@@ -90,15 +90,19 @@
             </div>
         </div>
 
-        <div class="container-fluid bottom-banner" style="background-image: url('../frontend/images/section/home/bottom-banner.png')">
+        <div class="container-fluid p-0 m-0 overflow-hidden bottom-banner">
             <div class="row">
-                <div class="col-md-5 justify-content-center mx-auto">
-                    <p class="text-center fs-52 text-white fw-bold">Are you ready to order with the best deals?</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2 justify-content-center mx-auto">
-                    <a href="{{ route('sweets') }}" class="text-decoration-none text-white fs-24 fsw-bold bg-danger rounded-2 px-5 py-2 ">Proceed To Order</a>
+                <div class="cta-footer">
+                    <div class="cta">
+                        <img class="image img-fluid w-100" src="{{ asset('frontend/images/section/home/bottom-banner.png') }}" />
+                        <div class="text">Are you ready to order with the best deals?</div>
+                        <a href="" class="button">
+                            <div class="text2">Proceed to order</div>
+                            <div class="icon">
+                                <img src="{{ asset('frontend/images/icons/arrow.svg') }}" alt="">
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

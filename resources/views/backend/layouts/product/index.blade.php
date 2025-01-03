@@ -1,17 +1,17 @@
 @extends('backend.app')
 
-@section('title', 'Sweet')
+@section('title', 'Products')
 
 @section('content')
     {{-- PAGE-HEADER --}}
     <div class="page-header">
         <div>
-            <h1 class="page-title">Sweet</h1>
+            <h1 class="page-title">Products</h1>
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Sweet</li>
+                <li class="breadcrumb-item active" aria-current="page">Products</li>
             </ol>
         </div>
     </div>
@@ -23,8 +23,8 @@
             <div class="card">
                 <div class="card-header border-bottom"
                     style="margin-bottom: 0; display: flex; justify-content: space-between;">
-                    <h3 class="card-title">Sweet Table</h3>
-                    <a href="{{ route('sweets.create') }}" class="btn btn-primary">Add New Sweet</a>
+                    <h3 class="card-title">Product Table</h3>
+                    <a href="{{ route('products.create') }}" class="btn btn-primary">Add New Product</a>
                 </div>
 
                 <div class="card-body">
@@ -33,7 +33,7 @@
                             <thead>
                                 <tr>
                                     <th class="wd-15p border-bottom-0">#</th>
-                                    <th class="wd-15p border-bottom-0">Sweet Name</th>
+                                    <th class="wd-15p border-bottom-0">Product Name</th>
                                     <th class="wd-20p border-bottom-0">Status</th>
                                     <th class="wd-15p border-bottom-0">Action</th>
                                 </tr>
@@ -84,7 +84,7 @@
                     pagingType: "full_numbers",
                     dom: "<'row justify-content-between table-topbar'<'col-md-2 col-sm-4 px-0'l><'col-md-2 col-sm-4 px-0'f>>tipr",
                     ajax: {
-                        url: "{{ route('sweets.index') }}",
+                        url: "{{ route('products.index') }}",
                         type: "GET",
                     },
 
@@ -141,7 +141,7 @@
         }
         // Status Change
         function statusChange(id) {
-            let url = '{{ route('sweets.status', ':id') }}';
+            let url = '{{ route('products.status', ':id') }}';
             $.ajax({
                 type: "GET",
                 url: url.replace(':id', id),
@@ -184,7 +184,7 @@
 
         // Delete Button
         function deleteItem(id) {
-            let url = '{{ route('sweets.destroy', ':id') }}';
+            let url = '{{ route('products.destroy', ':id') }}';
             let csrfToken = '{{ csrf_token() }}';
             $.ajax({
                 type: "DELETE",

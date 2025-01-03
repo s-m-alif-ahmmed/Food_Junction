@@ -26,15 +26,15 @@
             <div class="row">
                 <div class="row py-3">
                     @foreach($products as $product)
-                        <div class="col-lg-3 col-md-3 col-sm-6 col-6 special-sweet-card">
+                        <div class="col-md-4 special-sweet-card">
                             <div class="card border-0 custom-shadow">
                                 <div class="sweet-image">
-                                    <img src="{{ asset($product->image ?? '/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top" alt="{{ $product->name }}">
+                                    <img src="{{ asset($product->image ?? '/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top" alt="{{ $product->name ?? 'No Product' }}">
                                 </div>
-                                <div class="card-body border-0 mb-3 h-100">
-                                    <h5 class="fsw-bold">{{ $product->name }}</h5>
-                                    <p class="fsw-semibold">{{ $product->price }} টাকা ( <span class="text-danger"><del>৮৫০ টাকা</del></span> )</p>
-                                    <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
+                                <div class="card-body border-0 text-center mb-3 h-100">
+                                    <h5 class="card-title fsw-bold">{{ $product->name }}</h5>
+                                    <p class="card-text">{{ $product->short_description }}</p>
+                                    <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn fw-bold">Shop Now</a>
                                 </div>
                             </div>
                         </div>

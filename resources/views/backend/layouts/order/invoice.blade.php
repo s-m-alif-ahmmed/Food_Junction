@@ -51,7 +51,7 @@
                             <thead>
                             <tr>
                                 <th class="text-center">SL</th>
-                                <th>Sweet Name</th>
+                                <th>Product Name</th>
                                 <th class="text-center">Price</th>
                                 <th class="text-end">Weight</th>
                                 <th class="text-end">Sub Total</th>

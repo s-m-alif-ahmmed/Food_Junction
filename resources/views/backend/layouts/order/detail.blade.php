@@ -104,7 +104,7 @@
 
                         <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
                             <label for="page_title" class="form-label">Action:</label>
-                            <a class="btn btn-success" href="{{ route('orders.sweets', $data->id) }}">Sweet Details</a>
+                            <a class="btn btn-success" href="{{ route('orders.sweets', $data->id) }}">Product Details</a>
                             <a class="btn btn-primary" href="{{ route('orders.invoice', $data->id) }}">Invoice</a>
                             <a href="{{ route('orders.index') }}" class="btn btn-danger me-2">Back</a>
                         </div>
