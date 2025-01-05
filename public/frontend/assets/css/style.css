@@ -362,10 +362,6 @@
 
 /*Bottom Banner Start*/
 
-/*.bottom-banner{*/
-/*    height: 400px;*/
-/*}*/
-
 .bottom-banner .cta-footer,
 .bottom-banner .cta-footer * {
     box-sizing: border-box;
@@ -401,13 +397,14 @@
 .bottom-banner .text {
     color: #ffffff;
     text-align: center;
-    font-size: 57px;
+    font-size: 57px; /* Scales with viewport width */
     line-height: 97.5%;
     font-weight: 900;
     position: absolute;
-    left: 596px;
-    top: 91px;
-    width: 728px;
+    width: 45%;
+    top: 20%; /* Adjust placement for responsiveness */
+    left: 50%;
+    transform: translateX(-50%);
 }
 .bottom-banner .button {
     text-decoration: none;

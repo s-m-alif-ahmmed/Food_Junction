@@ -149,25 +149,84 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
-                <form action="" method="POST" >
+                <form id="searchForm" method="GET">
                     @csrf
-                    @method('GET')
-
                     <div class="input-group search-modal mb-3">
-                        <input type="text" class="form-control search-input" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                        <button type="submit" class="input-group-text" id="basic-addon2">
-                            <img src="{{ asset('frontend/images/icons/search.svg') }}" alt="">
+                        <input type="text" class="form-control search-input" name="search" id="search" placeholder="Search product" aria-label="Search product" aria-describedby="basic-addon2">
+                        <button type="button" id="searchButton" class="input-group-text">
+                            <img src="{{ asset('frontend/images/icons/search.svg') }}" alt="Search">
                         </button>
                     </div>
-
                 </form>
 
-                <p class="text-muted text-center">No Product Found!</p>
+                <div id="search-list" style="height: 500px; overflow-y: scroll; overflow-x: hidden;">
+                    <!-- Search results will be dynamically inserted here -->
+                </div>
             </div>
+
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Search button click handler
+            $('#searchButton').on('click', function () {
+                var value = $('#search').val().trim(); // Get and trim the input value
+
+                if (value.length > 0) {
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ route('search') }}",
+                        data: { search: value },
+                        success: function (response) {
+                            if (response.searchProducts && response.searchProducts.length > 0) {
+                                renderSearchResults(response.searchProducts);
+                            } else {
+                                $('#search-list').html('<p class="text-muted text-center">No Product Found!</p>');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("AJAX Error:", error);
+                            $('#search-list').html('<p class="text-muted text-center">Error fetching products!</p>');
+                        }
+                    });
+                } else {
+                    $('#search-list').empty(); // Clear results if input is empty
+                }
+            });
+
+            // Function to render search results
+            function renderSearchResults(searchProducts) {
+                let html = '';
+                searchProducts.forEach(function (product) {
+                    html += `
+                    <div class="card mb-3" style="max-width: 540px;">
+                        <div class="row g-0">
+                            <div class="col-md-3 col-sm-3 col-3">
+                                <a class="text-decoration-none text-black" href="/product/${product.product_slug}">
+                                    <img src="/${product.image}" class="img-fluid rounded-start" alt="${product.name}" style="height: 100px;">
+                                </a>
+                            </div>
+                            <div class="col-md-9 col-sm-9 col-9">
+                                <div class="card-body">
+                                    <a class="text-decoration-none text-black" href="/product/${product.product_slug}">
+                                        <h5 class="card-title fs-18 fsw-bold">${product.name}</h5>
+                                        <p class="card-text fs-14">${product.price} টাকা (<span><del class="text-danger">${product.discount_price} টাকা</del></span>)</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+                $('#search-list').html(html); // Update the search list
+            }
+        });
+    </script>
+
+@endpush
+
 
 <div class="offcanvas offcanvas-start" data-bs-backdrop="static" tabindex="-1" id="sideNavbar" aria-labelledby="staticBackdropLabel">
     <div class="offcanvas-header">

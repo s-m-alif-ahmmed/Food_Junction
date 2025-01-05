@@ -59,12 +59,13 @@
                             </div>
                         </div>
                         <div class="">
-                            <a href="">
-                                <i class="fa-solid fa-heart fs-22" style="color: var(--red);"></i>
-                            </a>
-{{--                            <a href="">--}}
-                                {{--                            <i class="fa-solid fa-heart fs-22" style="color: #bdbdbd;"></i>--}}
-{{--                            </a>--}}
+{{--                            <button class="wishlist-btn" data-product-id="{{ $product->id }}">--}}
+{{--                                @if(Auth::check() && Auth::user()->wishlist->contains('product_id', $product->id))--}}
+                                    <i class="fa-solid fa-heart fs-22" style="color: red;"></i>
+{{--                                @else--}}
+{{--                                    <i class="fa-solid fa-heart fs-22" style="color: #bdbdbd;"></i>--}}
+{{--                                @endif--}}
+{{--                            </button>--}}
                         </div>
                     </div>
                     <div class="sweet-price">
@@ -336,4 +337,48 @@
         showErrorToast("{{ session('t-error') }}");
         @endif
     </script>
+
+    <script>
+        $(document).on('click', '.wishlist-btn', function() {
+            var productId = $(this).data('product-id');
+            var $icon = $(this).find('i');
+
+            // Check if product is already in wishlist
+            if ($icon.css('color') == 'rgb(189, 189, 189)') { // Grey heart means not in wishlist
+                // Add to wishlist
+                $.ajax({
+                    url: '/wishlist/add',
+                    method: 'POST',
+                    data: {
+                        product_id: productId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.status == 'added') {
+                            $icon.css('color', 'red');
+                        } else if (response.status == 'exists') {
+                            alert('Product is already in your wishlist!');
+                        }
+                    }
+                });
+            } else {
+                // Remove from wishlist
+                $.ajax({
+                    url: '/wishlist/remove',
+                    method: 'POST',
+                    data: {
+                        product_id: productId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.status == 'removed') {
+                            $icon.css('color', '#bdbdbd');
+                        }
+                    }
+                });
+            }
+        });
+
+    </script>
+
 @endpush

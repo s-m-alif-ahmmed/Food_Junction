@@ -7,6 +7,8 @@ use App\Http\Controllers\Web\Frontend\ProductReviewController;
 use App\Http\Controllers\Web\Frontend\CartController;
 use App\Http\Controllers\Web\Frontend\OrderController;
 use App\Http\Controllers\Web\Frontend\UserProfileController;
+use App\Http\Controllers\Web\Frontend\SearchController;
+use App\Http\Controllers\Web\Frontend\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Landing Page
@@ -18,9 +20,13 @@ Route::get('/confirm-order', [HomeController::class, 'confirmOrder'])->name('con
 
 Route::get('/food-junction/{page_slug}', [HomeController::class, 'dynamicPage'])->name('user.dynamic.page');
 
+
 //Contact
 Route::get('/contact', [ContactController::class, 'contact'])->name('contact');
 Route::post('/contact/store', [ContactController::class, 'store'])->name('contact.store');
+
+//Search
+Route::get('/product/search', [SearchController::class, 'search'])->name('search');
 
 //Sweet Review
 Route::post('/sweet/review/store', [ProductReviewController::class, 'store'])->name('sweet.review.store');
@@ -37,12 +43,16 @@ Route::get('/order-complete', [OrderController::class, 'orderComplete'])->name('
 Route::get('/order-detail/{tracking_id}', [OrderController::class, 'orderDetails'])->name('order.details');
 
 Route::middleware('auth')->group(function () {
+
     Route::get('/dashboard', [DashboardController::class, 'userDashboard'])->name('user.dashboard');
 
-//    User Profile Update
+    // User Profile Update
     Route::patch('/dashboard/setting/update', [UserProfileController::class, 'UpdateProfile'])->name('user.update.profile');
     Route::patch('/dashboard/setting/update/password', [UserProfileController::class, 'UpdatePassword'])->name('user.update.profile.password');
 
+    //Wishlist
+    Route::post('/wishlist/add', [WishlistController::class, 'add']);
+    Route::post('/wishlist/remove', [WishlistController::class, 'remove']);
 
 });
 
