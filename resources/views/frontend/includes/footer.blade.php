@@ -8,25 +8,25 @@
                 </p>
             </div>
 
-{{--            <div class="col-md-2">--}}
-{{--                <p class="fw-bold fs-20">মেনু</p>--}}
-{{--                <ul class="navbar-nav">--}}
+            <div class="col-md-2">
+                <p class="fw-bold fs-20">Quick Links</p>
+                <ul class="navbar-nav">
 {{--                    <li class="nav-item">--}}
 {{--                        <a class="nav-link" href="">Videos</a>--}}
 {{--                    </li>--}}
-{{--                    <li class="nav-item">--}}
-{{--                        <a class="nav-link" href="">মেনু ২</a>--}}
-{{--                    </li>--}}
-{{--                    <li class="nav-item">--}}
-{{--                        <a class="nav-link" href="">মেনু ৩</a>--}}
-{{--                    </li>--}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('faq') }}">FAQ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('about-us') }}">About Us</a>
+                    </li>
 {{--                    <li class="nav-item">--}}
 {{--                        <a class="nav-link" href="">মেনু ৪</a>--}}
 {{--                    </li>--}}
-{{--                </ul>--}}
-{{--            </div>--}}
-            <div class="col-md-4">
-                <p class="fw-bold fs-20">মেনু</p>
+                </ul>
+            </div>
+            <div class="col-md-2">
+                <p class="fw-bold fs-20">Company</p>
                 <ul class="navbar-nav">
                     @php
                         $dynamic_pages = \App\Models\DynamicPage::query()->where('status','active')->latest()->get();
@@ -36,20 +36,11 @@
                         <a class="nav-link" href="{{ route('user.dynamic.page', $page->page_slug) }}">{{ $page->page_title }}</a>
                     </li>
                     @endforeach
-{{--                    <li class="nav-item">--}}
-{{--                        <a class="nav-link" href="">মেনু ২</a>--}}
-{{--                    </li>--}}
-{{--                    <li class="nav-item">--}}
-{{--                        <a class="nav-link" href="">মেনু ৩</a>--}}
-{{--                    </li>--}}
-{{--                    <li class="nav-item">--}}
-{{--                        <a class="nav-link" href="">মেনু ৪</a>--}}
-{{--                    </li>--}}
                 </ul>
             </div>
             <div class="col-md-4">
                 <p class="fw-bold fs-20">
-                    যোগাযোগ
+                    Contact
                 </p>
                 <p>
                     <i class="fa fa-phone"></i>
@@ -62,27 +53,27 @@
                 <div class="social-icon">
                     <ul class="navbar-nav flex-row footer-social-icon">
                         <li class="nav-item">
-                            <a class="nav-link" href="" style="">
+                            <a class="nav-link" href="https://www.facebook.com/FoodJunctionDhaka24" target="_blank">
                                 <i class="fa-brands fa-facebook" style=""></i>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="https://api.whatsapp.com/send?phone=01607022072" target="_blank">
                                 <i class="fa-brands fa-whatsapp" ></i>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="" target="_blank">
                                 <i class="fa-brands fa-instagram"></i>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="" target="_blank">
                                 <i class="fa-brands fa-youtube"></i>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="" target="_blank">
                                 <i class="fa-brands fa-x-twitter"></i>
                             </a>
                         </li>
@@ -98,8 +89,8 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 text-center">
-                <p class="fs-16">All <i class="fa-regular fa-copyright"></i> copyrights reserved by <a class="text-decoration-none text-black" href="">Food Function</a>. Design & Developed by
-                    <a class="text-decoration-none text-black" href="https://www.smalifahmmed.com">S M Alif Ahmmed</a>.</p>
+                <p class="fs-16">All <i class="fa-regular fa-copyright"></i> copyrights reserved by <a class="text-decoration-none text-black" href="https://www.facebook.com/FoodJunctionDhaka24">Food Function</a>. Design & Developed by
+                    <a class="text-decoration-none text-black" href="https://www.facebook.com/Netbindubd">Net Bindu</a>.</p>
             </div>
         </div>
     </div>

@@ -13,6 +13,8 @@
 
 @section('content')
 
+    @include('frontend.includes.top-nav-button')
+
     <section class="py-5">
         <div class="container">
             <div class="row">

@@ -61,7 +61,7 @@
                                             ?>
                                         <div class="row border-bottom py-2">
                                             <div class="col-lg-2 col-md-3 col-sm-3 col-3">
-                                                <a href="{{ route('sweets.detail', $cart->product->product_slug ) }}">
+                                                <a href="{{ route('product.detail', $cart->product->product_slug ) }}">
                                                     <div class="cart-img">
                                                         <img src="{{ asset($cart->product->image ?? '/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
                                                     </div>
@@ -70,7 +70,7 @@
                                             <div class="col-lg-8 col-md-7 col-sm-7 col-7">
                                                 <div>
                                                     <div>
-                                                        <a href="{{ route('sweets.detail', $cart->product->product_slug ) }}" class="sweet-name">
+                                                        <a href="{{ route('product.detail', $cart->product->product_slug ) }}" class="sweet-name">
                                                             {{ $cart->product->name ?? 'Product Name' }}
                                                         </a>
                                                     </div>
@@ -185,7 +185,7 @@
                                     <p class="fsw-semibold fs-20">Your cart is currently empty.</p>
                                 </div>
                                 <div class="">
-                                    <a href="{{ route('sweets') }}" class="btn review-btn">Return to sweets</a>
+                                    <a href="{{ route('products') }}" class="btn review-btn">Return to products</a>
                                 </div>
                             </div>
                         @endif
@@ -202,7 +202,7 @@
                                     @foreach($carts as $cart)
                                         <div class="row border-bottom py-2">
                                             <div class="col-lg-2 col-md-3 col-sm-3 col-3">
-                                                <a href="{{ route('sweets.detail', $cart['product']['product_slug'] ) }}">
+                                                <a href="{{ route('product.detail', $cart['product']['product_slug'] ) }}">
                                                     <div class="cart-img">
                                                         <!-- Display product image -->
                                                         <img src="{{ asset($cart['product']['image'] ?? '/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
@@ -212,7 +212,7 @@
                                             <div class="col-lg-8 col-md-7 col-sm-7 col-7">
                                                 <div>
                                                     <div>
-                                                        <a href="{{ route('sweets.detail', $cart['product']['product_slug'] ) }}" class="sweet-name">
+                                                        <a href="{{ route('product.detail', $cart['product']['product_slug'] ) }}" class="sweet-name">
                                                             <!-- Display product name -->
                                                             {{ $cart['product']->name ?? 'Product Name' }}
                                                         </a>
@@ -361,7 +361,7 @@
                                     <p class="fsw-semibold fs-20">Your cart is currently empty.</p>
                                 </div>
                                 <div class="">
-                                    <a href="{{ route('sweets') }}" class="btn review-btn">Return to sweets</a>
+                                    <a href="{{ route('products') }}" class="btn review-btn">Return to sweets</a>
                                 </div>
                             </div>
                         @endif

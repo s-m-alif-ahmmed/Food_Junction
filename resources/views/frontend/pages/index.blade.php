@@ -96,7 +96,7 @@
                     <div class="cta">
                         <img class="image img-fluid w-100" src="{{ asset('frontend/images/section/home/bottom-banner.png') }}" />
                         <div class="text">Are you ready to order with the best deals?</div>
-                        <a href="" class="button">
+                        <a href="{{ route('products') }}" class="button">
                             <div class="text2">Proceed to order</div>
                             <div class="icon">
                                 <img src="{{ asset('frontend/images/icons/arrow.svg') }}" alt="">

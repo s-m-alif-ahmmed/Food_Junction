@@ -205,13 +205,13 @@
                     <div class="card mb-3" style="max-width: 540px;">
                         <div class="row g-0">
                             <div class="col-md-3 col-sm-3 col-3">
-                                <a class="text-decoration-none text-black" href="/product/${product.product_slug}">
+                                <a class="text-decoration-none text-black" href="/product/detail/${product.product_slug}">
                                     <img src="/${product.image}" class="img-fluid rounded-start" alt="${product.name}" style="height: 100px;">
                                 </a>
                             </div>
                             <div class="col-md-9 col-sm-9 col-9">
                                 <div class="card-body">
-                                    <a class="text-decoration-none text-black" href="/product/${product.product_slug}">
+                                    <a class="text-decoration-none text-black" href="/product/detail/${product.product_slug}">
                                         <h5 class="card-title fs-18 fsw-bold">${product.name}</h5>
                                         <p class="card-text fs-14">${product.price} টাকা (<span><del class="text-danger">${product.discount_price} টাকা</del></span>)</p>
                                     </a>
@@ -241,11 +241,11 @@
         ?>
         <ul>
             <li class="list-unstyled">
-                <a class="text-decoration-none text-black" href="">All Categories</a>
+                <a class="text-decoration-none text-black" href="{{ route('products') }}">All Categories</a>
             </li>
             @foreach($categories as $category)
                 <li class="list-unstyled">
-                    <a class="text-decoration-none text-black" href="">{{ $category->name }}</a>
+                    <a class="text-decoration-none text-black" href="{{ route('category.products', $category->category_slug) }}">{{ $category->name }}</a>
                 </li>
             @endforeach
             @if(Auth::check())

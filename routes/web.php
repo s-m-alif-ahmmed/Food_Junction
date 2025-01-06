@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 
 //! Route for Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
+Route::get('/about-us', [HomeController::class, 'about'])->name('about-us');
 Route::get('/products', [HomeController::class, 'products'])->name('products');
 Route::get('/products/{category_slug}', [HomeController::class, 'categoryProduct'])->name('category.products');
 Route::get('/product/detail/{product_slug}', [HomeController::class, 'detail'])->name('product.detail');

@@ -12,6 +12,8 @@
 
 @section('content')
 
+    @include('frontend.includes.top-nav-button')
+
     <section class="sweet-page">
 
         <div class="container-fluid pb-3">

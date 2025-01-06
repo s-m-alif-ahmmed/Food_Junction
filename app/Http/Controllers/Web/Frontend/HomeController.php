@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Category;
 use App\Models\DynamicPage;
+use App\Models\Faq;
 use App\Models\Product;
 use App\Models\ProductReview;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,15 @@ class HomeController extends Controller {
     public function index(): View {
         $products = Product::where('status','active')->latest()->get();
         return view('frontend.pages.index',compact('products'));
+    }
+
+    public function faq(): View {
+        $faqs = Faq::where('status','active')->latest()->get();
+        return view('frontend.pages.faq',compact('faqs'));
+    }
+
+    public function about(): View {
+        return view('frontend.pages.about-us');
     }
 
     public function products(): View {
@@ -43,7 +53,7 @@ class HomeController extends Controller {
             ->latest()
             ->get();
 
-        return view('frontend.pages.product', compact('products', 'category'));
+        return view('frontend.pages.product-category', compact('products', 'category'));
     }
 
 
