@@ -21,6 +21,7 @@ class Product extends Model
         'image',
         'price',
         'discount_price',
+        'product_type',
         'product_slug',
         'status',
     ];
@@ -43,6 +44,12 @@ class Product extends Model
     public function wishlist()
     {
         return $this->hasMany(Wishlist::class);
+    }
+
+    // add to wishlist In product model
+    public function wishlistByUsers()
+    {
+        return $this->belongsToMany(User::class, 'wishlists', 'product_id', 'user_id');
     }
 
 }

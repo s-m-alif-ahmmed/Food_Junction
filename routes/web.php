@@ -53,8 +53,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/dashboard/setting/update/password', [UserProfileController::class, 'UpdatePassword'])->name('user.update.profile.password');
 
     //Wishlist
-    Route::post('/wishlist/add', [WishlistController::class, 'add']);
-    Route::post('/wishlist/remove', [WishlistController::class, 'remove']);
+    Route::post('/wishlist/add/{id}', [WishlistController::class, 'add'])->name('product.wishlist.add');
+    Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('product.wishlist.remove');
+
 
 });
 

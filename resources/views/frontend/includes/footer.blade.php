@@ -44,7 +44,7 @@
                 </p>
                 <p>
                     <i class="fa fa-phone"></i>
-                    ০১৬০৭০২২০৭২
+                    01607022072
                 </p>
                 <p>
                     <i class="fa-solid fa-location-dot"></i>

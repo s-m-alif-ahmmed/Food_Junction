@@ -42,9 +42,10 @@ class User extends Authenticatable
         ];
     }
 
+    // add to wishlist In User model
     public function wishlist()
     {
-        return $this->hasMany(Wishlist::class);
+        return $this->belongsToMany(Wishlist::class, 'wishlists', 'user_id', 'product_id');
     }
 
 }

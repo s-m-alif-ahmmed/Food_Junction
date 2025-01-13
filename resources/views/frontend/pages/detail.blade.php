@@ -47,27 +47,47 @@
                     </div>
                     <div class="d-flex justify-content-between">
                         <div class="d-flex">
-                            <div class="">
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-yellow"></i>
-                                <i class="fa-solid fa-star star-non-yellow"></i>
+                            <div>
+                                {{-- Calculate the average rating --}}
+                                @php
+                                    $averageRating = $product_reviews->avg('rating') ?? 0; // Average of 'rating' field
+                                    $ratingsCount = $product_reviews->count(); // Total number of reviews
+                                @endphp
+
+                                {{-- Display filled stars based on average rating --}}
+                                @for ($i = 0; $i < floor($averageRating); $i++)
+                                    <i class="fa-solid fa-star star-yellow"></i>
+                                @endfor
+
+                                {{-- Display half star if needed --}}
+                                @if ($averageRating - floor($averageRating) >= 0.5)
+                                    <i class="fa-solid fa-star-half-alt star-yellow"></i>
+                                @endif
+
+                                {{-- Display remaining empty stars --}}
+                                @for ($i = ceil($averageRating); $i < 5; $i++)
+                                    <i class="fa-solid fa-star star-non-yellow"></i>
+                                @endfor
                             </div>
                             <div class="ps-2">
-                            <span class="fs-12">
-                                (312 ratings)
-                            </span>
+                                <span class="fs-12">
+                                    ({{ $ratingsCount }} ratings)
+                                </span>
                             </div>
                         </div>
+
+
                         <div class="">
-{{--                            <button class="wishlist-btn" data-product-id="{{ $product->id }}">--}}
-{{--                                @if(Auth::check() && Auth::user()->wishlist->contains('product_id', $product->id))--}}
-                                    <i class="fa-solid fa-heart fs-22" style="color: red;"></i>
-{{--                                @else--}}
-{{--                                    <i class="fa-solid fa-heart fs-22" style="color: #bdbdbd;"></i>--}}
-{{--                                @endif--}}
-{{--                            </button>--}}
+                            @if (Auth::check())
+                                <button class="bookmark-btn border-0" type="button" onclick="toggleBookmark({{ $product->id }}, this)">
+                                    <i class="fa-solid fa-heart fs-22 wishlist-icon" style="color: {{ $product->wishlistByUsers->contains(auth()->id()) ? 'red' : '#bdbdbd' }};"></i>
+                                </button>
+                            @else
+                                <button class="bookmark-btn border-0" type="button" onclick="toggleBookmark({{ $product->id }}, this)">
+                                    <i class="fa-solid fa-heart fs-22" style="color: #bdbdbd;"></i>
+                                </button>
+                            @endif
+
                         </div>
                     </div>
                     <div class="sweet-price">
@@ -87,33 +107,45 @@
                             <input type="hidden" name="user_id" value="" />
                         @endif
 
-                        <div class="sweet-weight">
-                            <div class="d-flex">
-                                <div class="pe-3">
-                                    <span>
-                                        ওজন:
-                                    </span>
-                                </div>
-                                <div class="pe-3">
-                                    <select name="weight" id="" class="" style="width: 150px;">
-                                        <option value="500" selected>৫০০ গ্রাম</option>
-                                        <option value="1000">১ কেজি</option>
-                                        <option value="1500">১.৫ কেজি</option>
-                                        <option value="2000">২ কেজি</option>
-                                        <option value="2500">২.৫ কেজি</option>
-                                        <option value="3000">৩ কেজি</option>
-                                        <option value="4000">৪ কেজি</option>
-                                        <option value="5000">৫ কেজি</option>
-                                        <option value="6000">৬ কেজি</option>
-                                        <option value="7000">৭ কেজি</option>
-                                        <option value="8000">৮ কেজি</option>
-                                        <option value="9000">৯ কেজি</option>
-                                        <option value="10000">১০ কেজি</option>
-                                    </select>
-                                </div>
+                        @if($product->product_type == 'Sweet')
+                            <div class="sweet-weight">
+                                <div class="d-flex">
+                                    <div class="pe-3">
+                                        <span>
+                                            ওজন:
+                                        </span>
+                                    </div>
+                                    <div class="pe-3">
+                                        <select name="weight" id="" class="" style="width: 150px;">
+                                            <option value="500" selected>৫০০ গ্রাম</option>
+                                            <option value="1000">১ কেজি</option>
+                                            <option value="1500">১.৫ কেজি</option>
+                                            <option value="2000">২ কেজি</option>
+                                            <option value="2500">২.৫ কেজি</option>
+                                            <option value="3000">৩ কেজি</option>
+                                            <option value="4000">৪ কেজি</option>
+                                            <option value="5000">৫ কেজি</option>
+                                            <option value="6000">৬ কেজি</option>
+                                            <option value="7000">৭ কেজি</option>
+                                            <option value="8000">৮ কেজি</option>
+                                            <option value="9000">৯ কেজি</option>
+                                            <option value="10000">১০ কেজি</option>
+                                        </select>
+                                    </div>
 
+                                </div>
                             </div>
-                        </div>
+                        @elseif($product->product_type == 'Product')
+                            <div class="product-detail-quantity py-2">
+                                <div class="quantity">
+                                    <button type="button" class="minus" aria-label="Decrease">&minus;</button>
+                                    <input type="number" class="input-box" name="quantity" value="1" min="1" max="100">
+                                    <button type="button" class="plus" aria-label="Increase">&plus;</button>
+                                </div>
+                            </div>
+                        @endif
+
+
                         @if(Auth::check())
                             <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">
                                 <span class="">
@@ -130,12 +162,14 @@
                                 </span>
                             </div>
                         @endif
-                        <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">
-                            <span class="">
-                                <i class="fa-solid fa-tag me-2 text-warning"></i>
-                                If you order <strong>2kg</strong> then <strong>delivery free</strong>!
-                            </span>
-                        </div>
+                        @if($product->product_type == 'Sweet')
+                            <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">
+                                <span class="">
+                                    <i class="fa-solid fa-tag me-2 text-warning"></i>
+                                    If you order <strong>2kg</strong> then <strong>delivery free</strong>!
+                                </span>
+                            </div>
+                        @endif
                         <div class="mt-4">
                             <button class="btn cart-btn m-1" style="background-color: var(--yellow);" type="submit" > <i class="fa-solid fa-shopping-cart"></i> Add to Cart</button>
 {{--                            <button class="btn cart-btn m-1" style="background-color: var(--red);"> <i class="fa-solid fa-money-check-dollar"></i> Purchase Now</button>--}}
@@ -289,45 +323,98 @@
 @endsection
 
 @push('scripts')
+
     <script>
-        document.getElementById('add-to-cart-form').addEventListener('submit', function (e) {
-            e.preventDefault(); // Prevent default form submission
+        (function () {
+            const quantityContainer = document.querySelector(".quantity");
+            const minusBtn = quantityContainer.querySelector(".minus");
+            const plusBtn = quantityContainer.querySelector(".plus");
+            const inputBox = quantityContainer.querySelector(".input-box");
 
-            const form = this;
-            const formData = new FormData(form);
-            const product_id = formData.get('product_id');
-            const weight = formData.get('weight');
-            const user_id = formData.get('user_id');
-            const csrfToken = document.querySelector('input[name="_token"]').value;
+            updateButtonStates();
 
-            // Send the form data to the server
-            fetch(form.action, {
+            quantityContainer.addEventListener("click", handleButtonClick);
+            inputBox.addEventListener("input", handleQuantityChange);
+
+            function updateButtonStates() {
+                const value = parseInt(inputBox.value);
+                minusBtn.disabled = value <= 1;
+                plusBtn.disabled = value >= parseInt(inputBox.max);
+            }
+
+            function handleButtonClick(event) {
+                if (event.target.classList.contains("minus")) {
+                    decreaseValue();
+                } else if (event.target.classList.contains("plus")) {
+                    increaseValue();
+                }
+            }
+
+            function decreaseValue() {
+                let value = parseInt(inputBox.value);
+                value = isNaN(value) ? 1 : Math.max(value - 1, 1);
+                inputBox.value = value;
+                updateButtonStates();
+                handleQuantityChange();
+            }
+
+            function increaseValue() {
+                let value = parseInt(inputBox.value);
+                value = isNaN(value) ? 1 : Math.min(value + 1, parseInt(inputBox.max));
+                inputBox.value = value;
+                updateButtonStates();
+                handleQuantityChange();
+            }
+
+            function handleQuantityChange() {
+                let value = parseInt(inputBox.value);
+                value = isNaN(value) ? 1 : value;
+
+                if (value > 100) {
+                    inputBox.value = 1;  // Reset to 1 if the value exceeds 100
+                }
+            }
+
+        })();
+    </script>
+
+    <script>
+        function toggleBookmark(id, button) {
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+            if (!csrfToken) {
+                console.error('CSRF token meta tag is missing from the document.');
+                showErrorToast('An error occurred. CSRF token is missing.');
+                return;
+            }
+
+            fetch(`/wishlist/add/${id}`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    product_id,
-                    weight,
-                    user_id,
-                }),
+                body: JSON.stringify({}),
             })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        const icon = button.querySelector('.wishlist-icon');
+                        if (data.is_wishlist) {
+                            icon.style.color = 'red';
+                        } else {
+                            icon.style.color = '#bdbdbd';
+                        }
                         showSuccessToast(data.message);
                     } else {
-                        showErrorToast(data.message);
+                        showErrorToast('Unexpected error: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    showErrorToast('You must be logged in to wishlist a product.');
                 });
-        });
-
+        }
     </script>
-
 
     <script>
         // Trigger toaster based on session messages

@@ -51,6 +51,17 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="product_type" class="form-label">Product Type:</label>
+                            <select class="form-select select2" name="product_type" id="product_type">
+                                <option value="Sweet">Sweet</option>
+                                <option value="Product">Product</option>
+                            </select>
+                            @error('product_type')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
                             <label for="category_id" class="form-label">Category:</label>
                             <select class="form-select select2" name="category_id" id="category_id">
                                 @foreach($categories as $category)

@@ -166,7 +166,38 @@
                         <!-- Wishlist Tab -->
                         <div class="tab-pane fade" id="wishlist" role="tabpanel" aria-labelledby="wishlist-tab">
                             <p class="fs-20 fsw-bold">My Wishlist</p>
-                            <p>Your wishlist is empty.</p>
+                            @if($wishlists->count() > 0)
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Product Image</th>
+                                        <th scope="col">Product Name</th>
+                                        <th scope="col">Price</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($wishlists as $wishlist)
+                                        <tr>
+                                            <th scope="row">
+                                                <a href="{{ route('product.detail', $wishlist->product->product_slug) }}" class="text-black text-decoration-none">
+                                                    <img class="img-fluid" style="height: 50px;" src="{{ $wishlist->product->image }}" alt="{{ $wishlist->product->name }}">
+                                                </a>
+                                            </th>
+                                            <th scope="row">
+                                                <a href="{{ route('product.detail', $wishlist->product->product_slug) }}" class="text-black text-decoration-none">
+                                                    {{ $wishlist->product->name }}
+                                                </a>
+                                            </th>
+                                            <td>
+                                                {{ $wishlist->product->price }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <p>Your wishlist is empty.</p>
+                            @endif
                         </div>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\User;
+use App\Models\Wishlist;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -37,8 +38,9 @@ class DashboardController extends Controller
     public function userDashboard(): View
     {
         $orders = Order::where('user_id', Auth::user()->id)->get(); // Fetch all orders for the user
+        $wishlists = Wishlist::where('user_id', Auth::user()->id)->latest()->get();
 
-        return view('frontend.dashboard.dashboard', compact('orders'));
+        return view('frontend.dashboard.dashboard', compact('orders','wishlists'));
     }
 
 }

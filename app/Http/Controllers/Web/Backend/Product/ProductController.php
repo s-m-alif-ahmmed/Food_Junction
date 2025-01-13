@@ -92,6 +92,7 @@ class ProductController extends Controller
                 'image'             => 'required|image|mimes:jpeg,png,jpg,gif|max:200', // Max 200KB
                 'price'             => 'required',
                 'discount_price'    => 'nullable',
+                'product_type'      => 'nullable',
             ]);
 
             if ($validator->fails()) {
@@ -107,6 +108,7 @@ class ProductController extends Controller
             $data->description          = $request->description;
             $data->price                = $request->price;
             $data->discount_price       = $request->discount_price;
+            $data->product_type         = $request->product_type;
             $data->product_slug         = Str::slug($request->name);
 
             // Handle file upload
@@ -165,6 +167,7 @@ class ProductController extends Controller
                 'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:200', // Max 200KB
                 'price'             => 'required',
                 'discount_price'    => 'nullable',
+                'product_type'      => 'nullable',
             ]);
 
             if ($validator->fails()) {
@@ -180,6 +183,7 @@ class ProductController extends Controller
             $data->description          = $request->description;
             $data->price                = $request->price;
             $data->discount_price       = $request->discount_price;
+            $data->product_type         = $request->product_type;
             $data->product_slug         = Str::slug($request->name);
 
             // Handle file upload if a new image is provided

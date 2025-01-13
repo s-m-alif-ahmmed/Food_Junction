@@ -10,37 +10,76 @@ use Illuminate\Support\Facades\Auth;
 
 class WishlistController extends Controller
 {
-    // Add product to wishlist
-    public function add(Request $request)
+    public function add(Request $request, $id)
     {
-        $user = Auth::user();
-        $productId = $request->product_id;
-
-        // Check if the product is already in the wishlist
-        $wishlist = Wishlist::where('user_id', $user->id)->where('product_id', $productId)->first();
-
-        if (!$wishlist) {
-            // Add product to wishlist
-            Wishlist::create([
-                'user_id' => $user->id,
-                'product_id' => $productId
-            ]);
-
-            return response()->json(['status' => 'added']);
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You must be logged in to wishlist a product.',
+            ], 401);
         }
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You must be logged in to wishlist a product.'
+                ], 401);
+            }
 
-        return response()->json(['status' => 'exists']);
+            $product = Product::findOrFail($id);
+
+            // Check if the villa is already bookmarked
+            $wishlist = Wishlist::where('user_id', $user->id)->where('product_id', $product->id)->first();
+
+            if ($wishlist) {
+                // Remove wishlist
+                $user->wishlist()->detach($product->id);
+                return response()->json([
+                    'success' => true,
+                    'action' => 'removed',
+                    'is_favourite' => false,
+                    'message' => 'Product removed from wishlist.'
+                ]);
+            } else {
+                // Add to bookmarks
+                $user->wishlist()->attach($product->id, [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                return response()->json([
+                    'success' => true,
+                    'action' => 'added',
+                    'is_wishlist' => true,
+                    'message' => 'Product added to wishlist.'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
-    // Remove product from wishlist
-    public function remove(Request $request)
+    public function remove($id)
     {
-        $user = Auth::user();
-        $productId = $request->product_id;
+        try {
+            $wishlist = Wishlist::findOrFail($id);
+            $wishlist->delete();
 
-        // Remove product from wishlist
-        Wishlist::where('user_id', $user->id)->where('product_id', $productId)->delete();
-
-        return response()->json(['status' => 'removed']);
+            // Return success response as JSON
+            return response()->json([
+                'success' => true,
+                't-success' => 'Wishlist removed successfully!',
+            ]);
+        } catch (\Exception $e) {
+            // Return error response as JSON
+            return response()->json([
+                'success' => false,
+                't-error' => 'An error occurred while removing the wishlist.',
+            ]);
+        }
     }
+
 }
