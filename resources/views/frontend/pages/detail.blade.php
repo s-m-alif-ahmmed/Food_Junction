@@ -172,7 +172,6 @@
                         @endif
                         <div class="mt-4">
                             <button class="btn cart-btn m-1" style="background-color: var(--yellow);" type="submit" > <i class="fa-solid fa-shopping-cart"></i> Add to Cart</button>
-{{--                            <button class="btn cart-btn m-1" style="background-color: var(--red);"> <i class="fa-solid fa-money-check-dollar"></i> Purchase Now</button>--}}
                         </div>
 
                     </form>
@@ -323,6 +322,38 @@
 @endsection
 
 @push('scripts')
+
+    <script>
+        $(document).ready(function () {
+            // Handle the form submission
+            $('#add-to-cart-form').on('submit', function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                // Get the form data
+                let formData = $(this).serialize();
+
+                // Send the AJAX request
+                $.ajax({
+                    url: $(this).attr('action'), // Form action URL
+                    method: $(this).attr('method'), // Form method (POST)
+                    data: formData, // Serialized form data
+                    success: function (response) {
+                        if (response.success) {
+                            // Success feedback
+                            showSuccessToast(response['t-success'] || 'Item successfully added to cart!');
+                        } else {
+                            // Handle potential errors from the server
+                            showErrorToast(response['t-error'] || 'Something went wrong. Please try again.');
+                        }
+                    },
+                    error: function (xhr) {
+                        // Handle AJAX errors
+                        showErrorToast('An error occurred while adding the item to the cart. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
 
     <script>
         (function () {

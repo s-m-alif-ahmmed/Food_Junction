@@ -8,6 +8,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 
 class CartController extends Controller
@@ -31,7 +32,8 @@ class CartController extends Controller
                 if ($product) {
                     return [
                         'product' => $product,
-                        'weight' => $item['weight'],
+                        'weight' => $item['weight'] ?? null,
+                        'quantity' => $item['quantity'] ?? null,
                     ];
                 }
                 return null;
@@ -46,15 +48,25 @@ class CartController extends Controller
     public function addToCart(Request $request)
     {
         try {
-            // Get the data from the request
-            $data = $request->only(['product_id', 'weight']);
-            $productId = $data['product_id'];
-            $newWeight = $data['weight'];
+            // Assign data directly from the request
+            $productId = $request->input('product_id');
 
             // Fetch the product
             $product = Product::find($productId);
+
             if (!$product) {
-                return response()->json(['success' => false, 'message' => 'Product not found!'], 404);
+                return response()->json(['success' => false, 't-error' => 'Product not found!'], 404);
+            }
+
+            $product_type = $product->product_type;
+
+            // Adjust data based on product_type
+            if ($product_type === 'Sweet') {
+                $newWeight = $request->input('weight');
+            } elseif ($product_type === 'Product') {
+                $newQuantity = $request->input('quantity');
+            } else {
+                return response()->json(['success' => false, 't-error' => 'Invalid product type!'], 400);
             }
 
             // For logged-in users, save to the database
@@ -66,11 +78,15 @@ class CartController extends Controller
 
                 if ($existingCart) {
                     // If the product exists, sum the existing weight with the new weight
-                    $updatedWight = $existingCart->weight + $newWight;
-                    $existingCart->update(['weight' => $updatedWight]);
+                    if ($product_type === 'Sweet') {
+                        $existingCart->update(['weight' => $existingCart->weight + $newWeight]);
+                    } elseif ($product_type === 'Product') {
+                        $existingCart->update(['quantity' => $existingCart->quantity + $newQuantity]);
+                    }
+
                     return response()->json([
                         'success' => true,
-                        'message' => 'Cart updated with new weight!',
+                        't-success' => 'Cart updated with new weight!',
                         'cart' => $existingCart,
                     ]);
                 } else {
@@ -79,7 +95,7 @@ class CartController extends Controller
                     Cart::create($data);
                     return response()->json([
                         'success' => true,
-                        'message' => 'Item added to cart!',
+                        't-success' => 'Item added to cart!',
                     ]);
                 }
             }
@@ -90,8 +106,11 @@ class CartController extends Controller
             $found = false;
             foreach ($cart as $index => $item) {
                 if ($item['product_id'] == $productId) {
-                    // Update weight if product exists
-                    $cart[$index]['weight'] = $newWeight;
+                    if ($product_type === 'Sweet') {
+                        $cart[$index]['weight'] += $newWeight;
+                    } elseif ($product_type === 'Product') {
+                        $cart[$index]['quantity'] += $newQuantity;
+                    }
                     $found = true;
                     break;
                 }
@@ -101,12 +120,14 @@ class CartController extends Controller
             if (!$found) {
                 $cart[] = [
                     'product_id' => $productId,
-                    'weight' => $newWeight,
+                    'weight' => $product_type === 'Sweet' ? $newWeight : null,
+                    'quantity' => $product_type === 'Product' ? $newQuantity : null,
                     'product' => [
                         'id' => $product->id,
                         'name' => $product->name,
                         'image' => $product->image,
                         'price' => $product->price,
+                        'product_type' => $product_type,
                         'discount_price' => $product->discount_price,
                         'product_slug' => $product->product_slug,
                     ]
@@ -118,13 +139,13 @@ class CartController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => $found ? 'Cart updated with new weight!' : 'Item added to cart!',
+                't-success' => $found ? 'Cart updated with new weight!' : 'Item added to cart!',
                 'cart' => $cart,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to add item to cart!',
+                't-error' => 'Failed to add item to cart!',
                 'error' => $e->getMessage(),
             ], 500);
         }

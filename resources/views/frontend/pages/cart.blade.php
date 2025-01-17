@@ -76,7 +76,11 @@
                                                     </div>
                                                     <div>
                                                         <span class="cart-weight">
-                                                            {{ $cart->weight < 1000 ? englishToBengali($cart->weight) . ' গ্রাম' : englishToBengali($cart->weight / 1000) . ' কেজি' }}
+                                                            @if($cart->product->product_type == 'Sweet')
+                                                                {{ $cart->weight < 1000 ? englishToBengali($cart->weight) . ' গ্রাম' : englishToBengali($cart->weight / 1000) . ' কেজি' }}
+                                                            @elseif($cart->product->product_type == 'Product')
+                                                                {{ $cart->quantity }} pcs
+                                                            @endif
                                                         </span>
                                                         <p class="cart-price">{{ $cart->product->price ?? '0' }}Tk
                                                             @if($cart->product->discount_price)
@@ -214,13 +218,17 @@
                                                     <div>
                                                         <a href="{{ route('product.detail', $cart['product']['product_slug'] ) }}" class="sweet-name">
                                                             <!-- Display product name -->
-                                                            {{ $cart['product']->name ?? 'Product Name' }}
+                                                            {{ $cart['product']['name'] ?? 'Product Name' }}
                                                         </a>
                                                     </div>
                                                     <div>
                                                     <span class="cart-weight">
+                                                        @if($cart['product']['product_type'] == 'Sweet')
                                                         <!-- Display product weight (convert to grams or kg as needed) -->
                                                         {{ $cart['weight'] < 1000 ? $cart['weight'] . ' গ্রাম' : ($cart['weight'] / 1000) . ' কেজি' }}
+                                                        @elseif($cart['product']['product_type'] == 'Product')
+                                                            {{ $cart['quantity'] }} pcs
+                                                        @endif
                                                     </span>
                                                         <p class="cart-price">
                                                             <!-- Display product price -->
@@ -259,12 +267,21 @@
                                                                 // Convert the price from Bengali to English
                                                                 $price = banglaToEnglish($cart['product']['price']);
                                                                 $price = (float)$price;  // Convert the price to a float for calculation
+                                                                $product_type = $cart['product']['product_type'];
 
-                                                                // Convert the weight to float
-                                                                $weight = (float)$cart['weight'];
+                                                                if ($product_type == 'Sweet'){
+                                                                    // Convert the weight to float
+                                                                    $weight = (float)$cart['weight'];
 
-                                                                // Calculate the total price based on the weight
-                                                                $totalPrice = $price > 0 && $weight > 0 ? ($price / 1000) * $weight : 0;
+                                                                    // Calculate the total price based on the weight
+                                                                    $totalPrice = $price > 0 && $weight > 0 ? ($price / 1000) * $weight : 0;
+                                                                } elseif ($product_type == 'Product'){
+                                                                    // Convert the weight to float
+                                                                    $quantity = (float)$cart['quantity'];
+
+                                                                    // Calculate the total price based on the weight
+                                                                    $totalPrice = $price > 0 && $quantity > 0 ? ($price * $quantity) : 0;
+                                                                }
 
                                                                 // Convert the total price to Bengali numerals
                                                                 $totalPriceInBengali = englishToBengali(number_format($totalPrice, 2)); // Format with 2 decimal points
@@ -272,7 +289,6 @@
 
                                                             Total: {{ $totalPriceInBengali }} Tk
                                                         </span>
-
                                                     </div>
                                                 </div>
                                             </div>

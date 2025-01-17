@@ -114,7 +114,11 @@
                                                 </div>
                                                 <div>
                                                     <span class="cart-weight">
-                                                    {{ $cart->weight < 1000 ? englishToBengali($cart->weight) . ' গ্রাম' : englishToBengali($cart->weight / 1000) . ' কেজি' }}
+                                                        @if($cart->product->product_type == 'Sweet')
+                                                            {{ $cart->weight < 1000 ? englishToBengali($cart->weight) . ' গ্রাম' : englishToBengali($cart->weight / 1000) . ' কেজি' }}
+                                                        @elseif($cart->product->product_type == 'Product')
+                                                            {{ $cart->quantity < 1000 ? englishToBengali($cart->quantity) . ' গ্রাম' : englishToBengali($cart->quantity / 1000) . ' কেজি' }}
+                                                        @endif
                                                     </span>
                                                     <p class="cart-price">
                                                         {{ $cart->product->price ?? '0' }}Tk
