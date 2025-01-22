@@ -50,6 +50,8 @@ class CartController extends Controller
         try {
             // Assign data directly from the request
             $productId = $request->input('product_id');
+            $newWeight = $request->input('weight');
+            $newQuantity = $request->input('quantity');
 
             // Fetch the product
             $product = Product::find($productId);
@@ -59,15 +61,6 @@ class CartController extends Controller
             }
 
             $product_type = $product->product_type;
-
-            // Adjust data based on product_type
-            if ($product_type === 'Sweet') {
-                $newWeight = $request->input('weight');
-            } elseif ($product_type === 'Product') {
-                $newQuantity = $request->input('quantity');
-            } else {
-                return response()->json(['success' => false, 't-error' => 'Invalid product type!'], 400);
-            }
 
             // For logged-in users, save to the database
             if (Auth::check()) {
@@ -91,7 +84,12 @@ class CartController extends Controller
                     ]);
                 } else {
                     // If the product does not exist, create a new cart item
-                    $data['user_id'] = $userId;
+                    $data = [
+                        'user_id' => $userId,
+                        'product_id' => $productId,
+                        'quantity' => $newQuantity, // Assuming quantity is relevant for Products
+                        'weight' => $newWeight, // Assuming weight is relevant for Sweets
+                    ];
                     Cart::create($data);
                     return response()->json([
                         'success' => true,

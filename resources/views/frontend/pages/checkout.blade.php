@@ -66,8 +66,10 @@
                                 <textarea class="form-control" name="note" id="formGroupExampleInput" placeholder="Another input placeholder" cols="30" rows="3"></textarea>
                             </div>
                             <div class="d-flex mb-3">
-                                <input type="checkbox" class="" name="all_terms" id="all_terms" value="yes" placeholder="Example input placeholder">
-                                <label for="all_terms" class="form-label me-2">Accept all Terms and Conditions</label>
+                                <label for="all_terms" class="form-label me-2">
+                                    <input type="checkbox" class="" name="all_terms" id="all_terms" value="yes" placeholder="Example input placeholder">
+                                    Accept all Terms and Conditions
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -94,12 +96,19 @@
                                         }
 
                                         $price = banglaToEnglish($cart->product->price);
-                                        $gm = $price / 1000;
-                                        $total = $gm * $cart->weight;
+                                        $quantity = $cart->quantity;
+                                        $product_type = $cart->product->product_type;
+
+                                        if ($product_type == 'Sweet'){
+                                            $gm = $price / 1000;
+                                            $total = $gm * $cart->weight;
+                                        }elseif ($product_type == 'Product'){
+                                            $total = $quantity * $price;
+                                        }
                                         ?>
                                     <div class="row py-2">
                                         <div class="col-lg-3 col-md-3 col-sm-3 col-3">
-                                            <a href="{{ route('sweets.detail', $cart->product->product_slug ) }}">
+                                            <a href="{{ route('product.detail', $cart->product->product_slug ) }}">
                                                 <div class="cart-img">
                                                     <img src="{{ asset($cart->product->image ?? '/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
                                                 </div>
@@ -108,7 +117,7 @@
                                         <div class="col-lg-8 col-md-7 col-sm-7 col-7 checkout-cart-sweets">
                                             <div>
                                                 <div>
-                                                    <a href="{{ route('sweets.detail', $cart->product->product_slug ) }}" class="sweet-name">
+                                                    <a href="{{ route('product.detail', $cart->product->product_slug ) }}" class="sweet-name">
                                                         {{ $cart->product->name }}
                                                     </a>
                                                 </div>
@@ -117,7 +126,7 @@
                                                         @if($cart->product->product_type == 'Sweet')
                                                             {{ $cart->weight < 1000 ? englishToBengali($cart->weight) . ' গ্রাম' : englishToBengali($cart->weight / 1000) . ' কেজি' }}
                                                         @elseif($cart->product->product_type == 'Product')
-                                                            {{ $cart->quantity < 1000 ? englishToBengali($cart->quantity) . ' গ্রাম' : englishToBengali($cart->quantity / 1000) . ' কেজি' }}
+                                                            {{ $cart->quantity ?? '' }} pcs
                                                         @endif
                                                     </span>
                                                     <p class="cart-price">
@@ -150,21 +159,28 @@
                                 $totalWeight = 0;
                                 $discount = 0.0;
                                 $deliveryFee = 60; // default delivery fee
+                                $totalSweetPrice = 0.0;
+                                $totalProductPrice = 0.0;
 
                                 // Calculate subtotal and total weight from cart items
                                 foreach ($carts as $cart) {
                                     // Convert price to float for calculation (handling both current and old price)
                                     $productPrice = (float)banglaToEnglish($cart->product->price ?? 0); // Ensure the price is numeric
                                     $weight = (int)$cart->weight;
+                                    $product_type = $cart->product->product_type;
+                                    $quantity = $cart->quantity;
 
-                                    $gm = $productPrice / 1000;
-                                    $price = $gm * $weight;
+                                    if ($product_type == 'Sweet') {
+                                        $gm = $productPrice / 1000;
+                                        $sweetPrice = $gm * $weight;
+                                        $totalSweetPrice += $sweetPrice;
+                                    } elseif ($product_type == 'Product') {
+                                        $productPrice = $quantity * $productPrice;
+                                        $totalProductPrice += $productPrice;
+                                    }
 
-                                    // Add the current product price to the subtotal
-                                    $subtotal += $price;
-
-                                    // Ensure weight is treated as an integer (convert weight to grams)
-                                    $totalWeight += $weight; // Casting to integer to avoid decimal points
+                                    $subtotal = $totalSweetPrice + $totalProductPrice;
+                                    $total = $subtotal + $deliveryFee;
 
                                 }
 
@@ -172,11 +188,6 @@
                                 if (\Illuminate\Support\Facades\Auth::check()) {
                                     $discount = $subtotal * 0.05;
                                     $discount = round($discount);
-                                }
-
-                                // Check if delivery is free (if total weight >= 2000g)
-                                if ($totalWeight >= 2000) {
-                                    $deliveryFee = 0; // Free delivery if weight is 2000g or more
                                 }
 
                                 // Calculate total after discount and delivery fee
@@ -248,7 +259,7 @@
                                     <input type="hidden" name="product_id" value="{{ $cart['product']['id'] }}" />
                                     <input type="hidden" name="weight" value="{{ $cart['weight'] }}" />
                                     <div class="col-lg-3 col-md-3 col-sm-3 col-3">
-                                        <a href="{{ route('sweets.detail', $cart['product']['product_slug'] ) }}">
+                                        <a href="{{ route('product.detail', $cart['product']['product_slug'] ) }}">
                                             <div class="cart-img">
                                                 <img src="{{ asset($cart['product']['image'] ?? '/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
                                             </div>
@@ -257,7 +268,7 @@
                                     <div class="col-lg-8 col-md-7 col-sm-7 col-7 checkout-cart-sweets">
                                         <div>
                                             <div>
-                                                <a href="{{ route('sweets.detail', $cart['product']['product_slug'] ) }}" class="sweet-name">
+                                                <a href="{{ route('product.detail', $cart['product']['product_slug'] ) }}" class="sweet-name">
                                                     {{ $cart['product']->name ?? 'Product Name' }}
                                                 </a>
                                             </div>

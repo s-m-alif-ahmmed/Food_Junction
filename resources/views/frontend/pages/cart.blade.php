@@ -56,8 +56,15 @@
                                             }
 
                                             $price = banglaToEnglish($cart->product->price);
-                                            $gm = $price / 1000;
-                                            $total = $gm * $cart->weight;
+                                            $product_type = $cart->product->product_type;
+                                            if ($product_type == 'Sweet'){
+                                                $gm = $price / 1000;
+                                                $total = $gm * $cart->weight;
+                                            }elseif($product_type == 'Product') {
+                                                $quantity = $cart->quantity;
+                                                $total = $quantity * $price;
+                                            }
+
                                             ?>
                                         <div class="row border-bottom py-2">
                                             <div class="col-lg-2 col-md-3 col-sm-3 col-3">
@@ -112,37 +119,35 @@
                                 $totalWeight = 0;
                                 $discount = 0.0;
                                 $deliveryFee = 60; // default delivery fee
+                                $totalSweetPrice = 0.0;
+                                $totalProductPrice = 0.0;
 
                                 // Calculate subtotal and total weight from cart items
                                 foreach ($carts as $cart) {
                                     // Convert price to float for calculation (handling both current and old price)
                                     $productPrice = (float)banglaToEnglish($cart->product->price ?? 0); // Ensure the price is numeric
                                     $weight = (int)$cart->weight;
+                                    $quantity = $cart->quantity;
+                                    $product_type = $cart->product->product_type;
 
-                                    $gm = $productPrice / 1000;
-                                    $price = $gm * $weight;
-
-                                    // Add the current product price to the subtotal
-                                    $subtotal += $price;
-
-                                    // Ensure weight is treated as an integer (convert weight to grams)
-                                    $totalWeight += $weight; // Casting to integer to avoid decimal points
-
+                                    if ($product_type == 'Sweet') {
+                                        $gm = $productPrice / 1000;
+                                        $sweetPrice = $gm * $weight;
+                                        $totalSweetPrice += $sweetPrice;
+                                    } elseif ($product_type == 'Product') {
+                                        $productPrice = $quantity * $productPrice;
+                                        $totalProductPrice += $productPrice;
+                                    }
                                 }
-
+                                $subtotal = $totalSweetPrice + $totalProductPrice;
                                 // Apply 5% discount if the user is logged in
                                 if (\Illuminate\Support\Facades\Auth::check()) {
                                     $discount = $subtotal * 0.05;
                                     $discount = round($discount);
                                 }
-
-                                // Check if delivery is free (if total weight >= 2000g)
-                                if ($totalWeight >= 2000) {
-                                    $deliveryFee = 0; // Free delivery if weight is 2000g or more
-                                }
-
                                 // Calculate total after discount and delivery fee
                                 $discountTotal = $subtotal - $discount;
+                                $totalDiscount = $subtotal - $discount;
                                 $total = $discountTotal + $deliveryFee;
 
                                 // Convert numbers to Bengali
@@ -150,9 +155,7 @@
                                 $discountInBengali = englishToBengali(number_format($discount, 2));
                                 $deliveryFeeInBengali = ($deliveryFee == 0) ? 'Free' : englishToBengali(number_format($deliveryFee, 2).'Tk');
                                 $totalInBengali = englishToBengali(number_format($total, 2));
-
                             @endphp
-
                             <div class="col-md-4 py-2">
                                 <div class="card p-3">
                                     <div class="row">
@@ -263,7 +266,6 @@
                                                                     }
                                                                 }
 
-
                                                                 // Convert the price from Bengali to English
                                                                 $price = banglaToEnglish($cart['product']['price']);
                                                                 $price = (float)$price;  // Convert the price to a float for calculation
@@ -306,7 +308,7 @@
 
                                 <?php
                                 // Initialize variables for calculations
-                                $subtotal = 0;
+                                $totalSubtotal = 0;
                                 $totalDiscount = 0;
                                 $deliveryFee = 60;  // Default delivery fee
                                 $totalWeight = 0;    // Initialize total weight
@@ -317,32 +319,26 @@
                                 // Loop through the cart items to calculate subtotal, discount, and total weight
                                 foreach ($carts as $cart) {
                                     // Convert price to float (as in the original code)
+                                    $product_type = $cart['product']['product_type'];
                                     $price = banglaToEnglish($cart['product']['price']);
                                     $price = (float)$price;
 
-                                    // Convert weight to float (as in the original code)
-                                    $weight = (float)$cart['weight'];
-
-                                    // Calculate the total price for the current product
-                                    $productTotalPrice = $price > 0 && $weight > 0 ? ($price / 1000) * $weight : 0;
-
-                                    // Add the product total price to the subtotal
-                                    $subtotal += $productTotalPrice;
-
-                                    // Add the weight to the total weight
-                                    $totalWeight += $weight; // Add weight in grams
+                                    if ($product_type == 'Sweet'){
+                                        // Convert weight to float (as in the original code)
+                                        $weight = (float)$cart['weight'];
+                                        $productTotalPrice = $price > 0 && $weight > 0 ? ($price / 1000) * $weight : 0;
+                                        $totalSubtotal += $productTotalPrice;
+                                    } elseif ($product_type == 'Product'){
+                                        $quantity = (float)$cart['quantity'];
+                                        $productTotalPriceQuantity = $price * $quantity;
+                                        $totalSubtotal += $productTotalPriceQuantity;
+                                    }
                                 }
-
-                                // If the total weight exceeds 2000 grams, set delivery fee to 0 (free delivery)
-                                if ($totalWeight > 2000) {
-                                    $deliveryFee = 0;
-                                }
-
                                 // Calculate the final total
-                                $totalPrice = $subtotal + $deliveryFee;
+                                $totalPrice = $totalSubtotal + $deliveryFee;
 
                                 // Convert the total values to Bengali numerals for display
-                                $subtotalInBengali = englishToBengali(number_format($subtotal, 2));  // Format with 2 decimal points
+                                $subtotalInBengali = englishToBengali(number_format($totalSubtotal, 2));  // Format with 2 decimal points
                                 $totalDiscountInBengali = englishToBengali(number_format($totalDiscount, 2));  // Format with 2 decimal points
                                 $totalPriceInBengali = englishToBengali(number_format($totalPrice, 2));  // Format with 2 decimal points
                                 ?>

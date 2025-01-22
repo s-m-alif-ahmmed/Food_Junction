@@ -101,6 +101,7 @@
                         @method('POST')
 
                         <input type="hidden" name="product_id" value="{{ $product->id }}" />
+
                         @if(Auth::check())
                             <input type="hidden" name="user_id" value="{{ Auth::user()->id }}" />
                         @else
@@ -145,7 +146,6 @@
                             </div>
                         @endif
 
-
                         @if(Auth::check())
                             <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">
                                 <span class="">
@@ -162,14 +162,14 @@
                                 </span>
                             </div>
                         @endif
-                        @if($product->product_type == 'Sweet')
-                            <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">
-                                <span class="">
-                                    <i class="fa-solid fa-tag me-2 text-warning"></i>
-                                    If you order <strong>2kg</strong> then <strong>delivery free</strong>!
-                                </span>
-                            </div>
-                        @endif
+{{--                        @if($product->product_type == 'Sweet')--}}
+{{--                            <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">--}}
+{{--                                <span class="">--}}
+{{--                                    <i class="fa-solid fa-tag me-2 text-warning"></i>--}}
+{{--                                    If you order <strong>2kg</strong> then <strong>delivery free</strong>!--}}
+{{--                                </span>--}}
+{{--                            </div>--}}
+{{--                        @endif--}}
                         <div class="mt-4">
                             <button class="btn cart-btn m-1" style="background-color: var(--yellow);" type="submit" > <i class="fa-solid fa-shopping-cart"></i> Add to Cart</button>
                         </div>
