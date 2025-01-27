@@ -57,13 +57,20 @@
                                     }
 
                                     $price = banglaToEnglish($orderDetail->product->price);
-                                    $gm = $price / 1000;
-                                    $total = $gm * $orderDetail->weight;
+                                    $product_type = $orderDetail->product->product_type;
+
+                                    if ($product_type == 'Sweet'){
+                                        $gm = $price / 1000;
+                                        $total = $gm * $orderDetail->weight;
+                                    }elseif ($product_type == 'Product'){
+                                        $quantity = $orderDetail->quantity;
+                                        $total = $price * $quantity;
+                                    }
 
                                     ?>
                                 <div class="row border-bottom py-2">
                                     <div class="col-lg-2 col-md-3 col-sm-3 col-3">
-                                        <a href="{{ route('sweets.detail', $orderDetail->product->product_slug ) }}">
+                                        <a href="{{ route('product.detail', $orderDetail->product->product_slug ) }}">
                                             <div class="cart-img">
                                                 <img src="{{ asset($orderDetail->product->image ?? '/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
                                             </div>
@@ -72,13 +79,17 @@
                                     <div class="col-lg-8 col-md-7 col-sm-7 col-7">
                                         <div>
                                             <div>
-                                                <a href="{{ route('sweets.detail', $orderDetail->product->product_slug ) }}" class="sweet-name text-black text-decoration-none">
+                                                <a href="{{ route('product.detail', $orderDetail->product->product_slug ) }}" class="sweet-name text-black text-decoration-none">
                                                     {{ $orderDetail->product->name ?? 'Product Name' }}
                                                 </a>
                                             </div>
                                             <div class="cart-page">
                                             <span class="cart-weight">
-                                                {{ $orderDetail->weight < 1000 ? englishToBengali($orderDetail->weight) . ' গ্রাম' : englishToBengali($orderDetail->weight / 1000) . ' কেজি' }}
+                                                @if($orderDetail->weight)
+                                                    {{ $orderDetail->weight < 1000 ? englishToBengali($orderDetail->weight) . ' গ্রাম' : englishToBengali($orderDetail->weight / 1000) . ' কেজি' }}
+                                                @elseif($orderDetail->quantity)
+                                                    {{ $orderDetail->quantity }} pcs
+                                                @endif
                                             </span>
                                                 <p class="cart-price">{{ $orderDetail->product->price ?? '0' }}Tk
                                                     @if($orderDetail->product->discount_price)

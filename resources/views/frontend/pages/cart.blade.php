@@ -373,7 +373,7 @@
                                     <p class="fsw-semibold fs-20">Your cart is currently empty.</p>
                                 </div>
                                 <div class="">
-                                    <a href="{{ route('products') }}" class="btn review-btn">Return to sweets</a>
+                                    <a href="{{ route('products') }}" class="btn review-btn">Return to products</a>
                                 </div>
                             </div>
                         @endif

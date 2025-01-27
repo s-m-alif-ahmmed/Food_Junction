@@ -77,8 +77,14 @@
                                     }
 
                                     $price = banglaToEnglish($product->product->price);
-                                    $gm = $price / 1000;
-                                    $total = $gm * $product->weight;
+                                    $product_type = $product->product->product_type;
+
+                                    if ($product_type == 'Sweet'){
+                                        $gm = $price / 1000;
+                                        $total = $gm * $product->weight;
+                                    }elseif ($product_type == 'Product'){
+                                        $total = $price * $product->quantity;
+                                    }
 
                                     ?>
                                 <tr>
@@ -88,7 +94,11 @@
                                     </td>
                                     <td class="text-center">{{ $product->product->price }} (<span><del>{{ $product->product->discount_price }}Tk</del></span>)</td>
                                     <td class="text-end">
-                                        {{ $product->weight < 1000 ? englishToBengali($product->weight) . ' গ্রাম' : englishToBengali($product->weight / 1000) . ' কেজি' }}
+                                        @if($product->weight)
+                                            {{ $product->weight < 1000 ? englishToBengali($product->weight) . ' গ্রাম' : englishToBengali($product->weight / 1000) . ' কেজি' }}
+                                        @elseif($product->quantity)
+                                            {{ $product->quantity }} pcs
+                                        @endif
                                     </td>
                                     <td class="text-end">{{ englishToBengali($total) ?? '0' }}Tk</td>
                                 </tr>
@@ -105,7 +115,7 @@
                             @endif
                             <tr>
                                 <td colspan="4" class="text-end">Delivery Charge</td>
-                                <td class="text-end">{{ englishToBengali( ($data->delivery_fee == 0) ? 'Free' : $data->delivery_fee.'Tk' ) }}</td>
+                                <td class="text-end">{{ englishToBengali( $data->delivery_fee.'Tk' ) }}</td>
                             </tr>
                             <tr>
                                 <td colspan="4" class="text-end">Total</td>

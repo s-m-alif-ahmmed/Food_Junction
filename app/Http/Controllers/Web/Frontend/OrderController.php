@@ -11,10 +11,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session as LaravelSession;
 use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class OrderController extends Controller
 {
-    public function checkout(): View {
+    public function checkout(): RedirectResponse | View {
         $carts = [];
 
         if (Auth::check()) {
@@ -41,7 +42,11 @@ class OrderController extends Controller
             $carts = array_filter($carts);
         }
 
-        return view('frontend.pages.checkout', compact('carts'));
+        if (count($carts) > 0){
+            return view('frontend.pages.checkout', compact('carts'));
+        }else{
+            return redirect()->route('products')->with('t-error','Add products to cart first.');
+        }
     }
 
     public function newOrder(Request $request)
@@ -101,8 +106,17 @@ class OrderController extends Controller
         foreach ($cartItems as $cart) {
             $orderDetail = new OrderDetail();
             $orderDetail->order_id = $this->order->id;
-            $orderDetail->product_id = $cart['product']['id'] ?? $cart->product->id; // Ensure compatibility for both guest and authenticated users
-            $orderDetail->weight = $cart['weight'] ?? $cart->weight;
+            if ($user) {
+                // Authenticated user (object-based)
+                $orderDetail->product_id = $cart->product->id;
+                $orderDetail->weight = $cart->weight;
+                $orderDetail->quantity = $cart->quantity;
+            } else {
+                // Guest user (array-based)
+                $orderDetail->product_id = $cart['product_id'];
+                $orderDetail->weight = $cart['weight'];
+                $orderDetail->quantity = $cart['quantity'];
+            }
             $orderDetail->save();
         }
 

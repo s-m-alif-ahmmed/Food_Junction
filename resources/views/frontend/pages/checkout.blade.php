@@ -158,9 +158,29 @@
                                 $subtotal = 0.0;
                                 $totalWeight = 0;
                                 $discount = 0.0;
-                                $deliveryFee = 60; // default delivery fee
+                                if ($carts->count() > 0){
+                                    $deliveryFee = 60; // default delivery fee
+                                }else{
+                                    $deliveryFee = 0; // default delivery fee
+                                }
                                 $totalSweetPrice = 0.0;
                                 $totalProductPrice = 0.0;
+
+                                if (!function_exists('englishToBengali')) {
+                                    function englishToBengali($englishString) {
+                                        $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                                        $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+                                        return strtr($englishString, array_combine($englishNumbers, $bengaliNumbers));
+                                    }
+                                }
+
+                                if (!function_exists('banglaToEnglish')) {
+                                    function banglaToEnglish($bengaliString) {
+                                        $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                                        $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+                                        return strtr($bengaliString, array_combine($bengaliNumbers, $englishNumbers));
+                                    }
+                                }
 
                                 // Calculate subtotal and total weight from cart items
                                 foreach ($carts as $cart) {
@@ -197,7 +217,7 @@
                                 // Convert numbers to Bengali
                                 $subtotalInBengali = englishToBengali(number_format($subtotal, 2));
                                 $discountInBengali = englishToBengali(number_format($discount, 2));
-                                $deliveryFeeInBengali = ($deliveryFee == 0) ? 'Free' : englishToBengali(number_format($deliveryFee, 2).'Tk');
+                                $deliveryFeeInBengali = englishToBengali(number_format($deliveryFee, 2).'Tk');
                                 $totalInBengali = englishToBengali(number_format($total, 2));
 
                             @endphp
@@ -213,11 +233,13 @@
                                         <p class="fsw-semibold">{{ $subtotalInBengali }}Tk</p>
                                         <input type="hidden" name="order_total" value="{{ $subtotal }}">
                                     </div>
+                                    @if($discount > 0)
                                     <div class="col-md-12 d-flex justify-content-between">
                                         <p>Login Discount</p>
                                         <p class="fsw-semibold">-{{ $discountInBengali }}Tk</p>
                                         <input type="hidden" name="login_discount" value="{{ $discount }}">
                                     </div>
+                                    @endif
                                     <div class="col-md-12 d-flex justify-content-between">
                                         <p>Delivery Fee</p>
                                         <p class="fsw-semibold">{{ $deliveryFeeInBengali }}</p>
@@ -243,7 +265,11 @@
                                         <input type="hidden" name="estimate_total" value="{{ $total }}">
                                     </div>
                                     <div class="col-md-12">
-                                        <button type="submit" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">Place Order <i class="fa-solid fa-long-arrow-right"></i></button>
+                                        @if($carts->count() > 0)
+                                            <button type="submit" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">Place Order <i class="fa-solid fa-long-arrow-right"></i></button>
+                                        @else
+                                            <a href="{{ route('products') }}" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">Go to Shop <i class="fa-solid fa-long-arrow-right"></i></a>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -274,7 +300,11 @@
                                             </div>
                                             <div>
                                                 <span class="cart-weight">
-                                                    {{ $cart['weight'] < 1000 ? $cart['weight'] . ' গ্রাম' : ($cart['weight'] / 1000) . ' কেজি' }}
+                                                    @if($cart['weight'])
+                                                        {{ $cart['weight'] < 1000 ? $cart['weight'] . ' গ্রাম' : ($cart['weight'] / 1000) . ' কেজি' }}
+                                                    @elseif($cart['quantity'])
+                                                        {{ $cart['quantity'] }} pcs
+                                                    @endif
                                                 </span>
                                                 <p class="cart-price"><!-- Display product price -->
                                                     {{ $cart['product']['price'] ?? '0' }} Tk
@@ -282,8 +312,8 @@
                                                     <!-- If there is a discount, show it -->
                                                     @if($cart['product']['discount_price'])
                                                         <span class="discount-price">
-                                                                (<del>{{ $cart['product']['discount_price'] }} Tk</del>)
-                                                            </span>
+                                                            (<del>{{ $cart['product']['discount_price'] }} Tk</del>)
+                                                        </span>
                                                     @endif
                                                 </p>
                                                 <span class="single-cart-total-price">
@@ -308,16 +338,22 @@
                                                                 }
                                                             }
 
-
                                                             // Convert the price from Bengali to English
                                                             $price = banglaToEnglish($cart['product']['price']);
                                                             $price = (float)$price;  // Convert the price to a float for calculation
+                                                            $product_type = $cart['product']['product_type'];
 
-                                                            // Convert the weight to float
-                                                            $weight = (float)$cart['weight'];
-
-                                                            // Calculate the total price based on the weight
-                                                            $totalPrice = $price > 0 && $weight > 0 ? ($price / 1000) * $weight : 0;
+                                                            if ($product_type == 'Sweet'){
+                                                                // Convert the weight to float
+                                                                $weight = (float)$cart['weight'];
+                                                                // Calculate the total price based on the weight
+                                                                $totalPrice = $price > 0 && $weight > 0 ? ($price / 1000) * $weight : 0;
+                                                            }elseif ($product_type == 'Product'){
+                                                                // Convert the weight to float
+                                                                $quantity = (float)$cart['quantity'];
+                                                                // Calculate the total price based on the weight
+                                                                $totalPrice = $price * $quantity;
+                                                            }
 
                                                             // Convert the total price to Bengali numerals
                                                             $totalPriceInBengali = englishToBengali(number_format($totalPrice, 2)); // Format with 2 decimal points
@@ -341,8 +377,13 @@
                                 // Initialize variables for calculations
                                 $subtotal = 0;
                                 $totalDiscount = 0;
-                                $deliveryFee = 60;  // Default delivery fee
-                                $totalWeight = 0;    // Initialize total weight
+                                if (count($carts) > 0){
+                                    $deliveryFee = 60; // default delivery fee
+                                }else{
+                                    $deliveryFee = 0; // default delivery fee
+                                }
+                                $totalSweetPrice = 0.0;
+                                $totalProductPrice = 0.0;
 
                                 // Retrieve the cart items from the session (for guest users) or database (for logged-in users)
                                 $carts = session()->get('carts', []);
@@ -352,23 +393,21 @@
                                     // Convert price to float (as in the original code)
                                     $price = banglaToEnglish($cart['product']['price']);
                                     $price = (float)$price;
-
+                                    $product_type = $cart['product']['product_type'];
                                     // Convert weight to float (as in the original code)
-                                    $weight = (float)$cart['weight'];
+                                    $quantity = (int)$cart['quantity'];
 
-                                    // Calculate the total price for the current product
-                                    $productTotalPrice = $price > 0 && $weight > 0 ? ($price / 1000) * $weight : 0;
+                                    if ($product_type == 'Sweet'){
+                                        // Convert weight to float (as in the original code)
+                                        $weight = (float)$cart['weight'];
+                                        // Calculate the total price for the current product
+                                        $totalSweetPrice = $price > 0 && $weight > 0 ? ($price / 1000) * $weight : 0;
+                                    } elseif ($product_type == 'Product'){
+                                        // Calculate the total price for the current product
+                                        $totalProductPrice = $price * $quantity;
+                                    }
 
-                                    // Add the product total price to the subtotal
-                                    $subtotal += $productTotalPrice;
-
-                                    // Add the weight to the total weight
-                                    $totalWeight += $weight; // Add weight in grams
-                                }
-
-                                // If the total weight exceeds 2000 grams, set delivery fee to 0 (free delivery)
-                                if ($totalWeight > 2000) {
-                                    $deliveryFee = 0;
+                                    $subtotal = $totalSweetPrice + $totalProductPrice;
                                 }
 
                                 // Calculate the final total
@@ -376,7 +415,6 @@
 
                                 // Convert the total values to Bengali numerals for display
                                 $subtotalInBengali = englishToBengali(number_format($subtotal, 2));  // Format with 2 decimal points
-                                $totalDiscountInBengali = englishToBengali(number_format($totalDiscount, 2));  // Format with 2 decimal points
                                 $totalPriceInBengali = englishToBengali(number_format($totalPrice, 2));  // Format with 2 decimal points
                                 ?>
 
@@ -390,19 +428,11 @@
                                         <p class="fsw-semibold">{{ $subtotalInBengali }}Tk</p>
                                         <input type="hidden" name="order_total" value="{{ $subtotal }}">
                                     </div>
-{{--                                    <div class="col-md-12 d-flex justify-content-between">--}}
-{{--                                        <p>Login Discount</p>--}}
-{{--                                        <p class="fsw-semibold">0Tk</p>--}}
-{{--                                    </div>--}}
                                     <input type="hidden" name="login_discount" value="">
                                     <div class="col-md-12 d-flex justify-content-between">
                                         <p>Delivery Fee</p>
-                                        <p class="fsw-semibold">{{ $deliveryFee == 0 ? 'Free' : englishToBengali(number_format($deliveryFee, 2).'Tk') }}</p>
-                                        @if($totalWeight <= 2000)
-                                            <input type="hidden" name="delivery_fee" value="60">
-                                        @else
-                                            <input type="hidden" name="delivery_fee" value="0">
-                                        @endif
+                                        <p class="fsw-semibold">{{ englishToBengali(number_format($deliveryFee, 2).'Tk') }}</p>
+                                        <input type="hidden" name="delivery_fee" value="60">
                                     </div>
 {{--                                    <div class="col-md-12 d-flex justify-content-between">--}}
 {{--                                        <div class="input-group mb-3">--}}
