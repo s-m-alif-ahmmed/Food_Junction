@@ -90,8 +90,8 @@
             <div class="row">
                 <div class="cta-footer">
                     <div class="cta">
-                        <img class="image img-fluid w-100" src="{{ asset('frontend/images/section/home/bottom-banner.png') }}" />
-                        <div class="text">Are you ready to order with the best deals?</div>
+                        <img class="image img-fluid w-100" src="{{ asset( $home_bottom_banner->image ?? 'frontend/images/section/home/bottom-banner.png') }}" />
+                        <div class="text">{{ $home_bottom_banner->title ?? 'Are you ready to order with the best deals?' }}</div>
                         <a href="{{ route('products') }}" class="button">
                             <div class="text2">Proceed to order</div>
                             <div class="icon">

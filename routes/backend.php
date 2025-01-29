@@ -9,6 +9,7 @@ use App\Http\Controllers\Web\Backend\Order\AdminOrderController;
 use App\Http\Controllers\Web\Backend\Product\CategoryController;
 use App\Http\Controllers\Web\Backend\Faq\FaqController;
 use App\Http\Controllers\Web\Backend\Cms\HomeBannerController;
+use App\Http\Controllers\Web\Backend\Cms\HomeBottomBannerController;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Dashboard
@@ -50,6 +51,12 @@ Route::controller(HomeBannerController::class)->group(function () {
     Route::patch('/cms/home-banner/update/{id}', 'update')->name('cms.home-banner.update');
     Route::get('/cms/home-banner/status/{id}', 'status')->name('cms.home-banner.status');
     Route::delete('/cms/home-banner/delete/{id}', 'destroy')->name('cms.home-banner.destroy');
+});
+
+//! Route for Home Bottom Banner
+Route::controller(HomeBottomBannerController::class)->group(function () {
+    Route::get('/cms/home-bottom-banner/edit', 'edit')->name('cms.home-bottom-banner.edit');
+    Route::patch('/cms/home-bottom-banner/update', 'update')->name('cms.home-bottom-banner.update');
 });
 
 //! Route for Category
