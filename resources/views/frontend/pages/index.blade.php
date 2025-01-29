@@ -21,15 +21,11 @@
                 <div class="col-lg-12 p-0">
                     <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="{{ asset('/frontend/images/section/home/hero_banner.png') }}" class="d-block w-100" alt="...">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="{{ asset('/frontend/images/section/home/hero_banner.png') }}" class="d-block w-100" alt="...">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="{{ asset('/frontend/images/section/home/hero_banner.png') }}" class="d-block w-100" alt="...">
-                            </div>
+                            @foreach($home_banners as $image)
+                                <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                                    <img src="{{ asset( $image->image ?? '/frontend/images/section/home/hero_banner.png') }}" class="d-block w-100" alt="...">
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>

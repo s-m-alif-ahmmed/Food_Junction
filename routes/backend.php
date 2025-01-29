@@ -8,6 +8,7 @@ use App\Http\Controllers\Web\Backend\Product\CouponController;
 use App\Http\Controllers\Web\Backend\Order\AdminOrderController;
 use App\Http\Controllers\Web\Backend\Product\CategoryController;
 use App\Http\Controllers\Web\Backend\Faq\FaqController;
+use App\Http\Controllers\Web\Backend\Cms\HomeBannerController;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Dashboard
@@ -28,7 +29,7 @@ Route::controller(ContactController::class)->group(function () {
     Route::delete('/contact/destroy/{id}', 'destroy')->name('contact.destroy');
 });
 
-//! Route for Category
+//! Route for Faq
 Route::controller(FaqController::class)->group(function () {
     Route::get('/faqs', 'index')->name('faqs.index');
     Route::get('/faqs/create', 'create')->name('faqs.create');
@@ -38,6 +39,17 @@ Route::controller(FaqController::class)->group(function () {
     Route::patch('/faqs/update/{id}', 'update')->name('faqs.update');
     Route::get('/faqs/status/{id}', 'status')->name('faqs.status');
     Route::delete('/faqs/delete/{id}', 'destroy')->name('faqs.destroy');
+});
+
+//! Route for Home Banner
+Route::controller(HomeBannerController::class)->group(function () {
+    Route::get('/cms/home-banner', 'index')->name('cms.home-banner.index');
+    Route::get('/cms/home-banner/create', 'create')->name('cms.home-banner.create');
+    Route::post('/cms/home-banner/store', 'store')->name('cms.home-banner.store');
+    Route::get('/cms/home-banner/edit/{id}', 'edit')->name('cms.home-banner.edit');
+    Route::patch('/cms/home-banner/update/{id}', 'update')->name('cms.home-banner.update');
+    Route::get('/cms/home-banner/status/{id}', 'status')->name('cms.home-banner.status');
+    Route::delete('/cms/home-banner/delete/{id}', 'destroy')->name('cms.home-banner.destroy');
 });
 
 //! Route for Category

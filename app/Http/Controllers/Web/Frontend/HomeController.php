@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Category;
 use App\Models\DynamicPage;
 use App\Models\Faq;
+use App\Models\HomeBanner;
 use App\Models\Product;
 use App\Models\ProductReview;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,8 @@ class HomeController extends Controller {
      */
     public function index(): View {
         $products = Product::where('status','active')->latest()->get();
-        return view('frontend.pages.index',compact('products'));
+        $home_banners = HomeBanner::where('status','active')->latest()->get();
+        return view('frontend.pages.index',compact('products','home_banners'));
     }
 
     public function faq(): View {
