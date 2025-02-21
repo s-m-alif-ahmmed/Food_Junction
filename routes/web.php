@@ -19,9 +19,14 @@ Route::get('/products', [HomeController::class, 'products'])->name('products');
 Route::get('/products/{category_slug}', [HomeController::class, 'categoryProduct'])->name('category.products');
 Route::get('/product/detail/{product_slug}', [HomeController::class, 'detail'])->name('product.detail');
 Route::get('/confirm-order', [HomeController::class, 'confirmOrder'])->name('confirm.order');
+//blog
+Route::get('/blog', [HomeController::class, 'blog'])->name('blogs');
+Route::get('/blog/detail', [HomeController::class, 'blogDetail'])->name('blog.detail');
 
-Route::get('/food-junction/{page_slug}', [HomeController::class, 'dynamicPage'])->name('user.dynamic.page');
+Route::get('/videos', [HomeController::class, 'video'])->name('videos');
 
+//dynamic page
+Route::get('/page/{page_slug}', [HomeController::class, 'dynamicPage'])->name('user.dynamic.page');
 
 //Contact
 Route::get('/contact', [ContactController::class, 'contact'])->name('contact');

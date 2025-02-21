@@ -11,18 +11,18 @@
             <div class="col-md-2">
                 <p class="fw-bold fs-20">Quick Links</p>
                 <ul class="navbar-nav">
-{{--                    <li class="nav-item">--}}
-{{--                        <a class="nav-link" href="">Videos</a>--}}
-{{--                    </li>--}}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('faq') }}">FAQ</a>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('about-us') }}">About Us</a>
                     </li>
-{{--                    <li class="nav-item">--}}
-{{--                        <a class="nav-link" href="">মেনু ৪</a>--}}
-{{--                    </li>--}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('videos') }}">Videos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('blogs') }}">Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('faq') }}">FAQ</a>
+                    </li>
                 </ul>
             </div>
             <div class="col-md-2">

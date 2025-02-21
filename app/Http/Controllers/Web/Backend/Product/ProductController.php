@@ -84,12 +84,12 @@ class ProductController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'meta_title'        => 'required|string',
-                'meta_description'  => 'required|string|min:160|max:255',
+                'meta_description'  => 'required|string',
                 'meta_keywords'     => 'required|string',
                 'category_id'       => 'required',
                 'name'              => 'required|string|max:100',
                 'description'       => 'required|string',
-                'image'             => 'required|image|mimes:jpeg,png,jpg,gif|max:200', // Max 200KB
+                'image'             => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Max 200KB
                 'price'             => 'required',
                 'discount_price'    => 'nullable',
                 'product_type'      => 'nullable',
@@ -159,12 +159,12 @@ class ProductController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'meta_title'        => 'required|string',
-                'meta_description'  => 'required|string|min:160|max:255',
+                'meta_description'  => 'required|string',
                 'meta_keywords'     => 'required|string',
                 'category_id'       => 'required',
                 'name'              => 'required|string|max:100',
                 'description'       => 'required|string',
-                'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:200', // Max 200KB
+                'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Max 200KB
                 'price'             => 'required',
                 'discount_price'    => 'nullable',
                 'product_type'      => 'nullable',

@@ -11,7 +11,7 @@
                 Oops! Some error has occured, Requested page not found!
             </h5>
             <div class="text-center">
-                <a class="btn btn-primary mt-5 mb-5" href="{{ route('dashboard') }}"> <i class="fa fa-long-arrow-left"></i> Back to Dashboard </a>
+                <a class="btn btn-primary mt-5 mb-5" href="{{ route('home') }}"> <i class="fa fa-long-arrow-left"></i> Back to Home </a>
             </div>
         </div>
     </div>

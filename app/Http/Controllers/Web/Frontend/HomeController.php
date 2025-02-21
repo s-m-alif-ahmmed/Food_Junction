@@ -36,6 +36,18 @@ class HomeController extends Controller {
         return view('frontend.pages.about-us');
     }
 
+    public function blog(): View {
+        return view('frontend.pages.blog');
+    }
+
+    public function blogDetail(): View {
+        return view('frontend.pages.blog-detail');
+    }
+
+    public function video(): View {
+        return view('frontend.pages.video');
+    }
+
     public function products(): View {
         $products = Product::where('status','active')->latest()->get();
         return view('frontend.pages.product',compact('products'));

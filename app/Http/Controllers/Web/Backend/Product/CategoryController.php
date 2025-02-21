@@ -82,7 +82,7 @@ class CategoryController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'meta_title'        => 'required|string',
-                'meta_description'  => 'required|string|min:160|max:255',
+                'meta_description'  => 'required|string',
                 'meta_keywords'     => 'required|string',
                 'name'              => 'required|string|max:100',
             ]);
@@ -132,7 +132,7 @@ class CategoryController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'meta_title'        => 'required|string',
-                'meta_description'  => 'required|string|min:160|max:255',
+                'meta_description'  => 'required|string',
                 'meta_keywords'     => 'required|string',
                 'name'              => 'required|string|max:100',
             ]);

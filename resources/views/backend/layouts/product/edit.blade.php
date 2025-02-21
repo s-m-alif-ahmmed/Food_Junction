@@ -38,7 +38,7 @@
 
                         <div class="form-group">
                             <label for="meta_description" class="form-label">Meta Description:</label>
-                            <textarea class="form-control @error('meta_description') is-invalid @enderror" minlength="160" maxlength="255" id="meta_description" name="meta_description">{{ $data->meta_description ?? ' ' }}</textarea>
+                            <textarea class="form-control @error('meta_description') is-invalid @enderror" id="meta_description" name="meta_description">{{ $data->meta_description ?? ' ' }}</textarea>
                             @error('meta_description')
                             <span class="text-danger">{{ $message }}</span>
                             @enderror

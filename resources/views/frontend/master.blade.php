@@ -17,6 +17,12 @@
 
     @include('frontend.includes.codes.google-search-console')
 
+    @include('frontend.includes.codes.google-analytices')
+
+    @include('frontend.includes.codes.google-tag')
+
+    @include('frontend.includes.codes.meta-pixel')
+
     @stack('styles')
 
 </head>
