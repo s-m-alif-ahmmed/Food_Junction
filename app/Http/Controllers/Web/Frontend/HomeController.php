@@ -11,6 +11,7 @@ use App\Models\HomeBanner;
 use App\Models\HomeBottomBanner;
 use App\Models\Product;
 use App\Models\ProductReview;
+use App\Models\Video;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -44,8 +45,10 @@ class HomeController extends Controller {
         return view('frontend.pages.blog-detail');
     }
 
-    public function video(): View {
-        return view('frontend.pages.video');
+    public function video(): View
+    {
+        $videos = Video::where('status','active')->latest()->get();
+        return view('frontend.pages.video', compact('videos'));
     }
 
     public function products(): View {

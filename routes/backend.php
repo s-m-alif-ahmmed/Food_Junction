@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\Backend\Product\CategoryController;
 use App\Http\Controllers\Web\Backend\Faq\FaqController;
 use App\Http\Controllers\Web\Backend\Cms\HomeBannerController;
 use App\Http\Controllers\Web\Backend\Cms\HomeBottomBannerController;
+use App\Http\Controllers\Web\Backend\Video\VideoController;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Dashboard
@@ -40,6 +41,18 @@ Route::controller(FaqController::class)->group(function () {
     Route::patch('/faqs/update/{id}', 'update')->name('faqs.update');
     Route::get('/faqs/status/{id}', 'status')->name('faqs.status');
     Route::delete('/faqs/delete/{id}', 'destroy')->name('faqs.destroy');
+});
+
+//! Route for Video
+Route::controller(VideoController::class)->group(function () {
+    Route::get('/videos', 'index')->name('videos.index');
+    Route::get('/videos/create', 'create')->name('videos.create');
+    Route::post('/videos/store', 'store')->name('videos.store');
+    Route::get('/videos/show/{id}', 'show')->name('videos.show');
+    Route::get('/videos/edit/{id}', 'edit')->name('videos.edit');
+    Route::patch('/videos/update/{id}', 'update')->name('videos.update');
+    Route::get('/videos/status/{id}', 'status')->name('videos.status');
+    Route::delete('/videos/delete/{id}', 'destroy')->name('videos.destroy');
 });
 
 //! Route for Home Banner

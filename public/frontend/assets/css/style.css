@@ -1243,3 +1243,13 @@
 
 
 /*User Dashboard End*/
+
+
+/*Videos Page Start*/
+
+.video iframe{
+    height: 300px !important;
+    width: 100% !important;
+}
+
+/*Videos Page End*/
