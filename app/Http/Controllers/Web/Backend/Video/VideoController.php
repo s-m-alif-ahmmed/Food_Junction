@@ -94,11 +94,6 @@ class VideoController extends Controller
         }
     }
 
-    public function show(int $id): View {
-        $data = Video::find($id);
-        return view('backend.layouts.video.detail', compact('data'));
-    }
-
     /**
      * Show the form for editing the specified faq content.
      *

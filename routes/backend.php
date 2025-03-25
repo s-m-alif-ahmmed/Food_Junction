@@ -11,6 +11,7 @@ use App\Http\Controllers\Web\Backend\Faq\FaqController;
 use App\Http\Controllers\Web\Backend\Cms\HomeBannerController;
 use App\Http\Controllers\Web\Backend\Cms\HomeBottomBannerController;
 use App\Http\Controllers\Web\Backend\Video\VideoController;
+use App\Http\Controllers\Web\Backend\Blog\BlogController;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Dashboard
@@ -48,11 +49,22 @@ Route::controller(VideoController::class)->group(function () {
     Route::get('/videos', 'index')->name('videos.index');
     Route::get('/videos/create', 'create')->name('videos.create');
     Route::post('/videos/store', 'store')->name('videos.store');
-    Route::get('/videos/show/{id}', 'show')->name('videos.show');
     Route::get('/videos/edit/{id}', 'edit')->name('videos.edit');
     Route::patch('/videos/update/{id}', 'update')->name('videos.update');
     Route::get('/videos/status/{id}', 'status')->name('videos.status');
     Route::delete('/videos/delete/{id}', 'destroy')->name('videos.destroy');
+});
+
+//! Route for Video
+Route::controller(BlogController::class)->group(function () {
+    Route::get('/blogs', 'index')->name('blogs.index');
+    Route::get('/blogs/create', 'create')->name('blogs.create');
+    Route::post('/blogs/store', 'store')->name('blogs.store');
+    Route::get('/blogs/show/{id}', 'show')->name('blogs.show');
+    Route::get('/blogs/edit/{id}', 'edit')->name('blogs.edit');
+    Route::patch('/blogs/update/{id}', 'update')->name('blogs.update');
+    Route::get('/blogs/status/{id}', 'status')->name('blogs.status');
+    Route::delete('/blogs/delete/{id}', 'destroy')->name('blogs.destroy');
 });
 
 //! Route for Home Banner
