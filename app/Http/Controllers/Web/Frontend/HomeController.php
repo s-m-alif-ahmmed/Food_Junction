@@ -47,12 +47,12 @@ class HomeController extends Controller {
 
     public function video(): View
     {
-        $videos = Video::where('status','active')->latest()->get();
+        $videos = Video::where('status','active')->latest()->paginate(12);
         return view('frontend.pages.video', compact('videos'));
     }
 
     public function products(): View {
-        $products = Product::where('status','active')->latest()->get();
+        $products = Product::where('status','active')->latest()->paginate(12);
         return view('frontend.pages.product',compact('products'));
     }
 
@@ -70,7 +70,7 @@ class HomeController extends Controller {
         $products = Product::where('category_id', $category->id)
             ->where('status', 'active')
             ->latest()
-            ->get();
+            ->paginate(12);
 
         return view('frontend.pages.product-category', compact('products', 'category'));
     }

@@ -31,6 +31,10 @@
                         {!! $video->link !!}
                     </div>
                 @endforeach
+
+                <div class="">
+                    {{ $videos->links('pagination::bootstrap-5') }}
+                </div>
             </div>
         </div>
     </section>
