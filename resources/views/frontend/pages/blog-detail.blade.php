@@ -28,21 +28,15 @@
             <div class="row pt-3 pb-5">
                 <div class="col-md-9">
                     <div class="">
-                        <img class="img-fluid rounded-2" src="{{ asset('frontend/images/section/home/blog.png') }}" alt="">
+                        <img class="img-fluid rounded-2" src="{{ asset($blog->image ?? 'frontend/images/section/home/blog.png') }}" alt="">
                     </div>
                     <div>
                         <p class="p-2">Published At: 20 Jan, 2025</p>
                     </div>
                     <div class="">
-                        <h1>Blog sdjhfkjsdhfds dkshfjd shdsh fjkhs dfjkd shfjkh dsfj kds</h1>
+                        <h1>{{ $blog->title }}</h1>
                         <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti reprehenderit, ullam? At consequuntur
-                            debitis distinctio dolor esse necessitatibus nihil nisi provident sequi sint. Atque, doloribus earum ex
-                            perspiciatis praesentium quisquam ratione unde. Atque aut consectetur eius laudantium minus porro quas quidem
-                            recusandae repellat sit. Aliquid aperiam dicta ea eaque et exercitationem illo iusto laboriosam laudantium
-                            maiores maxime minus molestiae necessitatibus non officia omnis pariatur perferendis quae, quidem rem repellendus
-                            reprehenderit sapiente similique sit tempora tenetur unde velit veniam voluptates voluptatum. Accusantium animi,
-                            dolorem doloribus explicabo fugiat in iusto libero pariatur qui quis sint, tempore veniam? Adipisci harum mollitia rerum sed.
+                            {!! $blog->description !!}
                         </p>
                     </div>
                     <div class="text-center">

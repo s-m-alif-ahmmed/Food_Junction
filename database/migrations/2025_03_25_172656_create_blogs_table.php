@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
+            $table->string('meta_title')->nullable();
+            $table->string('meta_description')->nullable();
+            $table->text('meta_keywords')->nullable();
             $table->string('title');
             $table->string('slug');
             $table->text('description');

@@ -22,105 +22,57 @@
             <div class="d-lg-block d-md-none d-sm-none d-none px-2">
                 @if(Auth::check())
                     @if(Auth::user()->role == 'Super Admin')
-                        <div class="border-0 dropdown-hover" id="navbarNavDarkDropdown">
-                            <ul class="navbar-nav">
-                                <li class="nav-item border-0">
-                                    <div class="dropdown-center">
-                                        <button class="btn m-0 p-0 border-0" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa-regular fa-user text-yellow"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a class="dropdown-item" href="{{ route('dashboard') }}">
-                                                    Dashboard
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="" onclick="event.preventDefault(); document.getElementById('logoutForm').submit()">
-                                                    Logout
-                                                </a>
-                                                <form action="{{ route('logout') }}" method="post" id="logoutForm">
-                                                    @csrf
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                            </ul>
+                        <div class="d-flex">
+                            <div class="border-0 me-3">
+                                <a href="{{ route('dashboard') }}">
+                                    <img src="{{ asset('/frontend/images/icons/user.svg') }}" alt="">
+                                </a>
+                            </div>
+                            <div class="border-0 ms-1">
+                                <a href="" onclick="event.preventDefault(); document.getElementById('logoutForm').submit()">
+                                    <img src="{{ asset('/frontend/images/icons/logout.svg') }}" alt="">
+                                </a>
+                                <form action="{{ route('logout') }}" method="post" id="logoutForm">
+                                    @csrf
+                                </form>
+                            </div>
                         </div>
                     @elseif(Auth::user()->role == 'Admin')
-                        <div class="border-0 dropdown-hover" id="navbarNavDarkDropdown">
-                            <ul class="navbar-nav">
-                                <li class="nav-item border-0">
-                                    <div class="dropdown-center">
-                                        <button class="btn m-0 p-0 border-0" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa-regular fa-user text-yellow"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
-                                                    Dashboard
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="" onclick="event.preventDefault(); document.getElementById('logoutForm').submit()">
-                                                    Logout
-                                                </a>
-                                                <form action="{{ route('logout') }}" method="post" id="logoutForm">
-                                                    @csrf
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                            </ul>
+                        <div class="d-flex">
+                            <div class="border-0 me-3">
+                                <a href="{{ route('admin.dashboard') }}">
+                                    <img src="{{ asset('/frontend/images/icons/user.svg') }}" alt="">
+                                </a>
+                            </div>
+                            <div class="border-0 ms-1">
+                                <a href="" onclick="event.preventDefault(); document.getElementById('logoutForm').submit()">
+                                    <img src="{{ asset('/frontend/images/icons/logout.svg') }}" alt="">
+                                </a>
+                                <form action="{{ route('logout') }}" method="post" id="logoutForm">
+                                    @csrf
+                                </form>
+                            </div>
                         </div>
                     @elseif(Auth::user()->role == 'User')
-                        <div class="border-0 dropdown-hover" id="navbarNavDarkDropdown">
-                            <ul class="navbar-nav">
-                                <li class="nav-item border-0">
-                                    <div class="dropdown-center">
-                                        <button class="btn m-0 p-0 border-0" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa-regular fa-user text-yellow"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a class="dropdown-item" href="{{ route('user.dashboard') }}">
-                                                    Dashboard
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="" onclick="event.preventDefault(); document.getElementById('logoutForm').submit()">
-                                                    Logout
-                                                </a>
-                                                <form action="{{ route('logout') }}" method="post" id="logoutForm">
-                                                    @csrf
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                            </ul>
+                        <div class="border-0 me-3">
+                            <a href="{{ route('user.dashboard') }}">
+                                <img src="{{ asset('/frontend/images/icons/user.svg') }}" alt="">
+                            </a>
+                        </div>
+                        <div class="border-0 ms-1">
+                            <a href="" onclick="event.preventDefault(); document.getElementById('logoutForm').submit()">
+                                <img src="{{ asset('/frontend/images/icons/logout.svg') }}" alt="">
+                            </a>
+                            <form action="{{ route('logout') }}" method="post" id="logoutForm">
+                                @csrf
+                            </form>
                         </div>
                     @endif
                 @else
-                    <div class="border-0 dropdown-hover" id="navbarNavDarkDropdown">
-                        <ul class="navbar-nav">
-                            <li class="nav-item border-0">
-                                <div class="dropdown-center">
-                                    <button class="btn m-0 p-0 border-0" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa-regular fa-user text-yellow"></i>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('login') }}">
-                                                Login/Register
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
+                    <div class="border-0">
+                        <a href="{{ route('login') }}" class="btn m-0 p-0 border-0">
+                            <img src="{{ asset('frontend/images/icons/user.svg') }}" />
+                        </a>
                     </div>
                 @endif
             </div>

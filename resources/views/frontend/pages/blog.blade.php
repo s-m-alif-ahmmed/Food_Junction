@@ -26,77 +26,21 @@
 
         <div class="container">
             <div class="row pt-3 pb-5">
-                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-                    <div class="card">
-                        <img src="{{ asset('frontend/images/section/home/blog.png') }}" class="card-img-top object-fit-fill" style="height: 200px;" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">Card title hsjkdfhds sadjak s asjsajdkajas jdsaskdja </h5>
-                            <a href="{{ route('blog.detail') }}" class="order-now-btn w-auto fw-bold">Read More</a>
+
+                @foreach($blogs as $blog)
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+                        <div class="card">
+                            <img src="{{ asset('frontend/images/section/home/blog.png') }}" class="card-img-top object-fit-fill" style="height: 200px;" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Card title hsjkdfhds sadjak s asjsajdkajas jdsaskdja </h5>
+                                <a href="{{ route('blog.detail') }}" class="order-now-btn w-auto fw-bold">Read More</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-                    <div class="card">
-                        <img src="{{ asset('frontend/images/section/home/blog.png') }}" class="card-img-top object-fit-fill" style="height: 200px;" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">Card title hsjkdfhds sadjak s asjsajdkajas jdsaskdja </h5>
-                            <a href="{{ route('blog.detail') }}" class="order-now-btn w-auto fw-bold">Read More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-                    <div class="card">
-                        <img src="{{ asset('frontend/images/section/home/blog.png') }}" class="card-img-top object-fit-fill" style="height: 200px;" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">Card title hsjkdfhds sadjak s asjsajdkajas jdsaskdja </h5>
-                            <a href="{{ route('blog.detail') }}" class="order-now-btn w-auto fw-bold">Read More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-                    <div class="card">
-                        <img src="{{ asset('frontend/images/section/home/blog.png') }}" class="card-img-top object-fit-fill" style="height: 200px;" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">Card title hsjkdfhds sadjak s asjsajdkajas jdsaskdja </h5>
-                            <a href="#" class="order-now-btn w-auto fw-bold">Read More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-                    <div class="card">
-                        <img src="{{ asset('frontend/images/section/home/blog.png') }}" class="card-img-top object-fit-fill" style="height: 200px;" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">Card title hsjkdfhds sadjak s asjsajdkajas jdsaskdja </h5>
-                            <a href="#" class="order-now-btn w-auto fw-bold">Read More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-                    <div class="card">
-                        <img src="{{ asset('frontend/images/section/home/blog.png') }}" class="card-img-top object-fit-fill" style="height: 200px;" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">Card title hsjkdfhds sadjak s asjsajdkajas jdsaskdja </h5>
-                            <a href="#" class="order-now-btn w-auto fw-bold">Read More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-                    <div class="card">
-                        <img src="{{ asset('frontend/images/section/home/blog.png') }}" class="card-img-top object-fit-fill" style="height: 200px;" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">Card title hsjkdfhds sadjak s asjsajdkajas jdsaskdja </h5>
-                            <a href="#" class="order-now-btn w-auto fw-bold">Read More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-                    <div class="card">
-                        <img src="{{ asset('frontend/images/section/home/blog.png') }}" class="card-img-top object-fit-contain" style="height: 200px;" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">Card title hsjkdfhds sadjak s asjsajdkajas jdsaskdja </h5>
-                            <a href="#" class="order-now-btn w-auto fw-bold">Read More</a>
-                        </div>
-                    </div>
+                @endforeach
+
+                <div class="">
+                    {{ $blogs->links('pagination::bootstrap-5') }}
                 </div>
             </div>
         </div>

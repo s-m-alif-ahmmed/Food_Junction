@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
 use App\Models\Cart;
 use App\Models\Category;
 use App\Models\DynamicPage;
@@ -38,11 +39,17 @@ class HomeController extends Controller {
     }
 
     public function blog(): View {
-        return view('frontend.pages.blog');
+        $blogs = Blog::where('status','active')->latest()->paginate(12);
+        return view('frontend.pages.blog', compact('blogs'));
     }
 
-    public function blogDetail(): View {
-        return view('frontend.pages.blog-detail');
+    public function blogDetail($slug): View {
+        $blog = Blog::where('slug', $slug)->where('status', 'active')->first();
+        if (!$blog) {
+            abort(404);
+        }
+        $blogs = Blog::where('status','active')->latest()->limit(5);
+        return view('frontend.pages.blog-detail', compact('blog', 'blogs'));
     }
 
     public function video(): View
