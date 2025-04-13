@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Backend\Blog;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,9 +27,9 @@ class BlogController extends Controller
             $data = Blog::latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('name', function ($data) {
-                    $name = $data->name;
-                    return $name;
+                ->addColumn('title', function ($data) {
+                    $title = $data->title;
+                    return $title;
                 })
                 ->addColumn('status', function ($data) {
                     $backgroundColor  = $data->status == "active" ? '#4CAF50' : '#ccc';
@@ -45,10 +46,10 @@ class BlogController extends Controller
                 })
                 ->addColumn('action', function ($data) {
                     return '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                                <a href="' . route('products.show', ['id' => $data->id]) . '" type="button" class="btn btn-secondary fs-14 text-white edit-icn" title="Edit">
+                                <a href="' . route('blogs.show', ['id' => $data->id]) . '" type="button" class="btn btn-secondary fs-14 text-white edit-icn" title="View">
                                     <i class="fe fe-eye"></i>
                                 </a>
-                                <a href="' . route('products.edit', ['id' => $data->id]) . '" type="button" class="btn btn-primary fs-14 text-white edit-icn" title="Edit">
+                                <a href="' . route('blogs.edit', ['id' => $data->id]) . '" type="button" class="btn btn-primary fs-14 text-white edit-icn" title="Edit">
                                     <i class="fe fe-edit"></i>
                                 </a>
                                 <a href="#" type="button" onclick="showDeleteConfirm(' . $data->id . ')" class="btn btn-danger fs-14 text-white delete-icn" title="Delete">
@@ -56,7 +57,7 @@ class BlogController extends Controller
                                 </a>
                             </div>';
                 })
-                ->rawColumns(['name', 'status', 'action'])
+                ->rawColumns(['title', 'status', 'action'])
                 ->make();
         }
         return view('backend.layouts.blog.index');
@@ -83,36 +84,36 @@ class BlogController extends Controller
                 'meta_title'        => 'required|string',
                 'meta_description'  => 'required|string',
                 'meta_keywords'     => 'required|string',
-                'category_id'       => 'required',
-                'name'              => 'required|string|max:100',
+                'title'              => 'required|string|max:100',
                 'description'       => 'required|string',
-                'image'             => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Max 200KB
-                'price'             => 'required',
-                'discount_price'    => 'nullable',
-                'product_type'      => 'nullable',
+                'image'             => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
+            $slug = Str::slug($request->title);
+            if (Blog::where('slug', $slug)->exists()) {
+                $suffix = '_' . rand(5);
+                $new_slug = $slug . $suffix;
+            } else {
+                $new_slug = $slug;
+            }
+
             $data                       = new Blog();
             $data->meta_title           = $request->meta_title;
             $data->meta_description     = $request->meta_description;
             $data->meta_keywords        = $request->meta_keywords;
-            $data->category_id          = $request->category_id;
-            $data->name                 = $request->name;
+            $data->title                 = $request->title;
             $data->description          = $request->description;
-            $data->price                = $request->price;
-            $data->discount_price       = $request->discount_price;
-            $data->product_type         = $request->product_type;
-            $data->product_slug         = Str::slug($request->name);
+            $data->slug                 = $new_slug;
 
             // Handle file upload
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
-                $imagePath = Helper::fileUpload($image, 'products', $imageName);
+                $imagePath = Helper::fileUpload($image, 'blogs', $imageName);
 
                 if ($imagePath === null) {
                     throw new Exception('Failed to upload image.');
@@ -122,15 +123,15 @@ class BlogController extends Controller
             }
             $data->save();
 
-            return redirect()->route('products.index')->with('t-success', 'Created successfully');
+            return redirect()->route('blogs.index')->with('t-success', 'Created successfully');
         } catch (Exception) {
-            return redirect()->route('products.index')->with('t-success', 'Product failed created.');
+            return redirect()->route('blogs.index')->with('t-success', 'Blog failed created.');
         }
     }
 
     public function show(int $id): View {
         $data = Blog::find($id);
-        return view('backend.layouts.product.detail', compact('data'));
+        return view('backend.layouts.blog.detail', compact('data'));
     }
 
     /**
@@ -141,7 +142,7 @@ class BlogController extends Controller
      */
     public function edit(int $id): View {
         $data = Blog::find($id);
-        return view('backend.layouts.product.edit', compact('data','categories'));
+        return view('backend.layouts.blog.edit', compact('data'));
     }
 
     /**
@@ -157,30 +158,30 @@ class BlogController extends Controller
                 'meta_title'        => 'required|string',
                 'meta_description'  => 'required|string',
                 'meta_keywords'     => 'required|string',
-                'category_id'       => 'required',
-                'name'              => 'required|string|max:100',
+                'title'             => 'required|string|max:100',
                 'description'       => 'required|string',
                 'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Max 200KB
-                'price'             => 'required',
-                'discount_price'    => 'nullable',
-                'product_type'      => 'nullable',
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
+            $slug = Str::slug($request->title);
+            if (Blog::where('slug', $slug)->exists()) {
+                $suffix = '_' . rand(5);
+                $new_slug = $slug . $suffix;
+            } else {
+                $new_slug = $slug;
+            }
+
             $data                       = Blog::findOrFail($id);
             $data->meta_title           = $request->meta_title;
             $data->meta_description     = $request->meta_description;
             $data->meta_keywords        = $request->meta_keywords;
-            $data->category_id          = $request->category_id;
-            $data->name                 = $request->name;
+            $data->title                = $request->title;
             $data->description          = $request->description;
-            $data->price                = $request->price;
-            $data->discount_price       = $request->discount_price;
-            $data->product_type         = $request->product_type;
-            $data->product_slug         = Str::slug($request->name);
+            $data->slug                 = $new_slug;
 
             // Handle file upload if a new image is provided
             if ($request->hasFile('image')) {
@@ -193,7 +194,7 @@ class BlogController extends Controller
                 }
 
                 // Upload the new image
-                $imagePath = Helper::fileUpload($image, 'products', $imageName);
+                $imagePath = Helper::fileUpload($image, 'blogs', $imageName);
 
                 if ($imagePath === null) {
                     throw new Exception('Failed to upload image.');
@@ -204,10 +205,10 @@ class BlogController extends Controller
 
             $data->update();
 
-            return redirect()->route('products.index')->with('t-success', 'Product Updated Successfully.');
+            return redirect()->route('blogs.index')->with('t-success', 'Blog Updated Successfully.');
 
         } catch (Exception) {
-            return redirect()->route('products.index')->with('t-success', 'Product failed to update');
+            return redirect()->route('blogs.index')->with('t-success', 'Blog failed to update');
         }
     }
 
@@ -253,7 +254,7 @@ class BlogController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Product deleted successfully.',
+                'message' => 'Blog deleted successfully.',
             ]);
         } catch (Exception) {
             return response()->json([

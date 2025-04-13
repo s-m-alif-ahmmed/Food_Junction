@@ -1,17 +1,17 @@
 @extends('backend.app')
 
-@section('title', 'Product Detail')
+@section('title', 'Blog Detail')
 
 @section('content')
     {{-- PAGE-HEADER --}}
     <div class="page-header">
         <div>
-            <h1 class="page-title">Product Form</h1>
+            <h1 class="page-title">Blog Form</h1>
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Product</li>
+                <li class="breadcrumb-item active" aria-current="page">Blog</li>
             </ol>
         </div>
     </div>
@@ -49,60 +49,21 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="product_type" class="form-label">Product Type:</label>
-                        <select class="form-select select2" name="product_type" id="product_type" disabled readonly>
-                            <option>{{ $data->product_type }}</option>
-                        </select>
-                        @error('product_type')
+                        <label for="title" class="form-label">Blog Title:</label>
+                        <input type="text" class="form-control @error('title') is-invalid @enderror"
+                               name="title" placeholder="Blog title" id="title" maxlength="255" value="{{ $data->title ?? ' ' }}" disabled readonly >
+                        @error('title')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <div class="form-group">
-                        <label for="category_id" class="form-label">Category:</label>
-                        <select class="form-select select2" name="category_id" id="category_id" disabled readonly>
-                            <option>{{ $data->category->name }}</option>
-                        </select>
-                        @error('category_id')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="name" class="form-label">Product Name:</label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror"
-                               name="name" placeholder="sweet name" id="name" maxlength="100" value="{{ $data->name ?? ' ' }}" disabled readonly >
-                        @error('name')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="image" class="form-label">Product Image(500*500px):</label>
-                        <input type="file" class="form-control @error('image') is-invalid @enderror"
-                               name="image" placeholder="sweet name" id="image" value="{{ $data->image ?? ' ' }}">
+                        <label for="image" class="form-label">Blog Image(500*500px):</label>
+                        <input type="file" class="form-control dropify @error('image') is-invalid @enderror"
+                               name="image" placeholder="sweet name" id="image" value="{{ $data->image ?? ' ' }}" data-default-file="{{ isset($data->image) ? asset($data->image) : '' }}">
                         @if($data->image)
-                        <img class="img-fluid rounded-1 my-1" height="80px" width="80px" src="{{ asset($data->image) }}" alt="{{ $data->name ? $data->image : 'No Image' }}"  disabled readonly>
                         @endif
                         @error('image')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="price" class="form-label">Price:</label>
-                        <input type="text" class="form-control @error('price') is-invalid @enderror"
-                               name="price" placeholder="sweet price" id="price" value="{{ $data->price ?? ' ' }}" disabled readonly >
-                        @error('price')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="discount_price" class="form-label">Discount Price (Optional):</label>
-                        <input type="text" class="form-control @error('discount_price') is-invalid @enderror"
-                               name="discount_price" placeholder="sweet discount price" id="discount_price" value="{{ $data->discount_price ?? ' ' }}" disabled readonly >
-                        @error('discount_price')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
@@ -116,7 +77,7 @@
                     </div>
 
                     <div class="form-group">
-                        <a href="{{ route('products.index') }}" class="btn btn-danger me-2">Back</a>
+                        <a href="{{ route('blogs.index') }}" class="btn btn-danger me-2">Back</a>
                     </div>
 
                 </div>

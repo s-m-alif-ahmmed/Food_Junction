@@ -48,8 +48,8 @@ class HomeController extends Controller {
         if (!$blog) {
             abort(404);
         }
-        $blogs = Blog::where('status','active')->latest()->limit(5);
-        return view('frontend.pages.blog-detail', compact('blog', 'blogs'));
+        $latest_blogs = Blog::where('status','active')->latest()->get();
+        return view('frontend.pages.blog-detail', compact('blog', 'latest_blogs'));
     }
 
     public function video(): View

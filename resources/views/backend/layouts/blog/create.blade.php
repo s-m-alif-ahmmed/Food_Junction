@@ -1,17 +1,17 @@
 @extends('backend.app')
 
-@section('title', 'Product Create')
+@section('title', 'Blog Create')
 
 @section('content')
     {{-- PAGE-HEADER --}}
     <div class="page-header">
         <div>
-            <h1 class="page-title">Product Form</h1>
+            <h1 class="page-title">Blog Form</h1>
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Product</li>
+                <li class="breadcrumb-item active" aria-current="page">Blog</li>
             </ol>
         </div>
     </div>
@@ -22,7 +22,7 @@
         <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
             <div class="card box-shadow-0">
                 <div class="card-body">
-                    <form method="post" action="{{ route('products.store') }}" enctype="multipart/form-data">
+                    <form method="post" action="{{ route('blogs.store') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="form-group">
@@ -51,60 +51,19 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="product_type" class="form-label">Product Type:</label>
-                            <select class="form-select select2" name="product_type" id="product_type">
-                                <option value="Sweet">Sweet</option>
-                                <option value="Product">Product</option>
-                            </select>
-                            @error('product_type')
+                            <label for="title" class="form-label">Blog Title:</label>
+                            <input type="text" class="form-control @error('title') is-invalid @enderror"
+                                name="title" placeholder="Blog title" id="title" maxlength="255" value="{{ old('title') }}">
+                            @error('title')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <label for="category_id" class="form-label">Category:</label>
-                            <select class="form-select select2" name="category_id" id="category_id">
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('category_id')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="name" class="form-label">Product Name:</label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                name="name" placeholder="Product name" id="name" maxlength="100" value="{{ old('name') }}">
-                            @error('name')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="image" class="form-label">Product Image(500*500px):</label>
-                            <input type="file" class="form-control @error('image') is-invalid @enderror"
-                                name="image" placeholder="Product Image" id="image" value="{{ old('image') }}">
+                            <label for="image" class="form-label">Blog Image(500*500px):</label>
+                            <input type="file" class="form-control dropify @error('image') is-invalid @enderror"
+                                name="image" placeholder="Blog Image" id="image" value="{{ old('image') }}">
                             @error('image')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="price" class="form-label">Price:</label>
-                            <input type="text" class="form-control @error('price') is-invalid @enderror"
-                                name="price" placeholder="Product price" id="price" value="{{ old('price') }}">
-                            @error('price')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="discount_price" class="form-label">Discount Price (Optional):</label>
-                            <input type="text" class="form-control @error('discount_price') is-invalid @enderror"
-                                name="discount_price" placeholder="Product discount price" id="discount_price" value="{{ old('discount_price') }}">
-                            @error('discount_price')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -119,7 +78,7 @@
 
                         <div class="form-group">
                             <button class="btn btn-primary" type="submit">Submit</button>
-                            <a href="{{ route('products.index') }}" class="btn btn-danger me-2">Cancel</a>
+                            <a href="{{ route('blogs.index') }}" class="btn btn-danger me-2">Cancel</a>
                         </div>
                     </form>
                 </div>

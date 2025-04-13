@@ -21,7 +21,7 @@ Route::get('/product/detail/{product_slug}', [HomeController::class, 'detail'])-
 Route::get('/confirm-order', [HomeController::class, 'confirmOrder'])->name('confirm.order');
 //blog
 Route::get('/blog', [HomeController::class, 'blog'])->name('blogs');
-Route::get('/blog/detail', [HomeController::class, 'blogDetail'])->name('blog.detail');
+Route::get('/blog/detail/{slug}', [HomeController::class, 'blogDetail'])->name('blog.detail');
 
 Route::get('/videos', [HomeController::class, 'video'])->name('videos');
 

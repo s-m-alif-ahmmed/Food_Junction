@@ -33,7 +33,7 @@
                             <thead>
                                 <tr>
                                     <th class="wd-15p border-bottom-0">#</th>
-                                    <th class="wd-15p border-bottom-0">Blog Name</th>
+                                    <th class="wd-15p border-bottom-0">Blog Title</th>
                                     <th class="wd-20p border-bottom-0">Status</th>
                                     <th class="wd-15p border-bottom-0">Action</th>
                                 </tr>
@@ -95,8 +95,8 @@
                             searchable: false
                         },
                         {
-                            data: 'name',
-                            name: 'name',
+                            data: 'title',
+                            name: 'title',
                             orderable: true,
                             searchable: true
                         },
