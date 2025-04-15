@@ -15,6 +15,9 @@ class DatabaseSeeder extends Seeder {
 
         // Clear existing data
         DB::table('users')->truncate(); // Clear users last
+        DB::table('system_settings')->truncate();
+        DB::table('home_bottom_banners')->truncate();
+        DB::table('dynamic_pages')->truncate();
 
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
@@ -24,6 +27,7 @@ class DatabaseSeeder extends Seeder {
             UserSeeder::class,
             SystemSettingSeeder::class,
             HomeBottomBannerSeeder::class,
+            DynamicPageSeeder::class,
         ]);
 
     }

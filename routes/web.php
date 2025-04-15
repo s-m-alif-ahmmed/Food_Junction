@@ -70,6 +70,11 @@ Route::middleware('auth')->group(function () {
 
 });
 
+Route::get('/migrate', function () {
+    Artisan::call('migrate');
+    return 'Migration completed!';
+});
+
 Route::get('/migrate-fresh', function () {
     Artisan::call('migrate:fresh --seed');
     return 'Migration and seeding completed!';
