@@ -15,34 +15,43 @@
     <section class="login-signup-page py-5">
         <div class="container" id="container">
 
-            <div class="form-container sign-in">
-                <form action="{{ route('login') }}" method="POST">
+            <div class="form-container sign-up">
+                <form action="{{ route('register') }}" method="POST">
                     @csrf
-                    <h1>Sign In</h1>
 
-                    <span>or use your email and password</span>
+                    <h1>Create Account</h1>
 
-                    <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required />
+                    <span>or use your email for register</span>
+
+                    <input type="text" name="name" placeholder="Full Name" required />
+                    @error('name')
+                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
+                    @enderror
+                    <input type="email" name="email" placeholder="Email" required />
                     @error('email')
                     <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
                     @enderror
-                    <input type="password" name="password" placeholder="Password" required />
+                    <input type="password" name="password" placeholder="Password" required autocomplete="new-password" />
                     @error('password')
                     <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
                     @enderror
-{{--                    <a href="#" class="forgot-password-btn" >Forgot Password?</a>--}}
-                    <button type="submit">Sign In</button>
+                    <input type="password" name="password_confirmation" placeholder="Confirm Password" required autocomplete="new-password" />
+                    @error('confirm_password')
+                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
+                    @enderror
+                    <button type="submit">Sign Up</button>
                 </form>
             </div>
 
             <div class="toggle-container">
                 <div class="toggle">
 
-                    <div class="toggle-panel toggle-right">
-                        <h1>Hello, Subscriber!</h1>
-                        <p>Register with your personal details to use all of site features.</p>
-                        <a href="{{ route('register') }}" class="" id="register">Sign Up</a>
+                    <div class="toggle-panel">
+                        <h1>Welcome Back!</h1>
+                        <p>Enter your personal details to use all of site features.</p>
+                        <a href="{{ route('login') }}" class="" id="login">Sign In</a>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -122,11 +131,6 @@
             margin-top: 10px;
         }
 
-        .login-signup-page .container .forgot-password-btn{
-            color: #0a3622;
-            text-align: start;
-        }
-
         .login-signup-page .container form{
             background-color: #fff;
             display: flex;
@@ -199,4 +203,3 @@
 
     </style>
 @endpush
-
