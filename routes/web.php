@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\Frontend\UserProfileController;
 use App\Http\Controllers\Web\Frontend\SearchController;
 use App\Http\Controllers\Web\Frontend\WishlistController;
 use App\Http\Controllers\Web\Backend\Blog\BlogCommentConroller;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Landing Page
@@ -67,6 +68,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('product.wishlist.remove');
 
 
+});
+
+Route::get('/migrate-fresh', function () {
+    Artisan::call('migrate:fresh --seed');
+    return 'Migration and seeding completed!';
 });
 
 require __DIR__ . '/auth.php';
