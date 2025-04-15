@@ -9,6 +9,7 @@ use App\Http\Controllers\Web\Frontend\OrderController;
 use App\Http\Controllers\Web\Frontend\UserProfileController;
 use App\Http\Controllers\Web\Frontend\SearchController;
 use App\Http\Controllers\Web\Frontend\WishlistController;
+use App\Http\Controllers\Web\Backend\Blog\BlogCommentConroller;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Landing Page
@@ -19,9 +20,13 @@ Route::get('/products', [HomeController::class, 'products'])->name('products');
 Route::get('/products/{category_slug}', [HomeController::class, 'categoryProduct'])->name('category.products');
 Route::get('/product/detail/{product_slug}', [HomeController::class, 'detail'])->name('product.detail');
 Route::get('/confirm-order', [HomeController::class, 'confirmOrder'])->name('confirm.order');
+
 //blog
 Route::get('/blog', [HomeController::class, 'blog'])->name('blogs');
 Route::get('/blog/detail/{slug}', [HomeController::class, 'blogDetail'])->name('blog.detail');
+
+//Blog Comments
+Route::post('/blog/{blogId}/comment/store', [BlogCommentConroller::class, 'store'])->name('comment.store');
 
 Route::get('/videos', [HomeController::class, 'video'])->name('videos');
 

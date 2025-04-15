@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="author" content="bdCalling IT Ltd.">
-    <meta name="keywords" content="pure_water_innovation">
+    <meta name="author" content="Food Junction">
+    <meta name="keywords" content="Food_Junction">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title')</title>

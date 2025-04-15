@@ -259,7 +259,7 @@ class BlogController extends Controller
         } catch (Exception) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete the Product.',
+                'message' => 'Failed to delete the Blog.',
             ]);
         }
     }

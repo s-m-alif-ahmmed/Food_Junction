@@ -20,4 +20,9 @@ class Blog extends Model
         'slug'
     ];
 
+    public function blogComments()
+    {
+        return $this->hasMany(BlogComment::class);
+    }
+
 }

@@ -12,6 +12,7 @@ use App\Http\Controllers\Web\Backend\Cms\HomeBannerController;
 use App\Http\Controllers\Web\Backend\Cms\HomeBottomBannerController;
 use App\Http\Controllers\Web\Backend\Video\VideoController;
 use App\Http\Controllers\Web\Backend\Blog\BlogController;
+use App\Http\Controllers\Web\Backend\Blog\BlogCommentConroller;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Dashboard
@@ -65,6 +66,14 @@ Route::controller(BlogController::class)->group(function () {
     Route::patch('/blogs/update/{id}', 'update')->name('blogs.update');
     Route::get('/blogs/status/{id}', 'status')->name('blogs.status');
     Route::delete('/blogs/delete/{id}', 'destroy')->name('blogs.destroy');
+});
+
+//! Route for Video
+Route::controller(BlogCommentConroller::class)->group(function () {
+    Route::get('/blog-comments', 'index')->name('blog.comments.index');
+    Route::get('/blog-comments/show/{id}', 'show')->name('blog.comments.show');
+    Route::get('/blog-comments/status/{id}', 'status')->name('blog.comments.status');
+    Route::delete('/blog-comments/delete/{id}', 'destroy')->name('blog.comments.destroy');
 });
 
 //! Route for Home Banner

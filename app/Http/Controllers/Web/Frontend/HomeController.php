@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\BlogComment;
 use App\Models\Cart;
 use App\Models\Category;
 use App\Models\DynamicPage;
@@ -48,8 +49,11 @@ class HomeController extends Controller {
         if (!$blog) {
             abort(404);
         }
+
+        $blog_comments = BlogComment::where('blog_id', $blog->id)->where('status', 'active')->latest()->get();
+
         $latest_blogs = Blog::where('status','active')->latest()->get();
-        return view('frontend.pages.blog-detail', compact('blog', 'latest_blogs'));
+        return view('frontend.pages.blog-detail', compact('blog', 'latest_blogs', 'blog_comments'));
     }
 
     public function video(): View

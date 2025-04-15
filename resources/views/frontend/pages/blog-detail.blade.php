@@ -31,7 +31,7 @@
                         <img class="img-fluid rounded-2 w-100" src="{{ asset($blog->image ?? 'frontend/images/section/home/blog.png') }}" alt="">
                     </div>
                     <div>
-                        <p class="p-2">Published At: {{ \Carbon\Carbon::parse($blog->created_at)->format('d M, Y') }}</p>
+                        <p class="p-2">Published At: {{ $blog->created_at->diffForHumans() }}</p>
                     </div>
                     <div class="">
                         <h1>{{ $blog->title }}</h1>
@@ -40,28 +40,33 @@
                         </p>
                     </div>
                     <div class="text-center">
-                        <h2 class="styled-heading">Comments</h2>
+                        <h2 class="styled-heading">Comments ({{ $blog_comments->count() }})</h2>
                         <div class="text-underline"></div>
                     </div>
                     <div class="">
                         <div class="">
-                            <div class="d-flex mb-2">
-                                <div class="me-2">
-                                    <img class="rounded-circle" style="height: 50px;" src="{{ asset('frontend/images/default/profile-avatar.png') }}" alt="">
+                            @foreach($blog_comments->take(20) as $comment)
+                                <div class="d-flex mb-2">
+                                    <div class="me-2">
+                                        <img class="rounded-circle" style="height: 50px;" src="{{ asset($comment->user->avatar ?? 'frontend/images/default/profile-avatar.png') }}" alt="">
+                                    </div>
+                                    <div class="">
+                                        <p class="m-0">{{ $comment->user->name ?? 'Anonymous' }}</p>
+                                        <p class="m-0">{{ $comment->created_at->diffForHumans() }}</p>
+                                    </div>
                                 </div>
                                 <div class="">
-                                    <p class="m-0">Name</p>
-                                    <p class="m-0">20 Jan, 2025</p>
+                                    <p>
+                                        {!! $comment->comment !!}
+                                    </p>
                                 </div>
-                            </div>
+                            @endforeach
+
                             <div class="">
-                                <p>
-                                    djshfjkdshdshf sdfdsbsdj hdsdsjkfhskdj hfkdshfkjdshfjkdshfjkdsh jdshf
-                                </p>
-                            </div>
-                            <div class="">
-                                <form action="">
-                                    <textarea class="rounded-2" style="border: 1px solid #7d7e7e;" name="" id="" cols="30" rows="3"></textarea>
+                                <form action="{{ route('comment.store', ['blogId' => $blog->id]) }}" method="POST">
+                                    @csrf
+
+                                    <textarea class="rounded-2" style="border: 1px solid #7d7e7e;" name="comment" id="" cols="30" rows="3"></textarea>
                                     <button type="submit" class="btn review-btn float-end">Send</button>
                                 </form>
                             </div>
@@ -76,11 +81,17 @@
                         @foreach($latest_blogs->take(5) as $data)
                             <div class="d-flex mb-2">
                                 <div class="me-2">
-                                    <img class="rounded-circle object-fit-cover" style="height: 75px; width: 75px;" src="{{ asset($data->image ?? 'frontend/images/section/home/blog.png') }}" alt="">
+                                    <a class="nav-link" href="{{ route('blog.detail', $data->slug) }}">
+                                        <img class="rounded-circle object-fit-cover" style="height: 75px; width: 75px;" src="{{ asset($data->image ?? 'frontend/images/section/home/blog.png') }}" alt="">
+                                    </a>
                                 </div>
                                 <div class="">
-                                    <p class="m-0">{{ $data->title }}</p>
-                                    <p class="m-0">{{ \Carbon\Carbon::parse($data->created_at)->format('d M, Y') }}</p>
+                                    <p class="m-0">
+                                        <a class="nav-link" href="{{ route('blog.detail', $data->slug) }}">
+                                            {{ $data->title }}
+                                        </a>
+                                    </p>
+                                    <p class="m-0">{{ $data->created_at->diffForHumans() }}</p>
                                 </div>
                             </div>
                         @endforeach

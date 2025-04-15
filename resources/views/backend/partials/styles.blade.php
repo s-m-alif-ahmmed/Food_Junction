@@ -4,7 +4,7 @@
 
 {{-- FAVICON --}}
 <link rel="shortcut icon" type="image/x-icon"
-    href="{{ isset($systemSetting->favicon) && !empty($systemSetting->favicon) ? asset($systemSetting->favicon) : asset('frontend/eVento_Favicon.png') }}" />
+      href="{{ asset(!empty($systemSetting->favicon) ? $systemSetting->favicon : 'frontend/images/brands/food_junction_favicon.jpg') }}" />
 
 {{-- BOOTSTRAP CSS --}}
 <link id="style" href="{{ asset('backend/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />

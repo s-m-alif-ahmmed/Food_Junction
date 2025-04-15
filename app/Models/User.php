@@ -48,4 +48,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Wishlist::class, 'wishlists', 'user_id', 'product_id');
     }
 
+    public function blogComments()
+    {
+        return $this->hasMany(BlogComment::class);
+    }
+
 }

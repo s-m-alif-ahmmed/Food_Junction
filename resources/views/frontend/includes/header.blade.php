@@ -54,18 +54,20 @@
                             </div>
                         </div>
                     @elseif(Auth::user()->role == 'User')
-                        <div class="border-0 me-3">
-                            <a href="{{ route('user.dashboard') }}">
-                                <img src="{{ asset('/frontend/images/icons/user.svg') }}" alt="">
-                            </a>
-                        </div>
-                        <div class="border-0 ms-1">
-                            <a href="" onclick="event.preventDefault(); document.getElementById('logoutForm').submit()">
-                                <img src="{{ asset('/frontend/images/icons/logout.svg') }}" alt="">
-                            </a>
-                            <form action="{{ route('logout') }}" method="post" id="logoutForm">
-                                @csrf
-                            </form>
+                        <div class="d-flex">
+                            <div class="border-0 me-3">
+                                <a href="{{ route('user.dashboard') }}">
+                                    <img src="{{ asset('/frontend/images/icons/user.svg') }}" alt="">
+                                </a>
+                            </div>
+                            <div class="border-0 ms-1">
+                                <a href="" onclick="event.preventDefault(); document.getElementById('logoutForm').submit()">
+                                    <img src="{{ asset('/frontend/images/icons/logout.svg') }}" alt="">
+                                </a>
+                                <form action="{{ route('logout') }}" method="post" id="logoutForm">
+                                    @csrf
+                                </form>
+                            </div>
                         </div>
                     @endif
                 @else
