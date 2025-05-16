@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
@@ -15,6 +16,59 @@ use Illuminate\Http\RedirectResponse;
 
 class OrderController extends Controller
 {
+    public function couponCheck(Request $request)
+    {
+        $request->validate([
+            'coupon' => 'required',
+        ]);
+
+        $coupon = Coupon::where('code', $request->coupon)->first();
+
+        if (!$coupon) {
+            return response()->json([
+                'success' => false,  // Add this
+                'message' => 'Coupon not found.'  // Match the expected structure
+            ]);
+        }
+
+        if (Auth::check()) {
+            // Fetch the user's cart items from the database
+            $carts = Cart::where('user_id', Auth::id())->latest()->get();
+
+            // Calculate the total cart amount
+            $total = $carts->sum(function ($cart) {
+                return $cart->product->price * ($cart->weight ?? $cart->quantity);
+            });
+
+
+        } else {
+            // Fetch cart items from session for guest users
+            $sessionCart = session()->get('carts', []);
+
+            // Prepare the cart data
+            $carts = array_map(function ($item) {
+                $product = Product::find($item['product_id']);
+
+                // Return the product and weight data
+                if ($product) {
+                    return [
+                        'product' => $product,
+                        'weight' => $item['weight'],
+                    ];
+                }
+                return null;
+            }, $sessionCart);
+            // Filter out any null values (products not found)
+            $carts = array_filter($carts);
+        }
+
+        return response()->json([
+            'success' => true,  // Add this
+            'message' => 'Coupon found.',
+            'discount' => $carts // Optional: include discount amount
+        ]);
+    }
+
     public function checkout(): RedirectResponse | View {
         $carts = [];
 

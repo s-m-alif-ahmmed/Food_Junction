@@ -249,16 +249,21 @@
                                             <input type="hidden" name="delivery_fee" value="0">
                                         @endif
                                     </div>
-{{--                                    <div class="col-md-12 d-flex justify-content-between">--}}
-{{--                                        <div class="input-group mb-3">--}}
-{{--                                            <input type="text" class="form-control coupon-input" placeholder="Add Promo Code" aria-label="Recipient's username" aria-describedby="basic-addon2">--}}
-{{--                                            <span class="input-group-text bg-danger text-white coupon-btn" id="basic-addon2">Apply</span>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                    <div class="col-md-12 d-flex justify-content-between">--}}
-{{--                                        <p>Coupon Discount</p>--}}
-{{--                                        <p class="fsw-semibold">-140Tk</p>--}}
-{{--                                    </div>--}}
+                                    <div class="col-md-12 d-flex justify-content-between">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control coupon-input"
+                                                   name="coupon"
+                                                   placeholder="Add Promo Code">
+                                            <button type="button" class="input-group-text bg-danger text-white coupon-btn"
+                                                    onclick="applyCoupon()">
+                                                Apply
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 d-flex justify-content-between">
+                                        <p>Coupon Discount</p>
+                                        <p class="fsw-semibold">-140Tk</p>
+                                    </div>
                                     <div class="col-md-12 d-flex justify-content-between">
                                         <p class="fsw-semibold">Total</p>
                                         <p class="fsw-semibold">{{ $totalInBengali }}Tk</p>
@@ -434,16 +439,16 @@
                                         <p class="fsw-semibold">{{ englishToBengali(number_format($deliveryFee, 2).'Tk') }}</p>
                                         <input type="hidden" name="delivery_fee" value="60">
                                     </div>
-{{--                                    <div class="col-md-12 d-flex justify-content-between">--}}
-{{--                                        <div class="input-group mb-3">--}}
-{{--                                            <input type="text" class="form-control coupon-input" placeholder="Add Promo Code" aria-label="Recipient's username" aria-describedby="basic-addon2">--}}
-{{--                                            <span class="input-group-text bg-danger text-white coupon-btn" id="basic-addon2">Apply</span>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                    <div class="col-md-12 d-flex justify-content-between">--}}
-{{--                                        <p>Coupon Discount</p>--}}
-{{--                                        <p class="fsw-semibold">-140Tk</p>--}}
-{{--                                    </div>--}}
+                                    <div class="col-md-12 d-flex justify-content-between">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control coupon-input" placeholder="Add Promo Code" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                            <span class="input-group-text bg-danger text-white coupon-btn" id="basic-addon2">Apply</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 d-flex justify-content-between">
+                                        <p>Coupon Discount</p>
+                                        <p class="fsw-semibold">-140Tk</p>
+                                    </div>
                                     <div class="col-md-12 d-flex justify-content-between">
                                         <p class="fsw-semibold">Total</p>
                                         <p class="fsw-semibold">{{ $totalPriceInBengali }}Tk</p>
@@ -466,6 +471,44 @@
 @endsection
 
 @push('scripts')
+
+    <script>
+        function applyCoupon() {
+            const couponCode = document.querySelector('[name="coupon"]').value;
+
+            fetch("{{ route('coupon.check') }}", {
+                method: 'POST',
+                body: JSON.stringify({ coupon: couponCode }),
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if(data.success) {
+                        showSuccessToast(data.message);
+                        // Optional: Update UI with discount
+                        if(data.discount) {
+                            updateDiscount(data.discount);
+                        }
+                    } else {
+                        showErrorToast(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showErrorToast("Failed to apply coupon");
+                });
+        }
+    </script>
+
     <script>
         function removeFromCart(productId) {
             $.ajax({

@@ -31,6 +31,9 @@ Route::post('/blog/{blogId}/comment/store', [BlogCommentConroller::class, 'store
 
 Route::get('/videos', [HomeController::class, 'video'])->name('videos');
 
+//Coupon Check
+Route::post('/coupon-check', [OrderController::class, 'couponCheck'])->name('coupon.check');
+
 //dynamic page
 Route::get('/page/{page_slug}', [HomeController::class, 'dynamicPage'])->name('user.dynamic.page');
 
