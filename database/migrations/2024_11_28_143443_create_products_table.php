@@ -18,7 +18,6 @@ return new class extends Migration
                 $table->string('meta_description')->nullable();
                 $table->text('meta_keywords')->nullable();
                 $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('cascade');
-                $table->foreignId('coupon_id')->nullable();
                 $table->string('name')->nullable();
                 $table->text('description')->nullable();
                 $table->text('image')->nullable();

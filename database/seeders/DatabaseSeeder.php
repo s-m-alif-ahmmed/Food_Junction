@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder {
         DB::table('system_settings')->truncate();
         DB::table('home_bottom_banners')->truncate();
         DB::table('dynamic_pages')->truncate();
+        DB::table('categories')->truncate();
+        DB::table('products')->truncate();
 
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
@@ -28,6 +30,8 @@ class DatabaseSeeder extends Seeder {
             SystemSettingSeeder::class,
             HomeBottomBannerSeeder::class,
             DynamicPageSeeder::class,
+            CategorySeeder::class,
+            ProductSeeder::class,
         ]);
 
     }

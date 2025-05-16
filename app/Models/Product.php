@@ -14,7 +14,6 @@ class Product extends Model
         'meta_title',
         'meta_description',
         'meta_keywords',
-        'coupon_id',
         'category_id',
         'name',
         'description',
