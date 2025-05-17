@@ -15,78 +15,33 @@
     <section class="login-signup-page py-5">
         <div class="container" id="container">
 
-            <div class="form-container sign-up">
-                <form action="{{ route('register') }}" method="POST">
-                    @csrf
-
-                    <h1>Create Account</h1>
-
-{{--                    <div class="social-icons">--}}
-{{--                        <a href="#" class="icon"><i class="fa-brands fa-google"></i></a>--}}
-{{--                        <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>--}}
-{{--                        <a href="#" class="icon"><i class="fa-brands fa-youtube"></i></a>--}}
-{{--                        <a href="#" class="icon"><i class="fa-brands fa-x-twitter"></i></a>--}}
-{{--                    </div>--}}
-
-                    <span>or use your email for register</span>
-
-                    <input type="text" name="name" placeholder="Full Name" required />
-                    @error('name')
-                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
-                    @enderror
-                    <input type="email" name="email" placeholder="Email" required />
-                    @error('email')
-                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
-                    @enderror
-                    <input type="password" name="password" placeholder="Password" required autocomplete="new-password" />
-                    @error('password')
-                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
-                    @enderror
-                    <input type="password" name="password_confirmation" placeholder="Confirm Password" required autocomplete="new-password" />
-                    @error('confirm_password')
-                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
-                    @enderror
-                    <button type="submit">Sign Up</button>
-                </form>
-            </div>
-
             <div class="form-container sign-in">
-                <form action="{{ route('login') }}" method="POST">
+                <form action="{{ route('forgot.password.otp') }}" method="POST">
                     @csrf
-                    <h1>Sign In</h1>
-{{--                    <div class="social-icons">--}}
-{{--                        <a href="#" class="icon"><i class="fa-brands fa-google"></i></a>--}}
-{{--                        <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>--}}
-{{--                        <a href="#" class="icon"><i class="fa-brands fa-youtube"></i></a>--}}
-{{--                        <a href="#" class="icon"><i class="fa-brands fa-x-twitter"></i></a>--}}
-{{--                    </div>--}}
-                    <span>or use your email and password</span>
+                    <h1>Forgot Password</h1>
+
+                    <span class="pb-2">Enter the email address registered on your account</span>
+
                     <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required />
                     @error('email')
                     <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
                     @enderror
-                    <input type="password" name="password" placeholder="Password" required />
-                    @error('password')
-                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
-                    @enderror
-{{--                    <a href="#">Forgot Password?</a>--}}
-                    <button type="submit">Sign In</button>
+                    @if(session('message'))
+                        <div class="alert alert-success">{{ session('message') }}</div>
+                    @endif
+
+
+                    <button type="submit">Send OTP</button>
                 </form>
             </div>
 
             <div class="toggle-container">
                 <div class="toggle">
 
-                    <div class="toggle-panel toggle-left">
-                        <h1>Welcome Back!</h1>
-                        <p>Enter your personal details to use all of site features.</p>
-                        <button class="hidden" id="login">Sign In</button>
-                    </div>
-
                     <div class="toggle-panel toggle-right">
-                        <h1>Hello, Subscriber!</h1>
+                        <h1>Hello, there!</h1>
                         <p>Register with your personal details to use all of site features.</p>
-                        <button class="hidden" id="register">Sign Up</button>
+                        <a href="{{ route('register') }}" class="" id="register">Sign Up</a>
                     </div>
                 </div>
             </div>
@@ -98,7 +53,6 @@
 @push('styles')
     <style>
         .login-signup-page{
-            background-color: #c9d6ff;
             background: linear-gradient(to right, #f0953a, #b01920);
             display: flex;
             align-items: center;
@@ -125,15 +79,33 @@
             margin: 20px 0;
         }
 
+        .login-signup-page .form-container h1 {
+            font-size: 32px;
+        }
+
+        @media screen and (max-width: 576px) {
+            .login-signup-page .form-container h1 {
+                font-size: 24px;
+            }
+        }
+
         .container span{
             font-size: 12px;
         }
 
         .login-signup-page .container a{
-            color: #333;
-            font-size: 13px;
             text-decoration: none;
-            margin: 15px 0 10px;
+            background-color: transparent;
+            color: #ffffff;
+            font-size: 12px;
+            padding: 10px 45px;
+            border: 2px solid white;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 10px;
         }
 
         .login-signup-page .container button{
@@ -150,9 +122,9 @@
             margin-top: 10px;
         }
 
-        .login-signup-page .container button.hidden{
-            background-color: transparent;
-            border-color: #fff;
+        .login-signup-page .container .forgot-password-btn{
+            color: #0a3622;
+            text-align: start;
         }
 
         .login-signup-page .container form{
@@ -180,60 +152,10 @@
             position: absolute;
             top: 0;
             height: 100%;
+            width: 50%;
+            padding: 20px 20px 20px 0;
             transition: all .6s ease-in-out;
         }
-
-        .login-signup-page .sign-in{
-            left: 0;
-            width: 50%;
-            z-index: 2;
-        }
-
-        .login-signup-page .container.active .sign-in{
-            transform: translateX(100%);
-        }
-
-        .login-signup-page .sign-up{
-            left: 0;
-            width: 50%;
-            opacity: 0;
-            z-index: 1;
-        }
-
-        .login-signup-page  .container.active .sign-up{
-            transform: translateX(100%);
-            opacity: 1;
-            z-index: 5;
-            animation: move .6s;
-        }
-
-        @keyframes move{
-            0%, 49.99%{
-                opacity: 0;
-                z-index: 1;
-            }
-            50%, 100%{
-                opacity: 1;
-                z-index: 5;
-            }
-        }
-
-        /*.login-signup-page  .social-icons{*/
-        /*    margin: 20px 0;*/
-        /*}*/
-
-        /*.login-signup-page .social-icons a{*/
-        /*    border: 1px solid #ccc;*/
-        /*    color: #ffffff;*/
-        /*    background-color: #B77128;*/
-        /*    border-radius: 20%;*/
-        /*    display: inline-flex;*/
-        /*    justify-content: center;*/
-        /*    align-items: center;*/
-        /*    margin: 0 3px;*/
-        /*    width: 40px;*/
-        /*    height: 40px;*/
-        /*}*/
 
         .login-signup-page .toggle-container{
             position: absolute;
@@ -253,25 +175,17 @@
         }
 
         .login-signup-page .toggle{
-            background-color: #b01920;
             height: 100%;
             background: linear-gradient(to right, #f79a3f, #b01920);
             color: #fff;
             position: relative;
-            left: -100%;
-            height: 100%;
-            width: 200%;
-            transform: translate(0);
-            transition: all .6s ease-in-out;
-        }
-
-        .login-signup-page .container.container.active .toggle{
-            transform: translateX(50%);
+            left: 0%;
+            width: 100%;
         }
 
         .login-signup-page .toggle-panel{
             position: absolute;
-            width: 50%;
+            width: 100%;
             height: 100%;
             display: flex;
             align-items: center;
@@ -280,44 +194,9 @@
             padding: 0 30px;
             text-align: center;
             top: 0;
-            transform: translateX(0);
-            transition: all .6s ease-in-out;
         }
 
-        .login-signup-page .toggle-left{
-            transform: translateX(-200%);
-        }
-
-        .login-signup-page .container.active .toggle-left{
-            transform: translateX(0);
-        }
-
-        .login-signup-page .toggle-right{
-            right: 0;
-            transform: translateX(0);
-        }
-
-        .login-signup-page .container.active .toggle-right{
-            transform: translateX(200%);
-        }
 
     </style>
 @endpush
 
-@push('scripts')
-    <script>
-        const container = document.getElementById("container");
-        const registerBtn = document.getElementById("register");
-
-        const loginBtn = document.getElementById("login");
-
-        registerBtn.addEventListener("click", () => {
-            container.classList.add("active");
-        });
-
-        loginBtn.addEventListener("click", () => {
-            container.classList.remove("active");
-        });
-
-    </script>
-@endpush

@@ -17,8 +17,20 @@ Route::middleware('guest')->group(function () {
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
+    // Forgot password - Step 1
+    Route::get('/forgot/password', [RegisteredUserController::class, 'showForgotPasswordForm'])->name('forgot.password');
+    Route::post('/forgot/password', [RegisteredUserController::class, 'handleForgotPassword'])->name('forgot.password.otp');
+
+    // OTP Verification - Step 2
+    Route::get('/verify-otp', [RegisteredUserController::class, 'showOtpVerificationForm'])->name('otp.verify.form');
+    Route::post('/verify-otp', [RegisteredUserController::class, 'handleOtpVerification'])->name('otp.verify');
+
+    // Reset Password - Step 3
+    Route::get('/reset/password/{token}', [RegisteredUserController::class, 'showResetForm'])->name('reset.password.form');
+    Route::post('/reset/password', [RegisteredUserController::class, 'handleResetPassword'])->name('reset.password');
+
+
+    Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 

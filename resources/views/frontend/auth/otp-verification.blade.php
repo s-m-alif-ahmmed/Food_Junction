@@ -2,59 +2,63 @@
 
 @section('meta_infos')
     <meta name="author" content="Food Junction">
-    <meta name="description" content="Food Junction">
-    <meta name="keywords" content="Food Junction, Food, Junction, Dhaka, Sweets">
+    <meta name="description" content="Food Junction - Reset Password">
+    <meta name="keywords" content="Food Junction, Food, Junction, Dhaka, Sweets, Reset Password">
 @endsection
 
 @section('title')
-    Food Junction | Login & Signup
+    Food Junction | Forgot Password
 @endsection
 
 @section('content')
-
     <section class="login-signup-page py-5">
         <div class="container" id="container">
 
             <div class="form-container sign-in">
-                <form action="{{ route('login') }}" method="POST">
+                <form action="{{ route('otp.verify') }}" method="POST">
                     @csrf
-                    <h1>Sign In</h1>
+                    <h1>OTP Verification</h1>
 
-                    <span>or use your email and password</span>
+                    @if (session('status'))
+                        <div class="alert alert-success w-100 text-center">
+                            {{ session('status') }}
+                        </div>
+                    @endif
 
-                    <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required />
+                    @if (session('error'))
+                        <div class="alert alert-danger w-100 text-center">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    <span class="pb-2">Enter the otp for verification</span>
+
+                    <input type="number" name="otp" placeholder="Otp" value="{{ old('otp') }}" required />
                     @error('email')
                     <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
                     @enderror
-                    <input type="password" name="password" placeholder="Password" required />
-                    @error('password')
-                    <span class="text-danger text-start w-100 ps-3">{{ $message }}</span>
-                    @enderror
-                    <div class="text-center">
-                        <a href="{{ route('forgot.password') }}" class="forgot-password-btn">Forgot Password?</a>
-                    </div>
-                    <button type="submit">Sign In</button>
+
+                    <button type="submit">OTP Verify</button>
                 </form>
             </div>
 
             <div class="toggle-container">
                 <div class="toggle">
-
                     <div class="toggle-panel toggle-right">
-                        <h1>Hello, Subscriber!</h1>
+                        <h1>Hello, there!</h1>
                         <p>Register with your personal details to use all of site features.</p>
                         <a href="{{ route('register') }}" class="" id="register">Sign Up</a>
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
-
 @endsection
 
 @push('styles')
     <style>
-        .login-signup-page{
+        .login-signup-page {
             background: linear-gradient(to right, #f0953a, #b01920);
             display: flex;
             align-items: center;
@@ -63,7 +67,7 @@
             height: 100vh;
         }
 
-        .login-signup-page .container{
+        .login-signup-page .container {
             background-color: white;
             border-radius: 30px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, .35);
@@ -74,7 +78,7 @@
             min-height: 480px;
         }
 
-        .login-signup-page .container p{
+        .login-signup-page .container p {
             font-size: 14px;
             line-height: 20px;
             letter-spacing: .3px;
@@ -91,11 +95,11 @@
             }
         }
 
-        .container span{
+        .container span {
             font-size: 12px;
         }
 
-        .login-signup-page .container a{
+        .login-signup-page .container a {
             text-decoration: none;
             background-color: transparent;
             color: #ffffff;
@@ -110,7 +114,7 @@
             margin-top: 10px;
         }
 
-        .login-signup-page .container button{
+        .login-signup-page .container button {
             background-color: #b77128;
             color: #ffffff;
             font-size: 12px;
@@ -124,12 +128,12 @@
             margin-top: 10px;
         }
 
-        .login-signup-page .container .forgot-password-btn{
+        .login-signup-page .container .forgot-password-btn {
             color: #0a3622;
             text-align: start;
         }
 
-        .login-signup-page .container form{
+        .login-signup-page .container form {
             background-color: #fff;
             display: flex;
             align-items: center;
@@ -139,7 +143,7 @@
             height: 100%;
         }
 
-        .login-signup-page .container input{
+        .login-signup-page .container input {
             background-color: #eee;
             border: none;
             margin: 8px 0;
@@ -150,7 +154,7 @@
             outline: none;
         }
 
-        .login-signup-page .form-container{
+        .login-signup-page .form-container {
             position: absolute;
             top: 0;
             height: 100%;
@@ -159,7 +163,7 @@
             transition: all .6s ease-in-out;
         }
 
-        .login-signup-page .toggle-container{
+        .login-signup-page .toggle-container {
             position: absolute;
             top: 0;
             left: 50%;
@@ -171,12 +175,12 @@
             z-index: 1000;
         }
 
-        .login-signup-page .container.active .toggle-container{
+        .login-signup-page .container.active .toggle-container {
             transform: translateX(-100%);
             border-radius: 0 80px 80px 0;
         }
 
-        .login-signup-page .toggle{
+        .login-signup-page .toggle {
             height: 100%;
             background: linear-gradient(to right, #f79a3f, #b01920);
             color: #fff;
@@ -185,7 +189,7 @@
             width: 100%;
         }
 
-        .login-signup-page .toggle-panel{
+        .login-signup-page .toggle-panel {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -197,8 +201,5 @@
             text-align: center;
             top: 0;
         }
-
-
     </style>
 @endpush
-

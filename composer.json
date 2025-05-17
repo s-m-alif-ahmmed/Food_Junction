@@ -11,6 +11,7 @@
         "php": "^8.2",
         "endroid/qr-code": "^5.1",
         "guzzlehttp/guzzle": "^7.9",
+        "ichtrojan/laravel-otp": "^2.0",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.16",
