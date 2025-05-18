@@ -1,17 +1,17 @@
 @extends('backend.app')
 
-@section('title', 'Sweet Detail')
+@section('title', 'Coupon Detail')
 
 @section('content')
     {{-- PAGE-HEADER --}}
     <div class="page-header">
         <div>
-            <h1 class="page-title">Sweet Form</h1>
+            <h1 class="page-title">Coupon Form</h1>
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Sweet</li>
+                <li class="breadcrumb-item active" aria-current="page">Coupon</li>
             </ol>
         </div>
     </div>
@@ -140,7 +140,7 @@
                     </div>
 
                     <div class="form-group">
-                        <a href="{{ route('sweets.index') }}" class="btn btn-danger me-2">Back</a>
+                        <a href="{{ route('coupons.index') }}" class="btn btn-danger me-2">Back</a>
                     </div>
 
                 </div>

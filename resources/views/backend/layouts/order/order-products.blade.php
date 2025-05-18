@@ -2,7 +2,26 @@
 
 @section('title', 'Order')
 
+@php
+    if (!function_exists('englishToBengali')) {
+        function englishToBengali($englishString) {
+            $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return strtr($englishString, array_combine($englishNumbers, $bengaliNumbers));
+        }
+    }
+
+    if (!function_exists('banglaToEnglish')) {
+        function banglaToEnglish($bengaliString) {
+            $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return strtr($bengaliString, array_combine($bengaliNumbers, $englishNumbers));
+        }
+    }
+@endphp
+
 @section('content')
+
     {{-- PAGE-HEADER --}}
     <div class="page-header">
         <div>
@@ -35,24 +54,9 @@
                                 </tr>
                             </thead>
                             <tbody>
+
                             @foreach($order_data as $product)
                                     <?php
-                                    if (!function_exists('englishToBengali')) {
-                                        function englishToBengali($englishString) {
-                                            $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                                            $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-                                            return strtr($englishString, array_combine($englishNumbers, $bengaliNumbers));
-                                        }
-                                    }
-
-                                    if (!function_exists('banglaToEnglish')) {
-                                        function banglaToEnglish($bengaliString) {
-                                            $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                                            $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-                                            return strtr($bengaliString, array_combine($bengaliNumbers, $englishNumbers));
-                                        }
-                                    }
-
                                     $price = banglaToEnglish($product->product->price);
                                     $product_type = $product->product->product_type;
 
@@ -112,4 +116,5 @@
             </div>
         </div>
     </div>
+
 @endsection

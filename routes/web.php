@@ -33,6 +33,8 @@ Route::get('/videos', [HomeController::class, 'video'])->name('videos');
 
 //Coupon Check
 Route::post('/coupon-check', [OrderController::class, 'couponCheck'])->name('coupon.check');
+Route::post('/coupon/remove', [OrderController::class, 'couponRemove'])->name('coupon.remove');
+
 
 //dynamic page
 Route::get('/page/{page_slug}', [HomeController::class, 'dynamicPage'])->name('user.dynamic.page');

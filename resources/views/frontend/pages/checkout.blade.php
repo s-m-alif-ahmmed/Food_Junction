@@ -10,6 +10,25 @@
     Checkout | Food Junction
 @endsection
 
+@php
+    if (!function_exists('englishToBengali')) {
+        function englishToBengali($englishString) {
+            $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return strtr($englishString, array_combine($englishNumbers, $bengaliNumbers));
+        }
+    }
+
+    if (!function_exists('banglaToEnglish')) {
+        function banglaToEnglish($bengaliString) {
+            $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return strtr($bengaliString, array_combine($bengaliNumbers, $englishNumbers));
+        }
+    }
+
+@endphp
+
 @section('content')
 
     <section class="checkout-page">
@@ -30,6 +49,18 @@
                 <p class="fs-20 text-white mb-1">Order Only For Dhaka</p>
             </div>
         </div>
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+
         <div class="container my-4">
             <form action="{{ route('new.order') }}" method="post">
                 @csrf
@@ -75,391 +106,103 @@
                     </div>
 
                     <div class="col-lg-4 col-md-12 col-sm-12 col-12 py-2">
-                        @if(Auth::check())
-                            <div class="card p-3 mb-2">
-                                @foreach($carts as $cart)
-                                        <?php
-                                        if (!function_exists('englishToBengali')) {
-                                            function englishToBengali($englishString) {
-                                                $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                                                $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-                                                return strtr($englishString, array_combine($englishNumbers, $bengaliNumbers));
-                                            }
-                                        }
+                        <div class="card p-3 mb-2">
+                            @foreach($carts as $cart)
 
-                                        if (!function_exists('banglaToEnglish')) {
-                                            function banglaToEnglish($bengaliString) {
-                                                $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                                                $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-                                                return strtr($bengaliString, array_combine($bengaliNumbers, $englishNumbers));
-                                            }
-                                        }
-
-                                        $price = banglaToEnglish($cart->product->price);
-                                        $quantity = $cart->quantity;
-                                        $product_type = $cart->product->product_type;
-
-                                        if ($product_type == 'Sweet'){
-                                            $gm = $price / 1000;
-                                            $total = $gm * $cart->weight;
-                                        }elseif ($product_type == 'Product'){
-                                            $total = $quantity * $price;
-                                        }
-                                        ?>
-                                    <div class="row py-2">
-                                        <div class="col-lg-3 col-md-3 col-sm-3 col-3">
-                                            <a href="{{ route('product.detail', $cart->product->product_slug ) }}">
-                                                <div class="cart-img">
-                                                    <img src="{{ asset($cart->product->image ?? '/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
-                                                </div>
+                            <div class="row py-2">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-3">
+                                    <a href="{{ route('product.detail', $cart['product_slug'] ) }}">
+                                        <div class="cart-img">
+                                            <img src="{{ asset($cart->product->image ?? '/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-lg-8 col-md-7 col-sm-7 col-7 checkout-cart-sweets">
+                                    <div>
+                                        <div>
+                                            <a href="{{ route('product.detail', $cart['product_slug'] ) }}" class="sweet-name">
+                                                {{ $cart['product']['name'] }}
                                             </a>
                                         </div>
-                                        <div class="col-lg-8 col-md-7 col-sm-7 col-7 checkout-cart-sweets">
-                                            <div>
-                                                <div>
-                                                    <a href="{{ route('product.detail', $cart->product->product_slug ) }}" class="sweet-name">
-                                                        {{ $cart->product->name }}
-                                                    </a>
-                                                </div>
-                                                <div>
-                                                    <span class="cart-weight">
-                                                        @if($cart->product->product_type == 'Sweet')
-                                                            {{ $cart->weight < 1000 ? englishToBengali($cart->weight) . ' গ্রাম' : englishToBengali($cart->weight / 1000) . ' কেজি' }}
-                                                        @elseif($cart->product->product_type == 'Product')
-                                                            {{ $cart->quantity ?? '' }} pcs
-                                                        @endif
-                                                    </span>
-                                                    <p class="cart-price">
-                                                        {{ $cart->product->price ?? '0' }}Tk
-                                                        @if($cart->product->discount_price)
-                                                        <span class="discount-price">(<del>{{ $cart->product->discount_price }}Tk</del>)</span>
-                                                        @endif
-                                                    </p>
-                                                    <span class="single-cart-total-price">
-                                                        Total: {{ englishToBengali($total) ?? '0' }}Tk
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-1 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
-                                            <button class="btn" onclick="removeFromCart('{{ $cart->product->id }}')">
-                                                <i class="fa-solid fa-trash text-danger"></i>
-                                            </button>
+                                        <div>
+                                            <span class="cart-weight">
+                                                @if($cart['product']['product_type'] == 'Sweet')
+                                                    {{ $cart['weight'] < 1000 ? englishToBengali($cart['weight']) . ' গ্রাম' : englishToBengali($cart['weight'] / 1000) . ' কেজি' }}
+                                                @elseif($cart['product']['product_type'] == 'Product')
+                                                    {{ $cart->quantity ?? '' }} pcs
+                                                @endif
+                                            </span>
+                                            <p class="cart-price">
+                                                {{ englishToBengali($cart['price']) ?? '0' }}Tk
+                                                @if($cart['product']['discount_price'])
+                                                <span class="discount-price">(<del>{{ englishToBengali($cart['product']['price']) }}Tk</del>)</span>
+                                                @endif
+                                            </p>
+                                            <span class="single-cart-total-price">
+                                                Subtotal: {{ englishToBengali($cart['line_total']) ?? '0' }}Tk
+                                            </span>
                                         </div>
                                     </div>
-                                @endforeach
-
+                                </div>
+                                <div class="col-lg-1 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
+                                    <button class="btn" onclick="removeFromCart('{{ $cart['product']['id'] }}')">
+                                        <i class="fa-solid fa-trash text-danger"></i>
+                                    </button>
+                                </div>
                             </div>
+                            @endforeach
 
-                            @php
-                                // Number conversion functions remain the same as in previous response
+                        </div>
 
-                                // Initialize totals and other values
-                                $subtotal = 0.0;
-                                $totalWeight = 0;
-                                $discount = 0.0;
-                                if ($carts->count() > 0){
-                                    $deliveryFee = 60; // default delivery fee
-                                }else{
-                                    $deliveryFee = 0; // default delivery fee
-                                }
-                                $totalSweetPrice = 0.0;
-                                $totalProductPrice = 0.0;
-
-                                if (!function_exists('englishToBengali')) {
-                                    function englishToBengali($englishString) {
-                                        $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                                        $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-                                        return strtr($englishString, array_combine($englishNumbers, $bengaliNumbers));
-                                    }
-                                }
-
-                                if (!function_exists('banglaToEnglish')) {
-                                    function banglaToEnglish($bengaliString) {
-                                        $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                                        $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-                                        return strtr($bengaliString, array_combine($bengaliNumbers, $englishNumbers));
-                                    }
-                                }
-
-                                // Calculate subtotal and total weight from cart items
-                                foreach ($carts as $cart) {
-                                    // Convert price to float for calculation (handling both current and old price)
-                                    $productPrice = (float)banglaToEnglish($cart->product->price ?? 0); // Ensure the price is numeric
-                                    $weight = (int)$cart->weight;
-                                    $product_type = $cart->product->product_type;
-                                    $quantity = $cart->quantity;
-
-                                    if ($product_type == 'Sweet') {
-                                        $gm = $productPrice / 1000;
-                                        $sweetPrice = $gm * $weight;
-                                        $totalSweetPrice += $sweetPrice;
-                                    } elseif ($product_type == 'Product') {
-                                        $productPrice = $quantity * $productPrice;
-                                        $totalProductPrice += $productPrice;
-                                    }
-
-                                    $subtotal = $totalSweetPrice + $totalProductPrice;
-                                    $total = $subtotal + $deliveryFee;
-
-                                }
-
-                                // Apply 5% discount if the user is logged in
-                                if (\Illuminate\Support\Facades\Auth::check()) {
-                                    $discount = $subtotal * 0.05;
-                                    $discount = round($discount);
-                                }
-
-                                // Calculate total after discount and delivery fee
-                                $discountTotal = $subtotal - $discount;
-                                $total = $discountTotal + $deliveryFee;
-
-                                // Convert numbers to Bengali
-                                $subtotalInBengali = englishToBengali(number_format($subtotal, 2));
-                                $discountInBengali = englishToBengali(number_format($discount, 2));
-                                $deliveryFeeInBengali = englishToBengali(number_format($deliveryFee, 2).'Tk');
-                                $totalInBengali = englishToBengali(number_format($total, 2));
-
-                            @endphp
-
-
-                            <div class="card p-3">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p class="fsw-bold fs-20">Order Summery</p>
-                                    </div>
-                                    <div class="col-md-12 d-flex justify-content-between">
-                                        <p>Subtotal</p>
-                                        <p class="fsw-semibold">{{ $subtotalInBengali }}Tk</p>
-                                        <input type="hidden" name="order_total" value="{{ $subtotal }}">
-                                    </div>
-                                    @if($discount > 0)
+                        <div class="card p-3">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="fsw-bold fs-20">Order Summary</p>
+                                </div>
+                                <div class="col-md-12 d-flex justify-content-between">
+                                    <p>Subtotal</p>
+                                    <p class="fsw-semibold" data-subtotal>{{ englishToBengali($total_info['sub_total']) }}Tk</p>
+                                    <input type="hidden" name="order_total" value="{{ $total_info['sub_total'] }}">
+                                </div>
+                                @if($total_info['login_discount'])
                                     <div class="col-md-12 d-flex justify-content-between">
                                         <p>Login Discount</p>
-                                        <p class="fsw-semibold">-{{ $discountInBengali }}Tk</p>
-                                        <input type="hidden" name="login_discount" value="{{ $discount }}">
+                                        <p class="fsw-semibold" data-login-discount>-{{ englishToBengali($total_info['login_discount']) }}Tk</p>
+                                        <input type="hidden" name="login_discount" value="{{ $total_info['login_discount'] }}">
                                     </div>
-                                    @endif
-                                    <div class="col-md-12 d-flex justify-content-between">
-                                        <p>Delivery Fee</p>
-                                        <p class="fsw-semibold">{{ $deliveryFeeInBengali }}</p>
-                                        @if($totalWeight <= 2000)
-                                            <input type="hidden" name="delivery_fee" value="60">
-                                        @else
-                                            <input type="hidden" name="delivery_fee" value="0">
-                                        @endif
-                                    </div>
-                                    <div class="col-md-12 d-flex justify-content-between">
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control coupon-input"
-                                                   name="coupon"
-                                                   placeholder="Add Promo Code">
-                                            <button type="button" class="input-group-text bg-danger text-white coupon-btn"
-                                                    onclick="applyCoupon()">
-                                                Apply
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 d-flex justify-content-between">
-                                        <p>Coupon Discount</p>
-                                        <p class="fsw-semibold">-140Tk</p>
-                                    </div>
-                                    <div class="col-md-12 d-flex justify-content-between">
-                                        <p class="fsw-semibold">Total</p>
-                                        <p class="fsw-semibold">{{ $totalInBengali }}Tk</p>
-                                        <input type="hidden" name="estimate_total" value="{{ $total }}">
-                                    </div>
-                                    <div class="col-md-12">
-                                        @if($carts->count() > 0)
-                                            <button type="submit" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">Place Order <i class="fa-solid fa-long-arrow-right"></i></button>
-                                        @else
-                                            <a href="{{ route('products') }}" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">Go to Shop <i class="fa-solid fa-long-arrow-right"></i></a>
-                                        @endif
+                                @endif
+                                <div class="col-md-12 d-flex justify-content-between">
+                                    <p>Delivery Fee</p>
+                                    <p class="fsw-semibold" data-delivery-fee>{{ englishToBengali($total_info['delivery_fee']) }}Tk</p>
+                                    <input type="hidden" name="delivery_fee" value="{{ $total_info['delivery_fee'] }}">
+                                </div>
+                                <div class="col-md-12 d-flex justify-content-between">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control coupon-input"
+                                               name="coupon" placeholder="Add Promo Code">
+                                        <button type="button" class="input-group-text bg-danger text-white coupon-btn"
+                                                onclick="applyCoupon()">Apply</button>
                                     </div>
                                 </div>
-                            </div>
-                        @else
-                            <?php
-                            // Retrieve the cart items from the session (for guest users) or database (for logged-in users)
-                            $carts = session()->get('carts', []);
-                            ?>
-
-                            <div class="card p-3 mb-2">
-                                @foreach($carts as $cart)
-                                <div class="row py-2">
-                                    <input type="hidden" name="product_id" value="{{ $cart['product']['id'] }}" />
-                                    <input type="hidden" name="weight" value="{{ $cart['weight'] }}" />
-                                    <div class="col-lg-3 col-md-3 col-sm-3 col-3">
-                                        <a href="{{ route('product.detail', $cart['product']['product_slug'] ) }}">
-                                            <div class="cart-img">
-                                                <img src="{{ asset($cart['product']['image'] ?? '/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div class="col-lg-8 col-md-7 col-sm-7 col-7 checkout-cart-sweets">
-                                        <div>
-                                            <div>
-                                                <a href="{{ route('product.detail', $cart['product']['product_slug'] ) }}" class="sweet-name">
-                                                    {{ $cart['product']->name ?? 'Product Name' }}
-                                                </a>
-                                            </div>
-                                            <div>
-                                                <span class="cart-weight">
-                                                    @if($cart['weight'])
-                                                        {{ $cart['weight'] < 1000 ? $cart['weight'] . ' গ্রাম' : ($cart['weight'] / 1000) . ' কেজি' }}
-                                                    @elseif($cart['quantity'])
-                                                        {{ $cart['quantity'] }} pcs
-                                                    @endif
-                                                </span>
-                                                <p class="cart-price"><!-- Display product price -->
-                                                    {{ $cart['product']['price'] ?? '0' }} Tk
-
-                                                    <!-- If there is a discount, show it -->
-                                                    @if($cart['product']['discount_price'])
-                                                        <span class="discount-price">
-                                                            (<del>{{ $cart['product']['discount_price'] }} Tk</del>)
-                                                        </span>
-                                                    @endif
-                                                </p>
-                                                <span class="single-cart-total-price">
-                                                        @php
-
-                                                            if (!function_exists('englishToBengali')) {
-                                                                function englishToBengali($englishString) {
-                                                                    $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                                                                    $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-
-                                                                    // Replace each English number with the corresponding Bengali number
-                                                                    return strtr($englishString, array_combine($englishNumbers, $bengaliNumbers));
-                                                                }
-                                                            }
-
-                                                            if (!function_exists('banglaToEnglish')) {
-                                                                function banglaToEnglish($bengaliString) {
-                                                                    $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                                                                    $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-
-                                                                    return strtr($bengaliString, array_combine($bengaliNumbers, $englishNumbers));
-                                                                }
-                                                            }
-
-                                                            // Convert the price from Bengali to English
-                                                            $price = banglaToEnglish($cart['product']['price']);
-                                                            $price = (float)$price;  // Convert the price to a float for calculation
-                                                            $product_type = $cart['product']['product_type'];
-
-                                                            if ($product_type == 'Sweet'){
-                                                                // Convert the weight to float
-                                                                $weight = (float)$cart['weight'];
-                                                                // Calculate the total price based on the weight
-                                                                $totalPrice = $price > 0 && $weight > 0 ? ($price / 1000) * $weight : 0;
-                                                            }elseif ($product_type == 'Product'){
-                                                                // Convert the weight to float
-                                                                $quantity = (float)$cart['quantity'];
-                                                                // Calculate the total price based on the weight
-                                                                $totalPrice = $price * $quantity;
-                                                            }
-
-                                                            // Convert the total price to Bengali numerals
-                                                            $totalPriceInBengali = englishToBengali(number_format($totalPrice, 2)); // Format with 2 decimal points
-                                                        @endphp
-
-                                                        Total: {{ $totalPriceInBengali }} Tk
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
-                                        <button class="btn" onclick="removeFromCart('{{ $cart['product_id'] }}')">
-                                            <i class="fa-solid fa-trash text-danger"></i>
+                                <!-- This is where the coupon section will be inserted -->
+                                <div class="col-md-12 d-flex justify-content-between" data-total-row>
+                                    <p class="fsw-semibold">Total</p>
+                                    <p class="fsw-semibold" id="grand-total">{{ englishToBengali($total_info['total']) }}Tk</p>
+                                    <input type="hidden" name="estimate_total" value="{{ $total_info['total'] }}">
+                                </div>
+                                <div class="col-md-12">
+                                    @if($carts->count() > 0)
+                                        <button type="submit" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">
+                                            Place Order <i class="fa-solid fa-long-arrow-right"></i>
                                         </button>
-                                    </div>
-                                </div>
-                                @endforeach
-                            </div>
-
-                                <?php
-                                // Initialize variables for calculations
-                                $subtotal = 0;
-                                $totalDiscount = 0;
-                                if (count($carts) > 0){
-                                    $deliveryFee = 60; // default delivery fee
-                                }else{
-                                    $deliveryFee = 0; // default delivery fee
-                                }
-                                $totalSweetPrice = 0.0;
-                                $totalProductPrice = 0.0;
-
-                                // Retrieve the cart items from the session (for guest users) or database (for logged-in users)
-                                $carts = session()->get('carts', []);
-
-                                // Loop through the cart items to calculate subtotal, discount, and total weight
-                                foreach ($carts as $cart) {
-                                    // Convert price to float (as in the original code)
-                                    $price = banglaToEnglish($cart['product']['price']);
-                                    $price = (float)$price;
-                                    $product_type = $cart['product']['product_type'];
-                                    // Convert weight to float (as in the original code)
-                                    $quantity = (int)$cart['quantity'];
-
-                                    if ($product_type == 'Sweet'){
-                                        // Convert weight to float (as in the original code)
-                                        $weight = (float)$cart['weight'];
-                                        // Calculate the total price for the current product
-                                        $totalSweetPrice = $price > 0 && $weight > 0 ? ($price / 1000) * $weight : 0;
-                                    } elseif ($product_type == 'Product'){
-                                        // Calculate the total price for the current product
-                                        $totalProductPrice = $price * $quantity;
-                                    }
-
-                                    $subtotal = $totalSweetPrice + $totalProductPrice;
-                                }
-
-                                // Calculate the final total
-                                $totalPrice = $subtotal + $deliveryFee;
-
-                                // Convert the total values to Bengali numerals for display
-                                $subtotalInBengali = englishToBengali(number_format($subtotal, 2));  // Format with 2 decimal points
-                                $totalPriceInBengali = englishToBengali(number_format($totalPrice, 2));  // Format with 2 decimal points
-                                ?>
-
-                            <div class="card p-3">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p class="fsw-bold fs-20">Order Summery</p>
-                                    </div>
-                                    <div class="col-md-12 d-flex justify-content-between">
-                                        <p>Subtotal</p>
-                                        <p class="fsw-semibold">{{ $subtotalInBengali }}Tk</p>
-                                        <input type="hidden" name="order_total" value="{{ $subtotal }}">
-                                    </div>
-                                    <input type="hidden" name="login_discount" value="">
-                                    <div class="col-md-12 d-flex justify-content-between">
-                                        <p>Delivery Fee</p>
-                                        <p class="fsw-semibold">{{ englishToBengali(number_format($deliveryFee, 2).'Tk') }}</p>
-                                        <input type="hidden" name="delivery_fee" value="60">
-                                    </div>
-                                    <div class="col-md-12 d-flex justify-content-between">
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control coupon-input" placeholder="Add Promo Code" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                                            <span class="input-group-text bg-danger text-white coupon-btn" id="basic-addon2">Apply</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 d-flex justify-content-between">
-                                        <p>Coupon Discount</p>
-                                        <p class="fsw-semibold">-140Tk</p>
-                                    </div>
-                                    <div class="col-md-12 d-flex justify-content-between">
-                                        <p class="fsw-semibold">Total</p>
-                                        <p class="fsw-semibold">{{ $totalPriceInBengali }}Tk</p>
-                                        <input type="hidden" name="estimate_total" value="{{ $totalPrice }}">
-                                    </div>
-                                    <div class="col-md-12">
-                                        <button type="submit" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">Place Order <i class="fa-solid fa-long-arrow-right"></i></button>
-                                    </div>
+                                    @else
+                                        <a href="{{ route('products') }}" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">
+                                            Go to Shop <i class="fa-solid fa-long-arrow-right"></i>
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
-                        @endif
+                        </div>
 
                     </div>
                 </div>
@@ -474,40 +217,161 @@
 
     <script>
         function applyCoupon() {
-            const couponCode = document.querySelector('[name="coupon"]').value;
+            const couponCode = document.querySelector('[name="coupon"]').value.trim();
+
+            if (!couponCode) {
+                showErrorToast('Please enter a coupon code');
+                return;
+            }
+
+            // Show loading state
+            const applyBtn = document.querySelector('.coupon-btn');
+            applyBtn.disabled = true;
+            applyBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Applying...';
 
             fetch("{{ route('coupon.check') }}", {
                 method: 'POST',
-                body: JSON.stringify({ coupon: couponCode }),
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ coupon: couponCode })
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    if(data.success) {
+                    if (data.success) {
                         showSuccessToast(data.message);
-                        // Optional: Update UI with discount
-                        if(data.discount) {
-                            updateDiscount(data.discount);
-                        }
+
+                        // Update all the totals on the page
+                        updateTotals(data);
+
+                        // Add or update the coupon discount section
+                        updateCouponSection(data.coupon, data.discount);
                     } else {
                         showErrorToast(data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showErrorToast("Failed to apply coupon");
+                    showErrorToast('Failed to apply coupon');
+                })
+                .finally(() => {
+                    // Reset button state
+                    applyBtn.disabled = false;
+                    applyBtn.textContent = 'Apply';
                 });
         }
+
+        function updateTotals(data) {
+            // Update hidden inputs
+            document.querySelector('[name="order_total"]').value = data.sub_total;
+            if (data.login_discount) {
+                document.querySelector('[name="login_discount"]').value = data.login_discount;
+            }
+            document.querySelector('[name="delivery_fee"]').value = data.delivery_fee;
+            document.querySelector('[name="estimate_total"]').value = data.total;
+
+            // Update displayed values
+            document.getElementById('grand-total').textContent = englishToBengali(data.total) + 'Tk';
+
+            // Update other displayed totals if they exist
+            const subTotalElement = document.querySelector('[data-subtotal]');
+            if (subTotalElement) {
+                subTotalElement.textContent = englishToBengali(data.sub_total) + 'Tk';
+            }
+
+            const loginDiscountElement = document.querySelector('[data-login-discount]');
+            if (loginDiscountElement && data.login_discount) {
+                loginDiscountElement.textContent = '-' + englishToBengali(data.login_discount) + 'Tk';
+            }
+
+            const deliveryFeeElement = document.querySelector('[data-delivery-fee]');
+            if (deliveryFeeElement) {
+                deliveryFeeElement.textContent = englishToBengali(data.delivery_fee) + 'Tk';
+            }
+        }
+
+        function updateCouponSection(couponCode, discount) {
+            const couponSection = document.getElementById('coupon-discount-wrap');
+            const removeBtn = document.querySelector('.remove-coupon-btn');
+
+            if (couponSection) {
+                // Update existing section
+                couponSection.querySelector('p:last-child').textContent = '-' + englishToBengali(discount) + 'Tk';
+                couponSection.querySelector('input[name="coupon_discount"]').value = discount;
+            } else {
+                // Create new section
+                const couponHtml = `
+            <div class="col-md-12 d-flex justify-content-between" id="coupon-discount-wrap">
+                <p>Coupon Discount (${couponCode})</p>
+                <p class="fsw-semibold">-${englishToBengali(discount)}Tk</p>
+                <input type="hidden" name="coupon_discount" value="${discount}">
+                <input type="hidden" name="coupon_code" value="${couponCode}">
+            </div>
+            <button type="button" class="btn btn-sm btn-danger mb-2 remove-coupon-btn" onclick="removeCoupon()">
+                Remove Coupon
+            </button>
+        `;
+
+                // Insert before the total row
+                const totalRow = document.querySelector('[data-total-row]');
+                if (totalRow) {
+                    totalRow.insertAdjacentHTML('beforebegin', couponHtml);
+                }
+            }
+        }
+
+        function removeCoupon() {
+            // Show loading state
+            const removeBtn = document.querySelector('.remove-coupon-btn');
+            removeBtn.disabled = true;
+            removeBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Removing...';
+
+            fetch("{{ route('coupon.remove') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccessToast(data.message);
+
+                        // Remove coupon section
+                        const couponSection = document.getElementById('coupon-discount-wrap');
+                        const removeBtn = document.querySelector('.remove-coupon-btn');
+
+                        if (couponSection) couponSection.remove();
+                        if (removeBtn) removeBtn.remove();
+
+                        // Update totals without coupon
+                        updateTotals(data);
+                    } else {
+                        showErrorToast(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showErrorToast('Failed to remove coupon');
+                })
+                .finally(() => {
+                    if (removeBtn) {
+                        removeBtn.disabled = false;
+                        removeBtn.textContent = 'Remove Coupon';
+                    }
+                });
+        }
+
+        function englishToBengali(number) {
+            const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return number.toString().replace(/[0-9]/g, d => bengaliDigits[d]);
+        }
     </script>
+
 
     <script>
         function removeFromCart(productId) {

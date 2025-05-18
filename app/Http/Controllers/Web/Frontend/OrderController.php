@@ -22,90 +22,205 @@ class OrderController extends Controller
             'coupon' => 'required',
         ]);
 
-        $coupon = Coupon::where('code', $request->coupon)->first();
+        $coupon = Coupon::where('code', $request->coupon)
+            ->where('status', 'active')
+            ->where(function($query) {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            })
+            ->first();
 
         if (!$coupon) {
             return response()->json([
-                'success' => false,  // Add this
-                'message' => 'Coupon not found.'  // Match the expected structure
+                'success' => false,
+                'message' => 'Invalid or expired coupon code.'
             ]);
         }
 
+        // Get cart data (same as your checkout method)
         if (Auth::check()) {
-            // Fetch the user's cart items from the database
-            $carts = Cart::where('user_id', Auth::id())->latest()->get();
-
-            // Calculate the total cart amount
-            $total = $carts->sum(function ($cart) {
-                return $cart->product->price * ($cart->weight ?? $cart->quantity);
-            });
-
-
+            $carts = Cart::with('product')->where('user_id', Auth::id())->get();
         } else {
-            // Fetch cart items from session for guest users
-            $sessionCart = session()->get('carts', []);
-
-            // Prepare the cart data
-            $carts = array_map(function ($item) {
+            $sessionCart = session('carts', []);
+            $carts = collect($sessionCart)->map(function ($item) {
                 $product = Product::find($item['product_id']);
+                if (!$product) return null;
 
-                // Return the product and weight data
-                if ($product) {
-                    return [
-                        'product' => $product,
-                        'weight' => $item['weight'],
-                    ];
-                }
-                return null;
-            }, $sessionCart);
-            // Filter out any null values (products not found)
-            $carts = array_filter($carts);
+                return [
+                    'product' => $product,
+                    'product_id' => $item['product_id'],
+                    'weight' => $item['weight'] ?? 0,
+                    'quantity' => $item['quantity'] ?? 0,
+                    'price' => $item['price'] ?? 0,
+                ];
+            })->filter()->values();
         }
 
+        if ($carts->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Your cart is empty.'
+            ]);
+        }
+
+        // Calculate cart totals
+        $subTotal = 0;
+        $totalSweetWeight = 0;
+
+        $mappedCarts = $carts->map(function ($item) use (&$subTotal, &$totalSweetWeight) {
+            $product = $item['product'] ?? $item->product;
+            $productType = $product->product_type;
+            $quantity = $item['quantity'] ?? $item->quantity ?? 0;
+            $weight = $item['weight'] ?? $item->weight ?? 0;
+            $price = $item['price'] ?? $item->price ?? $product->discount_price ?? $product->price;
+
+            if ($productType === 'Sweet') {
+                $gmPrice = $price / 1000;
+                $lineTotal = $gmPrice * $weight;
+                $subTotal += $lineTotal;
+                $totalSweetWeight += $weight;
+            } elseif ($productType === 'Product') {
+                $lineTotal = $quantity * $price;
+                $subTotal += $lineTotal;
+            }
+
+            return [
+                'product' => $product,
+                'product_id' => $product->id,
+                'quantity' => $quantity,
+                'weight' => $weight,
+                'price' => $price,
+                'line_total' => round($lineTotal, 2),
+            ];
+        });
+
+        // Calculate discounts and totals
+        $loginDiscount = Auth::check() ? ($subTotal * 0.05) : 0;
+        $deliveryFee = ($totalSweetWeight > 2000) ? 0 : 60;
+        $subTotalAfterLoginDiscount = $subTotal - $loginDiscount;
+
+        // Calculate coupon discount
+        $couponDiscount = $coupon->type === 'percent'
+            ? ($subTotalAfterLoginDiscount * $coupon->discount_amount) / 100
+            : min($coupon->discount_amount, $subTotalAfterLoginDiscount);
+
+        $total = ($subTotalAfterLoginDiscount + $deliveryFee) - $couponDiscount;
+
+        // Store coupon in session
+        session([
+            'applied_coupon' => [
+                'code' => $coupon->code,
+                'id' => $coupon->id,
+                'discount' => $couponDiscount,
+                'type' => $coupon->type,
+                'amount' => $coupon->discount_amount
+            ]
+        ]);
+
         return response()->json([
-            'success' => true,  // Add this
-            'message' => 'Coupon found.',
-            'discount' => $carts // Optional: include discount amount
+            'success' => true,
+            'message' => 'Coupon applied successfully!',
+            'coupon' => $coupon->code,
+            'discount' => round($couponDiscount),
+            'total' => round($total),
+            'sub_total' => round($subTotal),
+            'login_discount' => round($loginDiscount),
+            'delivery_fee' => $deliveryFee
         ]);
     }
 
-    public function checkout(): RedirectResponse | View {
-        $carts = [];
+    public function couponRemove(Request $request)
+    {
+        $request->session()->forget('applied_coupon');
 
-        if (Auth::check()) {
-            // Fetch the user's cart items from the database
-            $carts = Cart::where('user_id', Auth::user()->id)->latest()->get();
-        } else {
-            // Fetch cart items from session for guest users
-            $sessionCart = session()->get('carts', []);
-
-            // Prepare the cart data
-            $carts = array_map(function ($item) {
-                $product = Product::find($item['product_id']);
-
-                // Return the product and weight data
-                if ($product) {
-                    return [
-                        'product' => $product,
-                        'weight' => $item['weight'],
-                    ];
-                }
-                return null;
-            }, $sessionCart);
-            // Filter out any null values (products not found)
-            $carts = array_filter($carts);
-        }
-
-        if (count($carts) > 0){
-            return view('frontend.pages.checkout', compact('carts'));
-        }else{
-            return redirect()->route('products')->with('t-error','Add products to cart first.');
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Coupon removed successfully'
+        ]);
     }
+
+    public function checkout(): RedirectResponse|View
+    {
+        // Get carts for authenticated user or from session
+        if (Auth::check()) {
+            $carts = Cart::with('product')->where('user_id', Auth::id())->get();
+        } else {
+            $sessionCart = session('carts', []);
+            $carts = collect($sessionCart)->map(function ($item) {
+                $product = Product::find($item['product_id']);
+                if (!$product) return null;
+
+                return [
+                    'product' => $product,
+                    'product_id' => $item['product_id'],
+                    'weight' => $item['weight'],
+                    'quantity' => $item['quantity'],
+                ];
+            })->filter()->values();
+        }
+
+        // Check if cart is empty
+        if ($carts->isEmpty()) {
+            return redirect()->route('products')->with('t-error', 'Add products to cart first.');
+        }
+
+        // Calculate cart totals
+        $subTotal = 0;
+        $totalSweetWeight = 0;
+
+        $mappedCarts = $carts->map(function ($item) use (&$subTotal, &$totalSweetWeight) {
+            // Normalize cart item structure
+            $product = $item['product'] ?? $item->product;
+            $productType = $product->product_type;
+            $quantity = $item['quantity'] ?? $item->quantity;
+            $weight = $item['weight'] ?? $item->weight;
+            $price = $item['product']['discount_price'] ?? $item['product']['price'];
+
+            // Calculate line total based on product type
+            if ($productType === 'Sweet') {
+                $gmPrice = $price / 1000;
+                $lineTotal = $gmPrice * $weight;
+                $subTotal += $lineTotal;
+                $totalSweetWeight += $weight;
+            } elseif ($productType === 'Product') {
+                $lineTotal = $quantity * $price;
+                $subTotal += $lineTotal;
+            } else {
+                $lineTotal = 0;
+            }
+
+            return [
+                'product' => $product,
+                'product_slug' => $product->product_slug,
+                'product_id' => $product->id,
+                'quantity' => $quantity,
+                'weight' => $weight,
+                'price' => $price,
+                'line_total' => round($lineTotal, 2),
+            ];
+        });
+
+        // Calculate final totals
+        $loginDiscount = Auth::check() ? ($subTotal * 0.05) : 0;
+        $deliveryFee = ($totalSweetWeight > 2000) ? 0 : 60;
+        $total = ($subTotal + $deliveryFee) - $loginDiscount;
+
+        $totalInfo = [
+            'login_discount' => round($loginDiscount),
+            'total' => round($total),
+            'sub_total' => round($subTotal),
+            'delivery_fee' => $deliveryFee,
+        ];
+
+        return view('frontend.pages.checkout', [
+            'carts' => $mappedCarts,
+            'total_info' => $totalInfo,
+        ]);
+    }
+
 
     public function newOrder(Request $request)
     {
-        // Validate request data
         $validated = $request->validate([
             'delivery_fee' => 'required|numeric',
             'coupon_id' => 'nullable|exists:coupons,id',
@@ -125,48 +240,43 @@ class OrderController extends Controller
             'number.regex' => 'The phone number must be exactly 11 digits.',
         ]);
 
-        // Retrieve user if authenticated
         $user = Auth::user();
 
-        // Handle authenticated and guest users differently
-        if ($user) {
-            // For authenticated users, fetch cart items from database
-            $cartItems = Cart::with('product')->where('user_id', $user->id)->get();
-        } else {
-            // For guest users, fetch cart items from session
-            $cartItems = session()->get('carts', []);
-        }
+        $cartItems = $user
+            ? Cart::with('product')->where('user_id', $user->id)->get()
+            : collect(session('carts', []));
 
-        // Initialize the order
-        $this->order = new Order();
-        $this->order->user_id = $user ? $user->id : null;
-        $this->order->delivery_fee = $request->delivery_fee;
-        $this->order->coupon_id = $request->coupon_id ?? null; // Handle coupon logic here
-        $this->order->discount_amount = $request->discount_amount ?? null;
-        $this->order->login_discount = $request->login_discount ?? null;
-        $this->order->estimate_total = $request->estimate_total ?? null;
-        $this->order->order_total = $request->order_total;
-        $this->order->name = $request->name;
-        $this->order->address = $request->address;
-        $this->order->email = $request->email ?? null;
-        $this->order->whatsapp_number = $request->whatsapp_number ?? null;
-        $this->order->number = $request->number;
-        $this->order->note = $request->note ?? null;
-        $this->order->all_terms = $request->all_terms;
-        $this->order->tracking_id = $this->generateTrackingId();
-        $this->order->save();
+        $discountCoupon = session('discount_coupon', []);
+        $couponId = $discountCoupon['coupon_id'] ?? null;
+        $discountAmount = $discountCoupon['discount'] ?? 0;
 
-        // Add order details from the cart
+        $order = new Order([
+            'user_id' => $user->id ?? null,
+            'delivery_fee' => $request->delivery_fee,
+            'coupon_id' => $couponId,
+            'discount_amount' => $discountAmount,
+            'login_discount' => $request->login_discount,
+            'estimate_total' => $request->estimate_total,
+            'order_total' => $request->order_total,
+            'name' => $request->name,
+            'address' => $request->address,
+            'email' => $request->email,
+            'whatsapp_number' => $request->whatsapp_number,
+            'number' => $request->number,
+            'note' => $request->note,
+            'all_terms' => $request->all_terms,
+            'tracking_id' => $this->generateTrackingId(),
+        ]);
+        $order->save();
+
+        // Save order details
         foreach ($cartItems as $cart) {
-            $orderDetail = new OrderDetail();
-            $orderDetail->order_id = $this->order->id;
+            $orderDetail = new OrderDetail(['order_id' => $order->id]);
             if ($user) {
-                // Authenticated user (object-based)
                 $orderDetail->product_id = $cart->product->id;
                 $orderDetail->weight = $cart->weight;
                 $orderDetail->quantity = $cart->quantity;
             } else {
-                // Guest user (array-based)
                 $orderDetail->product_id = $cart['product_id'];
                 $orderDetail->weight = $cart['weight'];
                 $orderDetail->quantity = $cart['quantity'];
@@ -174,22 +284,19 @@ class OrderController extends Controller
             $orderDetail->save();
         }
 
-        // Clear the cart after placing the order
+        // Clear cart and coupon session
         if ($user) {
-            // For authenticated users, delete the cart items
             Cart::where('user_id', $user->id)->delete();
         } else {
-            // For guest users, remove the cart from session
             session()->forget('carts');
         }
+        session()->forget('discount_coupon');
 
-        // Store the order ID in the session for later use (in order complete view)
-        LaravelSession::put('order', $this->order->id);
+        // Store order ID for order complete view
+        session(['order' => $order->id]);
 
-        // Redirect to the order completion page
         return redirect('/order-complete');
     }
-
 
     public function orderComplete(Request $request)
     {
