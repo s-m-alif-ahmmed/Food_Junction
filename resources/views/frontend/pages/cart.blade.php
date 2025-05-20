@@ -10,6 +10,26 @@
     Cart | Food Junction
 @endsection
 
+@php
+
+    if (!function_exists('englishToBengali')) {
+        function englishToBengali($englishString) {
+            $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return strtr($englishString, array_combine($englishNumbers, $bengaliNumbers));
+        }
+    }
+
+    if (!function_exists('banglaToEnglish')) {
+        function banglaToEnglish($bengaliString) {
+            $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return strtr($bengaliString, array_combine($bengaliNumbers, $englishNumbers));
+        }
+    }
+
+@endphp
+
 @section('content')
 
     <section class="cart-page">
@@ -39,30 +59,20 @@
                                 <div class="card p-3">
                                     @foreach($carts as $cart)
                                             <?php
-                                            if (!function_exists('englishToBengali')) {
-                                                function englishToBengali($englishString) {
-                                                    $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                                                    $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-                                                    return strtr($englishString, array_combine($englishNumbers, $bengaliNumbers));
-                                                }
-                                            }
+                                            $price = floatval(banglaToEnglish($cart->product->price));
+                                            $discount_price = $cart->product->discount_price ? floatval(banglaToEnglish($cart->product->discount_price)) : null;
 
-                                            if (!function_exists('banglaToEnglish')) {
-                                                function banglaToEnglish($bengaliString) {
-                                                    $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                                                    $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-                                                    return strtr($bengaliString, array_combine($bengaliNumbers, $englishNumbers));
-                                                }
-                                            }
+                                            // Use discount if available
+                                            $main_price = $discount_price ?? $price;
 
-                                            $price = banglaToEnglish($cart->product->price);
                                             $product_type = $cart->product->product_type;
+
                                             if ($product_type == 'Sweet'){
-                                                $gm = $price / 1000;
+                                                $gm = $main_price / 1000;
                                                 $total = $gm * $cart->weight;
                                             }elseif($product_type == 'Product') {
                                                 $quantity = $cart->quantity;
-                                                $total = $quantity * $price;
+                                                $total = $quantity * $main_price;
                                             }
 
                                             ?>
@@ -89,9 +99,9 @@
                                                                 {{ $cart->quantity }} pcs
                                                             @endif
                                                         </span>
-                                                        <p class="cart-price">{{ $cart->product->price ?? '0' }}Tk
+                                                        <p class="cart-price">{{ $cart->product->discount_price ?? $cart->product->price }}Tk
                                                             @if($cart->product->discount_price)
-                                                                <span class="discount-price">(<del>{{ $cart->product->discount_price }}Tk</del>)</span>
+                                                                <span class="discount-price">(<del>{{ $cart->product->price }}Tk</del>)</span>
                                                             @endif
                                                         </p>
                                                         <span class="single-cart-total-price">
@@ -121,11 +131,12 @@
                                 $deliveryFee = 60; // default delivery fee
                                 $totalSweetPrice = 0.0;
                                 $totalProductPrice = 0.0;
+                                $totalSweetWeight = 0;
 
                                 // Calculate subtotal and total weight from cart items
                                 foreach ($carts as $cart) {
                                     // Convert price to float for calculation (handling both current and old price)
-                                    $productPrice = (float)banglaToEnglish($cart->product->price ?? 0); // Ensure the price is numeric
+                                    $productPrice = (float)banglaToEnglish($cart->product->discount_price ?? $cart->product->price); // Ensure the price is numeric
                                     $weight = (int)$cart->weight;
                                     $quantity = $cart->quantity;
                                     $product_type = $cart->product->product_type;
@@ -134,6 +145,7 @@
                                         $gm = $productPrice / 1000;
                                         $sweetPrice = $gm * $weight;
                                         $totalSweetPrice += $sweetPrice;
+                                        $totalSweetWeight += $weight;
                                     } elseif ($product_type == 'Product') {
                                         $productPrice = $quantity * $productPrice;
                                         $totalProductPrice += $productPrice;
@@ -145,6 +157,12 @@
                                     $discount = $subtotal * 0.05;
                                     $discount = round($discount);
                                 }
+
+                                // Free delivery if sweet weight > 2000g
+                                if ($totalSweetWeight > 2000) {
+                                    $deliveryFee = 0;
+                                }
+
                                 // Calculate total after discount and delivery fee
                                 $discountTotal = $subtotal - $discount;
                                 $totalDiscount = $subtotal - $discount;
@@ -235,54 +253,38 @@
                                                     </span>
                                                         <p class="cart-price">
                                                             <!-- Display product price -->
-                                                            {{ $cart['product']['price'] ?? '0' }} Tk
+                                                            {{ $cart['product']['discount_price'] ?? $cart['product']['price'] }} Tk
 
                                                             <!-- If there is a discount, show it -->
                                                             @if($cart['product']['discount_price'])
                                                                 <span class="discount-price">
-                                                                (<del>{{ $cart['product']['discount_price'] }} Tk</del>)
+                                                                (<del>{{ $cart['product']['price'] }} Tk</del>)
                                                             </span>
                                                             @endif
                                                         </p>
                                                         <span class="single-cart-total-price">
                                                             @php
-
-                                                                if (!function_exists('englishToBengali')) {
-                                                                    function englishToBengali($englishString) {
-                                                                        $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                                                                        $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-
-                                                                        // Replace each English number with the corresponding Bengali number
-                                                                        return strtr($englishString, array_combine($englishNumbers, $bengaliNumbers));
-                                                                    }
-                                                                }
-
-                                                                if (!function_exists('banglaToEnglish')) {
-                                                                    function banglaToEnglish($bengaliString) {
-                                                                        $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                                                                        $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-
-                                                                        return strtr($bengaliString, array_combine($bengaliNumbers, $englishNumbers));
-                                                                    }
-                                                                }
-
                                                                 // Convert the price from Bengali to English
                                                                 $price = banglaToEnglish($cart['product']['price']);
+                                                                $discount_price = banglaToEnglish($cart['product']['discount_price']);
                                                                 $price = (float)$price;  // Convert the price to a float for calculation
+                                                                $discount_price = (float)$discount_price;  // Convert the price to a float for calculation
                                                                 $product_type = $cart['product']['product_type'];
+
+                                                                $main_price = $discount_price ?? $price;
 
                                                                 if ($product_type == 'Sweet'){
                                                                     // Convert the weight to float
                                                                     $weight = (float)$cart['weight'];
 
                                                                     // Calculate the total price based on the weight
-                                                                    $totalPrice = $price > 0 && $weight > 0 ? ($price / 1000) * $weight : 0;
+                                                                    $totalPrice = $main_price > 0 && $weight > 0 ? ($main_price / 1000) * $weight : 0;
                                                                 } elseif ($product_type == 'Product'){
                                                                     // Convert the weight to float
                                                                     $quantity = (float)$cart['quantity'];
 
                                                                     // Calculate the total price based on the weight
-                                                                    $totalPrice = $price > 0 && $quantity > 0 ? ($price * $quantity) : 0;
+                                                                    $totalPrice = $main_price > 0 && $quantity > 0 ? ( $main_price * $quantity) : 0;
                                                                 }
 
                                                                 // Convert the total price to Bengali numerals
@@ -321,16 +323,20 @@
                                     // Convert price to float (as in the original code)
                                     $product_type = $cart['product']['product_type'];
                                     $price = banglaToEnglish($cart['product']['price']);
+                                    $discount_price = banglaToEnglish($cart['product']['discount_price']);
                                     $price = (float)$price;
+                                    $discount_price = (float)$discount_price;
+
+                                    $main_price = $discount_price ?? $price;
 
                                     if ($product_type == 'Sweet'){
                                         // Convert weight to float (as in the original code)
                                         $weight = (float)$cart['weight'];
-                                        $productTotalPrice = $price > 0 && $weight > 0 ? ($price / 1000) * $weight : 0;
+                                        $productTotalPrice = $main_price > 0 && $weight > 0 ? ($main_price / 1000) * $weight : 0;
                                         $totalSubtotal += $productTotalPrice;
                                     } elseif ($product_type == 'Product'){
                                         $quantity = (float)$cart['quantity'];
-                                        $productTotalPriceQuantity = $price * $quantity;
+                                        $productTotalPriceQuantity = $main_price * $quantity;
                                         $totalSubtotal += $productTotalPriceQuantity;
                                     }
                                 }

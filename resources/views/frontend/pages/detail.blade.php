@@ -92,8 +92,10 @@
                     </div>
                     <div class="sweet-price">
                         <div class="d-flex">
-                            <p class="price">{{ $product->price }} Tk</p>
-                            <span class="discount-price">&nbsp;(<del>{{ $product->discount_price }} Tk</del>)</span>
+                            <p class="price">{{ $product->discount_price ?? $product->price }} Tk</p>
+                            @if($product->discount_price)
+                                <span class="discount-price">&nbsp;(<del>{{ $product->price }} Tk</del>)</span>
+                            @endif
                         </div>
                     </div>
                     <form id="add-to-cart-form" action="{{ route('new.cart') }}" method="POST">

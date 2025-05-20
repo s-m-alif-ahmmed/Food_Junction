@@ -161,20 +161,36 @@
                                 </div>
                                 <div class="col-md-12 d-flex justify-content-between">
                                     <p>Subtotal</p>
-                                    <p class="fsw-semibold" data-subtotal>{{ englishToBengali($total_info['sub_total']) }}Tk</p>
+                                    <p class="fsw-semibold" data-subtotal>{{ englishToBengali( number_format( round($total_info['sub_total']), 2) ) }}Tk</p>
                                     <input type="hidden" name="order_total" value="{{ $total_info['sub_total'] }}">
                                 </div>
                                 @if($total_info['login_discount'])
                                     <div class="col-md-12 d-flex justify-content-between">
                                         <p>Login Discount</p>
-                                        <p class="fsw-semibold" data-login-discount>-{{ englishToBengali($total_info['login_discount']) }}Tk</p>
+                                        <p class="fsw-semibold" data-login-discount>-{{ englishToBengali( number_format( round($total_info['login_discount']), 2) ) }}Tk</p>
                                         <input type="hidden" name="login_discount" value="{{ $total_info['login_discount'] }}">
                                     </div>
                                 @endif
                                 <div class="col-md-12 d-flex justify-content-between">
                                     <p>Delivery Fee</p>
-                                    <p class="fsw-semibold" data-delivery-fee>{{ englishToBengali($total_info['delivery_fee']) }}Tk</p>
+                                    <p class="fsw-semibold" data-delivery-fee>{{  ($total_info['delivery_fee'] == 0) ? 'Free' : englishToBengali(number_format(number_format( round($total_info['delivery_fee']), 2) ).'Tk') }}</p>
                                     <input type="hidden" name="delivery_fee" value="{{ $total_info['delivery_fee'] }}">
+                                </div>
+
+                                @if(session()->has('applied_coupon'))
+                                    <!-- Show Coupon Discount -->
+                                    <div class="col-md-12 d-flex justify-content-between">
+                                        <p>Coupon Discount</p>
+                                        <p class="fsw-semibold" data-coupon-discount>- {{ englishToBengali( number_format( round( session('applied_coupon.discount') ), 2) ) }}Tk</p>
+                                        <input type="hidden" name="discount" value="{{ session('applied_coupon.discount') }}">
+                                    </div>
+                                @endif
+
+                                <!-- This is where the coupon section will be inserted -->
+                                <div class="col-md-12 d-flex justify-content-between" data-total-row>
+                                    <p class="fsw-semibold">Total</p>
+                                    <p class="fsw-semibold" id="grand-total">{{ englishToBengali( number_format( round( session('applied_coupon.total') ?? $total_info['total'] ), 2) ) }}Tk</p>
+                                    <input type="hidden" name="estimate_total" value="{{ session('applied_coupon.total') ?? $total_info['total'] }}">
                                 </div>
 
                                 <!-- Apply Coupon Section -->
@@ -214,21 +230,8 @@
                                         </div>
                                     </div>
 
-                                    <!-- Show Coupon Discount -->
-                                    <div class="col-md-12 d-flex justify-content-between">
-                                        <p>Coupon Discount</p>
-                                        <p class="fsw-semibold" data-coupon-discount>{{ englishToBengali(round(session('applied_coupon.amount'))) }}Tk</p>
-                                        <input type="hidden" name="discount" value="{{ session('applied_coupon.amount') }}">
-                                    </div>
-
                                 @endif
 
-                                <!-- This is where the coupon section will be inserted -->
-                                <div class="col-md-12 d-flex justify-content-between" data-total-row>
-                                    <p class="fsw-semibold">Total</p>
-                                    <p class="fsw-semibold" id="grand-total">{{ englishToBengali($total_info['total']) }}Tk</p>
-                                    <input type="hidden" name="estimate_total" value="{{ $total_info['total'] }}">
-                                </div>
                                 <div class="col-md-12">
                                     @if($carts->count() > 0)
                                         <button type="submit" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">

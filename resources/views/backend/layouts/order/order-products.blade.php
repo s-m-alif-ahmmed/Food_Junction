@@ -58,13 +58,16 @@
                             @foreach($order_data as $product)
                                     <?php
                                     $price = banglaToEnglish($product->product->price);
+                                    $discount_price = banglaToEnglish($product->product->discount_price);
                                     $product_type = $product->product->product_type;
 
+                                    $main_price = $discount_price ?? $price;
+
                                     if ($product_type == 'Sweet'){
-                                        $gm = $price / 1000;
+                                        $gm = $main_price / 1000;
                                         $total = $gm * $product->weight;
                                     }elseif ($product_type == 'Product'){
-                                        $total = $price * $product->quantity;
+                                        $total = $main_price * $product->quantity;
                                     }
 
                                     ?>
@@ -73,7 +76,7 @@
                                     <td>
                                         <p class="font-w600 mb-1">{{ $product->product->name }}</p>
                                     </td>
-                                    <td class="text-center">{{ $product->product->price }}Tk (<span><del>{{ $product->product->discount_price }}Tk</del></span>)</td>
+                                    <td class="text-center">{{ $product->product->discount_price ?? $product->product->price }}Tk @if($product->product->discount_price)(<span><del>{{ $product->product->price }}Tk</del></span>) @endif </td>
                                     <td class="text-end">
                                         @if($product->weight)
                                             {{ $product->weight < 1000 ? englishToBengali($product->weight) . ' গ্রাম' : englishToBengali($product->weight / 1000) . ' কেজি' }}

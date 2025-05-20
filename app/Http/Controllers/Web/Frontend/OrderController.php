@@ -68,12 +68,15 @@ class OrderController extends Controller
         $totalSweetWeight = 0;
 
         $mappedCarts = $carts->map(function ($item) use (&$subTotal, &$totalSweetWeight) {
-            $product = $item['product'] ?? $item->product;
+            // Normalize item access (array or object)
+            $isArray = is_array($item);
+            $product = $isArray ? $item['product'] : $item->product;
             $productType = $product->product_type;
-            $quantity = $item['quantity'] ?? $item->quantity ?? 0;
-            $weight = $item['weight'] ?? $item->weight ?? 0;
-            $price = $item['price'] ?? $item->price ?? $product->discount_price ?? $product->price;
+            $quantity = $isArray ? ($item['quantity'] ?? 0) : ($item->quantity ?? 0);
+            $weight = $isArray ? ($item['weight'] ?? 0) : ($item->weight ?? 0);
+            $price = $product->discount_price ?? $product->price;
 
+            // Calculate line total
             if ($productType === 'Sweet') {
                 $gmPrice = $price / 1000;
                 $lineTotal = $gmPrice * $weight;
@@ -82,15 +85,18 @@ class OrderController extends Controller
             } elseif ($productType === 'Product') {
                 $lineTotal = $quantity * $price;
                 $subTotal += $lineTotal;
+            } else {
+                $lineTotal = 0;
             }
 
             return [
                 'product' => $product,
+                'product_slug' => $product->product_slug,
                 'product_id' => $product->id,
                 'quantity' => $quantity,
                 'weight' => $weight,
-                'price' => $price,
-                'line_total' => round($lineTotal, 2),
+                'price' => round($price),
+                'line_total' => round($lineTotal),
             ];
         });
 
@@ -100,9 +106,12 @@ class OrderController extends Controller
         $subTotalAfterLoginDiscount = $subTotal - $loginDiscount;
 
         // Calculate coupon discount
-        $couponDiscount = $coupon->type === 'percent'
-            ? ($subTotalAfterLoginDiscount * $coupon->discount_amount) / 100
-            : min($coupon->discount_amount, $subTotalAfterLoginDiscount);
+        $couponDiscount = 0;
+        if ($coupon->type === 'percent'){
+            $couponDiscount = ($subTotal * $coupon->discount_amount) / 100;
+        } elseif ($coupon->type === 'fixed'){
+            $couponDiscount = $subTotal - $coupon->discount_amount;
+        }
 
         $total = ($subTotalAfterLoginDiscount + $deliveryFee) - $couponDiscount;
 
@@ -111,9 +120,10 @@ class OrderController extends Controller
             'applied_coupon' => [
                 'code' => $coupon->code,
                 'id' => $coupon->id,
-                'discount' => $couponDiscount,
+                'discount' => round($couponDiscount),
                 'type' => $coupon->type,
-                'amount' => $coupon->discount_amount
+                'amount' => $coupon->discount_amount,
+                'total' => round($total),
             ]
         ]);
 
@@ -121,11 +131,9 @@ class OrderController extends Controller
             'success' => true,
             'message' => 'Coupon applied successfully!',
             'coupon' => $coupon->code,
-            'discount' => round($couponDiscount),
-            'total' => round($total),
-            'sub_total' => round($subTotal),
             'login_discount' => round($loginDiscount),
-            'delivery_fee' => $deliveryFee
+            'sub_total' => round($subTotal),
+            'delivery_fee' => $deliveryFee,
         ]);
     }
 
@@ -207,9 +215,9 @@ class OrderController extends Controller
         $total = ($subTotal + $deliveryFee) - $loginDiscount;
 
         $totalInfo = [
-            'login_discount' => round($loginDiscount),
-            'total' => round($total),
-            'sub_total' => round($subTotal),
+            'login_discount' => round($loginDiscount, 2),
+            'total' => round($total, 2),
+            'sub_total' => round($subTotal, 2),
             'delivery_fee' => $deliveryFee,
         ];
 

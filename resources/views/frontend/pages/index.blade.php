@@ -50,7 +50,7 @@
                             </div>
                             <div class="card-body border-0 mb-3 h-100">
                                 <h5 class="fsw-bold">{{ $product->name }}</h5>
-                                <p class="fsw-semibold">{{ $product->price }} টাকা ( <span class="text-danger"><del>৮৫০ টাকা</del></span> )</p>
+                                <p class="fsw-semibold">{{ $product->discount_price ?? $product->price }} টাকা @if($product->discount_price)( <span class="text-danger"><del>{{ $product->price }} টাকা</del></span> ) @endif </p>
                                 <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
                             </div>
                         </div>
@@ -77,7 +77,7 @@
                             </div>
                             <div class="card-body border-0 mb-3 h-100">
                                 <h5 class="fsw-bold">{{ $product->name }}</h5>
-                                <p class="fsw-semibold">{{ $product->price }} টাকা ( <span class="text-danger"><del>৮৫০ টাকা</del></span> )</p>
+                                <p class="fsw-semibold">{{ $product->discount_price ?? $product->price }} টাকা @if($product->discount_price)( <span class="text-danger"><del>{{ $product->price }} টাকা</del></span> ) @endif </p>
                                 <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
                             </div>
                         </div>
