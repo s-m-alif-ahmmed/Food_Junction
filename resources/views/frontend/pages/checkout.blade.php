@@ -176,14 +176,53 @@
                                     <p class="fsw-semibold" data-delivery-fee>{{ englishToBengali($total_info['delivery_fee']) }}Tk</p>
                                     <input type="hidden" name="delivery_fee" value="{{ $total_info['delivery_fee'] }}">
                                 </div>
-                                <div class="col-md-12 d-flex justify-content-between">
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control coupon-input"
-                                               name="coupon" placeholder="Add Promo Code">
-                                        <button type="button" class="input-group-text bg-danger text-white coupon-btn"
-                                                onclick="applyCoupon()">Apply</button>
+
+                                <!-- Apply Coupon Section -->
+                                @if(!session()->has('applied_coupon'))
+                                    <div class="col-md-12 d-flex justify-content-between" id="apply-coupon-section">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control coupon-input" name="coupon" placeholder="Add Promo Code">
+                                            <button type="button" class="input-group-text bg-danger text-white coupon-btn"
+                                                    onclick="applyCoupon()">Apply</button>
+                                        </div>
                                     </div>
-                                </div>
+
+                                    <div class="col-md-12 d-flex justify-content-between d-none" id="remove-coupon-section">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control coupon-input" name="coupon" placeholder="Add Promo Code" readonly>
+                                            <button type="button" class="input-group-text bg-dark text-white remove-coupon-btn"
+                                                    onclick="removeCoupon()">Remove</button>
+                                        </div>
+                                    </div>
+
+                                @else
+                                    <!-- Hide Apply Coupon Section on load -->
+                                    <div class="col-md-12 d-flex justify-content-between d-none" id="apply-coupon-section">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control coupon-input" name="coupon" placeholder="Add Promo Code">
+                                            <button type="button" class="input-group-text bg-danger text-white coupon-btn"
+                                                    onclick="applyCoupon()">Apply</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Show Remove Coupon Section -->
+                                    <div class="col-md-12 d-flex justify-content-between" id="remove-coupon-section">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control coupon-input" name="coupon" value="{{ session('applied_coupon.code') }}" readonly>
+                                            <button type="button" class="input-group-text bg-dark text-white remove-coupon-btn"
+                                                    onclick="removeCoupon()">Remove</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Show Coupon Discount -->
+                                    <div class="col-md-12 d-flex justify-content-between">
+                                        <p>Coupon Discount</p>
+                                        <p class="fsw-semibold" data-coupon-discount>{{ englishToBengali(round(session('applied_coupon.amount'))) }}Tk</p>
+                                        <input type="hidden" name="discount" value="{{ session('applied_coupon.amount') }}">
+                                    </div>
+
+                                @endif
+
                                 <!-- This is where the coupon section will be inserted -->
                                 <div class="col-md-12 d-flex justify-content-between" data-total-row>
                                     <p class="fsw-semibold">Total</p>
@@ -217,152 +256,89 @@
 
     <script>
         function applyCoupon() {
-            const couponCode = document.querySelector('[name="coupon"]').value.trim();
+            const couponCode = $('[name="coupon"]').val().trim();
 
             if (!couponCode) {
                 showErrorToast('Please enter a coupon code');
                 return;
             }
 
-            // Show loading state
-            const applyBtn = document.querySelector('.coupon-btn');
-            applyBtn.disabled = true;
-            applyBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Applying...';
+            const applyBtn = $('.coupon-btn');
+            const applySection = $('#apply-coupon-section');
+            const removeSection = $('#remove-coupon-section');
 
-            fetch("{{ route('coupon.check') }}", {
+            applyBtn.prop('disabled', true).text('Applying...');
+
+            $.ajax({
+                url: "{{ route('coupon.check') }}",
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                data: {
+                    coupon: couponCode,
+                    _token: $('meta[name="csrf-token"]').attr('content')
                 },
-                body: JSON.stringify({ coupon: couponCode })
-            })
-                .then(response => response.json())
-                .then(data => {
+                dataType: 'json',
+                success: function (data) {
                     if (data.success) {
                         showSuccessToast(data.message);
 
-                        // Update all the totals on the page
-                        updateTotals(data);
+                        // Toggle UI correctly
+                        applySection.addClass('d-none');
+                        removeSection.removeClass('d-none');
+                        window.location.reload();
 
-                        // Add or update the coupon discount section
-                        updateCouponSection(data.coupon, data.discount);
+                        // Set coupon value
+                        $('#remove-coupon-section input[name="coupon"]').val(couponCode);
                     } else {
                         showErrorToast(data.message);
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
+                },
+                error: function (xhr) {
+                    console.error(xhr);
                     showErrorToast('Failed to apply coupon');
-                })
-                .finally(() => {
-                    // Reset button state
-                    applyBtn.disabled = false;
-                    applyBtn.textContent = 'Apply';
-                });
-        }
-
-        function updateTotals(data) {
-            // Update hidden inputs
-            document.querySelector('[name="order_total"]').value = data.sub_total;
-            if (data.login_discount) {
-                document.querySelector('[name="login_discount"]').value = data.login_discount;
-            }
-            document.querySelector('[name="delivery_fee"]').value = data.delivery_fee;
-            document.querySelector('[name="estimate_total"]').value = data.total;
-
-            // Update displayed values
-            document.getElementById('grand-total').textContent = englishToBengali(data.total) + 'Tk';
-
-            // Update other displayed totals if they exist
-            const subTotalElement = document.querySelector('[data-subtotal]');
-            if (subTotalElement) {
-                subTotalElement.textContent = englishToBengali(data.sub_total) + 'Tk';
-            }
-
-            const loginDiscountElement = document.querySelector('[data-login-discount]');
-            if (loginDiscountElement && data.login_discount) {
-                loginDiscountElement.textContent = '-' + englishToBengali(data.login_discount) + 'Tk';
-            }
-
-            const deliveryFeeElement = document.querySelector('[data-delivery-fee]');
-            if (deliveryFeeElement) {
-                deliveryFeeElement.textContent = englishToBengali(data.delivery_fee) + 'Tk';
-            }
-        }
-
-        function updateCouponSection(couponCode, discount) {
-            const couponSection = document.getElementById('coupon-discount-wrap');
-            const removeBtn = document.querySelector('.remove-coupon-btn');
-
-            if (couponSection) {
-                // Update existing section
-                couponSection.querySelector('p:last-child').textContent = '-' + englishToBengali(discount) + 'Tk';
-                couponSection.querySelector('input[name="coupon_discount"]').value = discount;
-            } else {
-                // Create new section
-                const couponHtml = `
-            <div class="col-md-12 d-flex justify-content-between" id="coupon-discount-wrap">
-                <p>Coupon Discount (${couponCode})</p>
-                <p class="fsw-semibold">-${englishToBengali(discount)}Tk</p>
-                <input type="hidden" name="coupon_discount" value="${discount}">
-                <input type="hidden" name="coupon_code" value="${couponCode}">
-            </div>
-            <button type="button" class="btn btn-sm btn-danger mb-2 remove-coupon-btn" onclick="removeCoupon()">
-                Remove Coupon
-            </button>
-        `;
-
-                // Insert before the total row
-                const totalRow = document.querySelector('[data-total-row]');
-                if (totalRow) {
-                    totalRow.insertAdjacentHTML('beforebegin', couponHtml);
+                },
+                complete: function () {
+                    applyBtn.prop('disabled', false).text('Apply');
                 }
-            }
+            });
         }
 
         function removeCoupon() {
-            // Show loading state
-            const removeBtn = document.querySelector('.remove-coupon-btn');
-            removeBtn.disabled = true;
-            removeBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Removing...';
+            const removeBtn = $('.remove-coupon-btn');
+            const applySection = $('#apply-coupon-section');
+            const removeSection = $('#remove-coupon-section');
 
-            fetch("{{ route('coupon.remove') }}", {
+            removeBtn.prop('disabled', true).text('Removing...');
+
+            $.ajax({
+                url: "{{ route('coupon.remove') }}",
                 method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                dataType: 'json',
+                success: function (data) {
                     if (data.success) {
                         showSuccessToast(data.message);
 
-                        // Remove coupon section
-                        const couponSection = document.getElementById('coupon-discount-wrap');
-                        const removeBtn = document.querySelector('.remove-coupon-btn');
+                        // Toggle UI correctly
+                        removeSection.addClass('d-none');
+                        applySection.removeClass('d-none');
+                        window.location.reload();
 
-                        if (couponSection) couponSection.remove();
-                        if (removeBtn) removeBtn.remove();
-
-                        // Update totals without coupon
-                        updateTotals(data);
+                        // Reset input
+                        $('#apply-coupon-section input[name="coupon"]').val('');
                     } else {
                         showErrorToast(data.message);
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
+                },
+                error: function (xhr) {
+                    console.error(xhr);
                     showErrorToast('Failed to remove coupon');
-                })
-                .finally(() => {
-                    if (removeBtn) {
-                        removeBtn.disabled = false;
-                        removeBtn.textContent = 'Remove Coupon';
-                    }
-                });
+                },
+                complete: function () {
+                    removeBtn.prop('disabled', false).text('Remove');
+                }
+            });
         }
 
         function englishToBengali(number) {

@@ -153,8 +153,8 @@ class OrderController extends Controller
                 return [
                     'product' => $product,
                     'product_id' => $item['product_id'],
-                    'weight' => $item['weight'],
-                    'quantity' => $item['quantity'],
+                    'weight' => $item['weight'] ?? null,
+                    'quantity' => $item['quantity'] ?? null,
                 ];
             })->filter()->values();
         }
@@ -169,14 +169,15 @@ class OrderController extends Controller
         $totalSweetWeight = 0;
 
         $mappedCarts = $carts->map(function ($item) use (&$subTotal, &$totalSweetWeight) {
-            // Normalize cart item structure
-            $product = $item['product'] ?? $item->product;
+            // Normalize item access (array or object)
+            $isArray = is_array($item);
+            $product = $isArray ? $item['product'] : $item->product;
             $productType = $product->product_type;
-            $quantity = $item['quantity'] ?? $item->quantity;
-            $weight = $item['weight'] ?? $item->weight;
-            $price = $item['product']['discount_price'] ?? $item['product']['price'];
+            $quantity = $isArray ? ($item['quantity'] ?? 0) : ($item->quantity ?? 0);
+            $weight = $isArray ? ($item['weight'] ?? 0) : ($item->weight ?? 0);
+            $price = $product->discount_price ?? $product->price;
 
-            // Calculate line total based on product type
+            // Calculate line total
             if ($productType === 'Sweet') {
                 $gmPrice = $price / 1000;
                 $lineTotal = $gmPrice * $weight;
