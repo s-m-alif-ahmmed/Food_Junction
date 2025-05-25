@@ -40,9 +40,63 @@ class CartController extends Controller
             }, $sessionCart);
             // Filter out any null values (products not found)
             $carts = array_filter($carts);
+            // Convert array to collection
+            $carts = collect($carts);
         }
+        // Calculate cart totals
+        $subTotal = 0;
+        $totalSweetWeight = 0;
 
-        return view('frontend.pages.cart', compact('carts'));
+        $carts = $carts->map(function ($item) use (&$subTotal, &$totalSweetWeight) {
+            // Normalize item access (array or object)
+            $isArray = is_array($item);
+            $product = $isArray ? $item['product'] : $item->product;
+            $productType = $product->product_type;
+            $quantity = $isArray ? ($item['quantity'] ?? 0) : ($item->quantity ?? 0);
+            $weight = $isArray ? ($item['weight'] ?? 0) : ($item->weight ?? 0);
+            $price = $product->discount_price ?? $product->price;
+
+            // Calculate line total
+            if ($productType === 'Sweet') {
+                $gmPrice = $price / 1000;
+                $lineTotal = $gmPrice * $weight;
+                $subTotal += $lineTotal;
+                $totalSweetWeight += $weight;
+            } elseif ($productType === 'Product') {
+                $lineTotal = $quantity * $price;
+                $subTotal += $lineTotal;
+            } else {
+                $lineTotal = 0;
+            }
+
+            // Create a stdClass object instead of an array to allow object-style access in the view
+            $cartItem = new \stdClass();
+            $cartItem->product = $product;
+            $cartItem->product_slug = $product->product_slug;
+            $cartItem->product_id = $product->id;
+            $cartItem->quantity = $quantity;
+            $cartItem->weight = $weight;
+            $cartItem->price = round($price, 2);
+            $cartItem->line_total = round($lineTotal, 2);
+
+            return $cartItem;
+        });
+
+        // Calculate discounts and totals
+        $loginDiscount = Auth::check() ? ($subTotal * 0.05) : 0;
+        $deliveryFee = ($totalSweetWeight > 2000) ? 0 : 60;
+        $subTotalAfterLoginDiscount = $subTotal - $loginDiscount;
+        $total = ($subTotalAfterLoginDiscount + $deliveryFee);
+
+        // Create a stdClass object instead of an array to allow object-style access in the view
+        $totalInfo = new \stdClass();
+        $totalInfo->login_discount = round($loginDiscount, 2);
+        $totalInfo->total = round($total, 2);
+        $totalInfo->delivery_fee = $deliveryFee;
+        $totalInfo->sub_total = round($subTotal, 2);
+
+        // Pass the carts variable to the view
+        return view('frontend.pages.cart', compact('carts', 'totalInfo'));
     }
 
     public function addToCart(Request $request)
@@ -165,12 +219,11 @@ class CartController extends Controller
 
                 if ($cart) {
                     $cart->delete();
-                    return redirect()->back()->with([
-                        'success' => true,
-                        't-success' => 'Item removed from cart.',
-                    ]);
+
+                    return redirect()->back()->with('t-success', 'Item removed from cart.');
+
                 } else {
-                    return redirect()->back()->with([
+                    return response()->json([
                         'success' => false,
                         't-error' => 'Item not found in cart.',
                     ], 404);
@@ -190,16 +243,13 @@ class CartController extends Controller
                 // Update the session with the new cart
                 session()->put('carts', $cart);
 
-                return redirect()->back()->with([
-                    'success' => true,
-                    't-success' => 'Item removed from cart.',
-                ]);
+                return redirect()->back()->with('t-success', 'Item removed from cart.');
             }
         } catch (\Exception $e) {
-            return redirect()->back()->with([
+            return response()->json([
                 'success' => false,
-                't-error' => 'Failed to remove item from cart.',
-                'error' => $e->getMessage(),
+                'message' => 'Failed to remove item from cart.',
+                't-error' => $e->getMessage(),
             ], 500);
         }
     }

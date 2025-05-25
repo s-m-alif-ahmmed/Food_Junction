@@ -364,6 +364,10 @@
                 success: function(response) {
                     if (response.success) {
                         showSuccessToast(response.message);
+                        // Refresh the page after a short delay to show the toast message
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
                     } else {
                         showErrorToast(response.message);
                     }
