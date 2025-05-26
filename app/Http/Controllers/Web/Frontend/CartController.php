@@ -90,10 +90,10 @@ class CartController extends Controller
 
         // Create a stdClass object instead of an array to allow object-style access in the view
         $totalInfo = new \stdClass();
-        $totalInfo->login_discount = round($loginDiscount, 2);
-        $totalInfo->total = round($total, 2);
+        $totalInfo->login_discount = floor($loginDiscount);
+        $totalInfo->total = floor($total);
         $totalInfo->delivery_fee = $deliveryFee;
-        $totalInfo->sub_total = round($subTotal, 2);
+        $totalInfo->sub_total = floor($subTotal);
 
         // Pass the carts variable to the view
         return view('frontend.pages.cart', compact('carts', 'totalInfo'));
@@ -188,6 +188,8 @@ class CartController extends Controller
 
             // Store updated cart in session
             session()->put('carts', $cart);
+
+            session()->forget('applied_coupon');
 
             return response()->json([
                 'success' => true,

@@ -50,17 +50,6 @@
             </div>
         </div>
 
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-
         <div class="container my-4">
             <form action="{{ route('new.order') }}" method="post">
                 @csrf
@@ -73,32 +62,40 @@
                                 <p class="fs-24 fsw-semibold">Billing Details</p>
                             </div>
                             <div class="mb-3">
-                                <label for="formGroupExampleInput" class="form-label">Name</label>
-                                <input type="text" class="form-control" name="name" id="formGroupExampleInput" placeholder="Example input placeholder">
+                                <label for="name" class="form-label">Name<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name"
+                                       placeholder="Enter full name here" value="{{ old('name') }}" required >
+                                @error('name')
+                                <p class="text-sm text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div class="mb-3">
-                                <label for="formGroupExampleInput2" class="form-label">Email <span>(Optional)</span></label>
-                                <input type="text" class="form-control" name="email" id="formGroupExampleInput2" placeholder="Another input placeholder">
+                                <label for="email" class="form-label">Email <span>(Optional)</span></label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="email" id="email"
+                                       placeholder="Enter email address here" value="{{ old('email') }}" required >
                             </div>
                             <div class="mb-3">
-                                <label for="formGroupExampleInput" class="form-label">Phone Number</label>
-                                <input type="text" class="form-control" name="number" id="formGroupExampleInput" placeholder="Example input placeholder">
+                                <label for="number" class="form-label">Phone Number<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('number') is-invalid @enderror" name="number" id="number"
+                                       placeholder="Enter phone number here" value="{{ old('number') }}" required >
                             </div>
                             <div class="mb-3">
-                                <label for="formGroupExampleInput" class="form-label">Whatsapp Number(Optional)</label>
-                                <input type="text" class="form-control" name="whatsapp_number" id="formGroupExampleInput" placeholder="Example input placeholder">
+                                <label for="whatsapp_number" class="form-label">Whatsapp Number(Optional)</label>
+                                <input type="text" class="form-control @error('whatsapp_number') is-invalid @enderror" name="whatsapp_number" id="whatsapp_number"
+                                       placeholder="Enter whatsapp number here" value="{{ old('whatsapp_number') }}">
                             </div>
                             <div class="mb-3">
-                                <label for="formGroupExampleInput2" class="form-label">Address</label>
-                                <textarea class="form-control" name="address" id="formGroupExampleInput2" placeholder="Another input placeholder" cols="30" rows="3"></textarea>
+                                <label for="address" class="form-label">Address<span class="text-danger">*</span></label>
+                                <textarea class="form-control @error('address') is-invalid @enderror" name="address" id="address"
+                                          placeholder="Enter full Address here" cols="30" rows="3" required >{{ old('address') }}</textarea>
                             </div>
                             <div class="mb-3">
-                                <label for="formGroupExampleInput" class="form-label">Note(Optional)</label>
-                                <textarea class="form-control" name="note" id="formGroupExampleInput" placeholder="Another input placeholder" cols="30" rows="3"></textarea>
+                                <label for="note" class="form-label">Note(Optional)</label>
+                                <textarea class="form-control @error('note') is-invalid @enderror" name="note" id="note" placeholder="Enter note here" cols="30" rows="3">{{ old('note') }}</textarea>
                             </div>
                             <div class="d-flex mb-3">
                                 <label for="all_terms" class="form-label me-2">
-                                    <input type="checkbox" class="" name="all_terms" id="all_terms" value="yes" placeholder="Example input placeholder">
+                                    <input type="checkbox" class="" name="all_terms" id="all_terms" value="yes" required >
                                     Accept all Terms and Conditions
                                 </label>
                             </div>
@@ -144,11 +141,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-1 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
-                                    <button class="btn" onclick="removeFromCart('{{ $cart['product']['id'] }}')">
-                                        <i class="fa-solid fa-trash text-danger"></i>
-                                    </button>
-                                </div>
+{{--                                <div class="col-lg-1 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">--}}
+{{--                                    <button class="btn" onclick="removeFromCart('{{ $cart['product']['id'] }}')">--}}
+{{--                                        <i class="fa-solid fa-trash text-danger"></i>--}}
+{{--                                    </button>--}}
+{{--                                </div>--}}
                             </div>
                             @endforeach
 
@@ -352,33 +349,33 @@
     </script>
 
 
-    <script>
-        function removeFromCart(productId) {
-            $.ajax({
-                url: '{{ route('remove.cart') }}', // Use the correct route name for removeFromCart
-                type: 'POST',
-                data: {
-                    product_id: productId,
-                    _token: '{{ csrf_token() }}', // CSRF token for security
-                },
-                success: function(response) {
-                    if (response.success) {
-                        showSuccessToast(response.message);
-                        // Refresh the page after a short delay to show the toast message
-                        setTimeout(function() {
-                            window.location.reload();
-                        }, 1000);
-                    } else {
-                        showErrorToast(response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    showErrorToast(error);
-                }
-            });
-        }
+{{--    <script>--}}
+{{--        function removeFromCart(productId) {--}}
+{{--            $.ajax({--}}
+{{--                url: '{{ route('remove.cart') }}', // Use the correct route name for removeFromCart--}}
+{{--                type: 'POST',--}}
+{{--                data: {--}}
+{{--                    product_id: productId,--}}
+{{--                    _token: '{{ csrf_token() }}', // CSRF token for security--}}
+{{--                },--}}
+{{--                success: function(response) {--}}
+{{--                    if (response.success) {--}}
+{{--                        showSuccessToast(response.message);--}}
+{{--                        // Refresh the page after a short delay to show the toast message--}}
+{{--                        setTimeout(function() {--}}
+{{--                            window.location.reload();--}}
+{{--                        }, 1000);--}}
+{{--                    } else {--}}
+{{--                        showErrorToast(response.message);--}}
+{{--                    }--}}
+{{--                },--}}
+{{--                error: function(xhr, status, error) {--}}
+{{--                    showErrorToast(error);--}}
+{{--                }--}}
+{{--            });--}}
+{{--        }--}}
 
-    </script>
+{{--    </script>--}}
 
     <script>
         // Trigger toaster based on session messages

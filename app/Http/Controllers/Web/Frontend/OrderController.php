@@ -231,12 +231,12 @@ class OrderController extends Controller
     public function newOrder(Request $request)
     {
         $validated = $request->validate([
-            'delivery_fee' => 'required|numeric',
-            'coupon_id' => 'nullable|exists:coupons,id',
-            'discount_amount' => 'nullable|numeric',
-            'login_discount' => 'nullable|numeric',
-            'estimate_total' => 'nullable|numeric',
-            'order_total' => 'required|numeric',
+            'login_discount' => 'nullable',
+            'delivery_fee' => 'nullable',
+            'coupon' => 'nullable',
+            'discount' => 'nullable',
+            'order_total' => 'nullable',
+            'estimate_total' => 'nullable',
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
@@ -255,13 +255,13 @@ class OrderController extends Controller
             ? Cart::with('product')->where('user_id', $user->id)->get()
             : collect(session('carts', []));
 
-        $discountCoupon = session('discount_coupon', []);
-        $couponId = $discountCoupon['coupon_id'] ?? null;
+        $discountCoupon = session('applied_coupon', []);
+        $couponId = $discountCoupon['id'] ?? null;
         $discountAmount = $discountCoupon['discount'] ?? 0;
 
         $order = new Order([
             'user_id' => $user->id ?? null,
-            'delivery_fee' => $request->delivery_fee,
+            'delivery_fee' => $request->delivery_fee ?? 60,
             'coupon_id' => $couponId,
             'discount_amount' => $discountAmount,
             'login_discount' => $request->login_discount,
@@ -299,7 +299,7 @@ class OrderController extends Controller
         } else {
             session()->forget('carts');
         }
-        session()->forget('discount_coupon');
+        session()->forget('applied_coupon');
 
         // Store order ID for order complete view
         session(['order' => $order->id]);
