@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Backend\Cms;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\HomeBanner;
+use App\Models\Offer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,9 +24,12 @@ class HomeBannerController extends Controller
      */
     public function index(Request $request): View | JsonResponse {
         if ($request->ajax()) {
-            $data = HomeBanner::latest()->get();
+            $data = HomeBanner::with('offers')->latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('offers', function($row) {
+                    return $row->offers->map(fn($o) => '<span class="badge bg-success">'.$o->name.'</span>')->join(' ');
+                })
                 ->addColumn('image', function ($data) {
                     $defaultImage = asset('frontend/images/section/home_banner.png');
                     if ($data->image) {
@@ -58,7 +62,7 @@ class HomeBannerController extends Controller
                                 </a>
                             </div>';
                 })
-                ->rawColumns(['image', 'status', 'action'])
+                ->rawColumns(['image', 'status', 'offers', 'action'])
                 ->make();
         }
         return view('backend.layouts.cms.home-banner.index');
@@ -70,7 +74,8 @@ class HomeBannerController extends Controller
      * @return View
      */
     public function create(): View {
-        return view('backend.layouts.cms.home-banner.create');
+        $offers = Offer::active()->get();
+        return view('backend.layouts.cms.home-banner.create', compact('offers'));
     }
 
     /**
@@ -104,6 +109,10 @@ class HomeBannerController extends Controller
             }
             $data->save();
 
+            if ($request->has('offer_ids')) {
+                $data->offers()->sync($request->offer_ids);
+            }
+
             return redirect()->route('cms.home-banner.index')->with('t-success', 'Updated successfully');
         } catch (Exception) {
             return redirect()->route('cms.home-banner.index')->with('t-success', 'Home Banner failed created.');
@@ -117,8 +126,9 @@ class HomeBannerController extends Controller
      * @return View
      */
     public function edit(int $id): View {
-        $data = HomeBanner::find($id);
-        return view('backend.layouts.cms.home-banner.edit', compact('data'));
+        $data = HomeBanner::with('offers')->findOrFail($id);
+        $offers = Offer::active()->get();
+        return view('backend.layouts.cms.home-banner.edit', compact('data', 'offers'));
     }
 
     /**
@@ -158,7 +168,14 @@ class HomeBannerController extends Controller
 
                 $data->image = $imagePath;
             }
-            $data->update();
+            $data->save();
+
+            // Sync offers
+            if ($request->has('offer_ids')) {
+                $data->offers()->sync($request->offer_ids);
+            } else {
+                $data->offers()->detach();
+            }
 
             return redirect()->route('cms.home-banner.index')->with('t-success', 'Home Banner Updated Successfully.');
 

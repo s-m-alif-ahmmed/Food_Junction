@@ -1,17 +1,17 @@
 @extends('backend.app')
 
-@section('title', 'Home Banner')
+@section('title', 'Offers')
 
 @section('content')
     {{-- PAGE-HEADER --}}
     <div class="page-header">
         <div>
-            <h1 class="page-title">Home Banner</h1>
+            <h1 class="page-title">Offers</h1>
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Home Banner Image</li>
+                <li class="breadcrumb-item active" aria-current="page">Offers</li>
             </ol>
         </div>
     </div>
@@ -23,8 +23,8 @@
             <div class="card">
                 <div class="card-header border-bottom"
                     style="margin-bottom: 0; display: flex; justify-content: space-between;">
-                    <h3 class="card-title">Home Banner Table</h3>
-                    <a href="{{ route('cms.home-banner.create') }}" class="btn btn-primary">Add New Home Banner Image</a>
+                    <h3 class="card-title">Offer Table</h3>
+                    <a href="{{ route('offers.create') }}" class="btn btn-primary">Add New Offer</a>
                 </div>
 
                 <div class="card-body">
@@ -33,8 +33,8 @@
                             <thead>
                                 <tr>
                                     <th class="wd-15p border-bottom-0">#</th>
-                                    <th class="wd-15p border-bottom-0">Home Banner Image</th>
-                                    <th class="wd-15p border-bottom-0">Offers</th>
+                                    <th class="wd-15p border-bottom-0">Offer Name</th>
+                                    <th class="wd-15p border-bottom-0">Type</th>
                                     <th class="wd-20p border-bottom-0">Status</th>
                                     <th class="wd-15p border-bottom-0">Action</th>
                                 </tr>
@@ -85,7 +85,7 @@
                     pagingType: "full_numbers",
                     dom: "<'row justify-content-between table-topbar'<'col-md-2 col-sm-4 px-0'l><'col-md-2 col-sm-4 px-0'f>>tipr",
                     ajax: {
-                        url: "{{ route('cms.home-banner.index') }}",
+                        url: "{{ route('offers.index') }}",
                         type: "GET",
                     },
 
@@ -96,15 +96,15 @@
                             searchable: false
                         },
                         {
-                            data: 'image',
-                            name: 'image',
+                            data: 'name',
+                            name: 'name',
                             orderable: true,
                             searchable: true
                         },
                         {
-                            data: 'offers',
-                            name: 'offers',
-                            orderable: false,
+                            data: 'offer_type',
+                            name: 'offer_type',
+                            orderable: true,
                             searchable: true
                         },
                         {
@@ -148,7 +148,7 @@
         }
         // Status Change
         function statusChange(id) {
-            let url = '{{ route('cms.home-banner.status', ':id') }}';
+            let url = '{{ route('offers.status', ':id') }}';
             $.ajax({
                 type: "GET",
                 url: url.replace(':id', id),
@@ -191,7 +191,7 @@
 
         // Delete Button
         function deleteItem(id) {
-            let url = '{{ route('cms.home-banner.destroy', ':id') }}';
+            let url = '{{ route('offers.destroy', ':id') }}';
             let csrfToken = '{{ csrf_token() }}';
             $.ajax({
                 type: "DELETE",
@@ -201,7 +201,7 @@
                 },
                 success: function(resp) {
                     $('#datatable').DataTable().ajax.reload();
-                    if (resp['t-success']) {
+                    if (resp.success) {
                         toastr.success(resp.message);
                     } else {
                         toastr.error(resp.message);

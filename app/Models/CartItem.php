@@ -4,43 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class OrderDetail extends Model
+class CartItem extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
-        'order_id',
+        'cart_id',
         'product_id',
-
-        // snapshot
-        'product_name',
-
-        // pricing
-        'original_price',
-        'unit_price',
-        'discount_amount',
-
-        // quantity system
         'unit_type',
         'unit_value',
         'quantity',
-
-        // totals
+        'unit_price',
         'total_price',
-
-        // extra
-        'meta',
     ];
 
     protected $casts = [
-        'original_price' => 'decimal:2',
-        'unit_price' => 'decimal:2',
-        'discount_amount' => 'decimal:2',
         'unit_value' => 'decimal:2',
+        'unit_price' => 'decimal:2',
         'total_price' => 'decimal:2',
-        'meta' => 'array',
     ];
 
     /*
@@ -49,9 +31,9 @@ class OrderDetail extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function order()
+    public function cart()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Cart::class);
     }
 
     public function product()
@@ -61,11 +43,11 @@ class OrderDetail extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Helper Methods (VERY IMPORTANT)
+    | Helper Methods (IMPORTANT)
     |--------------------------------------------------------------------------
     */
 
-    // total quantity in KG
+    // total kg (for offer engine)
     public function getTotalKgAttribute()
     {
         if ($this->unit_type !== 'kg') return 0;
@@ -73,7 +55,7 @@ class OrderDetail extends Model
         return $this->unit_value * $this->quantity;
     }
 
-    // total pieces
+    // total pcs
     public function getTotalPcsAttribute()
     {
         if ($this->unit_type !== 'pcs') return 0;
@@ -81,7 +63,7 @@ class OrderDetail extends Model
         return $this->quantity;
     }
 
-    // formatted label (UI ready)
+    // display for UI
     public function getDisplayQuantityAttribute()
     {
         if ($this->unit_type === 'kg') {
@@ -90,6 +72,5 @@ class OrderDetail extends Model
 
         return $this->quantity . ' pcs';
     }
-
 
 }

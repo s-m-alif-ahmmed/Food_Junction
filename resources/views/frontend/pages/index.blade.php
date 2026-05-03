@@ -23,7 +23,16 @@
                         <div class="carousel-inner">
                             @foreach($home_banners as $image)
                                 <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
-                                    <img src="{{ asset( $image->image ?? '/frontend/images/section/home/hero_banner.png') }}" class="d-block w-100" alt="...">
+                                    @php
+                                        $offer = $image->offers->first();
+                                    @endphp
+                                    @if($offer)
+                                        <a href="{{ route('offer.detail', $offer->id) }}">
+                                            <img src="{{ asset( $image->image ?? '/frontend/images/section/home/hero_banner.png') }}" class="d-block w-100" alt="{{ $offer->name }}">
+                                        </a>
+                                    @else
+                                        <img src="{{ asset( $image->image ?? '/frontend/images/section/home/hero_banner.png') }}" class="d-block w-100" alt="Banner">
+                                    @endif
                                 </div>
                             @endforeach
                         </div>
@@ -42,7 +51,7 @@
 
         <div class="container pb-5">
             <div class="row py-3">
-                @foreach($products->take(4) as $product)
+                @forelse($offer_products->take(4) as $product)
                     <div class="col-lg-3 col-md-3 col-sm-6 col-6 special-sweet-card">
                         <div class="card border-0 custom-shadow">
                             <div class="sweet-image">
@@ -55,7 +64,11 @@
                             </div>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="col-12 text-center py-5">
+                        <p class="text-muted">No offer products available at the moment.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
 
@@ -69,7 +82,7 @@
 
         <div class="container pb-5">
             <div class="row py-3">
-                @foreach($products as $product)
+                @foreach($all_products as $product)
                     <div class="col-lg-3 col-md-3 col-sm-6 col-6 special-sweet-card">
                         <div class="card border-0 custom-shadow">
                             <div class="sweet-image">

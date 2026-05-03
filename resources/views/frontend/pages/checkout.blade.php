@@ -104,48 +104,43 @@
 
                     <div class="col-lg-4 col-md-12 col-sm-12 col-12 py-2">
                         <div class="card p-3 mb-2">
-                            @foreach($carts as $cart)
+                            @foreach($cart->items as $item)
 
                             <div class="row py-2">
                                 <div class="col-lg-3 col-md-3 col-sm-3 col-3">
-                                    <a href="{{ route('product.detail', $cart['product_slug'] ) }}">
+                                    <a href="{{ route('product.detail', $item->product->product_slug ?? '') }}">
                                         <div class="cart-img">
-                                            <img src="{{ asset($cart->product->image ?? '/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
+                                            <img src="{{ asset($item->product->image ?? '/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
                                         </div>
                                     </a>
                                 </div>
                                 <div class="col-lg-8 col-md-7 col-sm-7 col-7 checkout-cart-sweets">
                                     <div>
                                         <div>
-                                            <a href="{{ route('product.detail', $cart['product_slug'] ) }}" class="sweet-name">
-                                                {{ $cart['product']['name'] }}
+                                            <a href="{{ route('product.detail', $item->product->product_slug ?? '') }}" class="sweet-name">
+                                                {{ $item->product->name ?? 'Product Name' }}
                                             </a>
                                         </div>
                                         <div>
                                             <span class="cart-weight">
-                                                @if($cart['product']['product_type'] == 'Sweet')
-                                                    {{ $cart['weight'] < 1000 ? englishToBengali($cart['weight']) . ' গ্রাম' : englishToBengali($cart['weight'] / 1000) . ' কেজি' }}
-                                                @elseif($cart['product']['product_type'] == 'Product')
-                                                    {{ $cart->quantity ?? '' }} pcs
+                                                @if($item->unit_type == 'kg')
+                                                    {{ $item->unit_value < 1000 ? englishToBengali($item->unit_value) . ' গ্রাম' : englishToBengali($item->unit_value / 1000) . ' কেজি' }}
+                                                @else
+                                                    {{ $item->quantity }} pcs
                                                 @endif
                                             </span>
                                             <p class="cart-price">
-                                                {{ englishToBengali($cart['price']) ?? '0' }}Tk
-                                                @if($cart['product']['discount_price'])
-                                                <span class="discount-price">(<del>{{ englishToBengali($cart['product']['price']) }}Tk</del>)</span>
+                                                {{ englishToBengali($item->unit_price) ?? '0' }}Tk
+                                                @if($item->product && $item->product->discount_price)
+                                                <span class="discount-price">(<del>{{ englishToBengali($item->product->price) }}Tk</del>)</span>
                                                 @endif
                                             </p>
                                             <span class="single-cart-total-price">
-                                                Subtotal: {{ englishToBengali($cart['line_total']) ?? '0' }}Tk
+                                                Subtotal: {{ englishToBengali($item->total_price) ?? '0' }}Tk
                                             </span>
                                         </div>
                                     </div>
                                 </div>
-{{--                                <div class="col-lg-1 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">--}}
-{{--                                    <button class="btn" onclick="removeFromCart('{{ $cart['product']['id'] }}')">--}}
-{{--                                        <i class="fa-solid fa-trash text-danger"></i>--}}
-{{--                                    </button>--}}
-{{--                                </div>--}}
                             </div>
                             @endforeach
 
@@ -156,81 +151,62 @@
                                 <div class="col-md-12">
                                     <p class="fsw-bold fs-20">Order Summary</p>
                                 </div>
+
+                                {{-- Subtotal --}}
                                 <div class="col-md-12 d-flex justify-content-between">
                                     <p>Subtotal</p>
-                                    <p class="fsw-semibold" data-subtotal>{{ englishToBengali( number_format( round($total_info['sub_total']), 2) ) }}Tk</p>
-                                    <input type="hidden" name="order_total" value="{{ $total_info['sub_total'] }}">
+                                    <p class="fsw-semibold" data-subtotal>{{ englishToBengali(number_format(round($cart->subtotal), 2)) }}Tk</p>
                                 </div>
-                                @if($total_info['login_discount'])
+
+                                {{-- Discount (covers login discount + offers) --}}
+                                @if($cart->discount > 0)
                                     <div class="col-md-12 d-flex justify-content-between">
-                                        <p>Login Discount</p>
-                                        <p class="fsw-semibold" data-login-discount>-{{ englishToBengali( number_format( round($total_info['login_discount']), 2) ) }}Tk</p>
-                                        <input type="hidden" name="login_discount" value="{{ $total_info['login_discount'] }}">
+                                        <p>Discount</p>
+                                        <p class="fsw-semibold" data-discount>-{{ englishToBengali(number_format(round($cart->discount), 2)) }}Tk</p>
                                     </div>
                                 @endif
+
+                                {{-- Delivery Fee --}}
                                 <div class="col-md-12 d-flex justify-content-between">
                                     <p>Delivery Fee</p>
-                                    <p class="fsw-semibold" data-delivery-fee>{{  ($total_info['delivery_fee'] == 0) ? 'Free' : englishToBengali(number_format(number_format( round($total_info['delivery_fee']), 2) ).'Tk') }}</p>
-                                    <input type="hidden" name="delivery_fee" value="{{ $total_info['delivery_fee'] }}">
+                                    <p class="fsw-semibold" data-delivery-fee>{{ $cart->delivery_fee <= 0 ? 'Free' : englishToBengali(number_format(round($cart->delivery_fee), 2)).'Tk' }}</p>
                                 </div>
 
-                                @if(session()->has('applied_coupon'))
-                                    <!-- Show Coupon Discount -->
+                                {{-- Coupon badge if applied --}}
+                                @if($cart->coupon_code)
                                     <div class="col-md-12 d-flex justify-content-between">
-                                        <p>Coupon Discount</p>
-                                        <p class="fsw-semibold" data-coupon-discount>- {{ englishToBengali( number_format( round( session('applied_coupon.discount') ), 2) ) }}Tk</p>
-                                        <input type="hidden" name="discount" value="{{ session('applied_coupon.discount') }}">
+                                        <p>Coupon <span class="badge bg-success">{{ $cart->coupon_code }}</span></p>
+                                        <p class="text-success fsw-semibold">Applied ✓</p>
                                     </div>
                                 @endif
 
-                                <!-- This is where the coupon section will be inserted -->
+                                {{-- Total --}}
                                 <div class="col-md-12 d-flex justify-content-between" data-total-row>
                                     <p class="fsw-semibold">Total</p>
-                                    <p class="fsw-semibold" id="grand-total">{{ englishToBengali( number_format( round( session('applied_coupon.total') ?? $total_info['total'] ), 2) ) }}Tk</p>
-                                    <input type="hidden" name="estimate_total" value="{{ session('applied_coupon.total') ?? $total_info['total'] }}">
+                                    <p class="fsw-semibold" id="grand-total">{{ englishToBengali(number_format(round($cart->total), 2)) }}Tk</p>
                                 </div>
 
-                                <!-- Apply Coupon Section -->
-                                @if(!session()->has('applied_coupon'))
-                                    <div class="col-md-12 d-flex justify-content-between" id="apply-coupon-section">
+                                {{-- Coupon Input Section --}}
+                                @if(!$cart->coupon_code)
+                                    <div class="col-md-12" id="apply-coupon-section">
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control coupon-input" name="coupon" placeholder="Add Promo Code">
+                                            <input type="text" class="form-control coupon-input" id="coupon-input" placeholder="Add Promo Code">
                                             <button type="button" class="input-group-text bg-danger text-white coupon-btn"
                                                     onclick="applyCoupon()">Apply</button>
                                         </div>
                                     </div>
-
-                                    <div class="col-md-12 d-flex justify-content-between d-none" id="remove-coupon-section">
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control coupon-input" name="coupon" placeholder="Add Promo Code" readonly>
-                                            <button type="button" class="input-group-text bg-dark text-white remove-coupon-btn"
-                                                    onclick="removeCoupon()">Remove</button>
-                                        </div>
-                                    </div>
-
                                 @else
-                                    <!-- Hide Apply Coupon Section on load -->
-                                    <div class="col-md-12 d-flex justify-content-between d-none" id="apply-coupon-section">
+                                    <div class="col-md-12" id="remove-coupon-section">
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control coupon-input" name="coupon" placeholder="Add Promo Code">
-                                            <button type="button" class="input-group-text bg-danger text-white coupon-btn"
-                                                    onclick="applyCoupon()">Apply</button>
-                                        </div>
-                                    </div>
-
-                                    <!-- Show Remove Coupon Section -->
-                                    <div class="col-md-12 d-flex justify-content-between" id="remove-coupon-section">
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control coupon-input" name="coupon" value="{{ session('applied_coupon.code') }}" readonly>
+                                            <input type="text" class="form-control" value="{{ $cart->coupon_code }}" readonly>
                                             <button type="button" class="input-group-text bg-dark text-white remove-coupon-btn"
                                                     onclick="removeCoupon()">Remove</button>
                                         </div>
                                     </div>
-
                                 @endif
 
                                 <div class="col-md-12">
-                                    @if($carts->count() > 0)
+                                    @if($cart->items->count() > 0)
                                         <button type="submit" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">
                                             Place Order <i class="fa-solid fa-long-arrow-right"></i>
                                         </button>

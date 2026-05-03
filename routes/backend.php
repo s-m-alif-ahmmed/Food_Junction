@@ -129,7 +129,7 @@ Route::controller(CouponController::class)->group(function () {
     Route::delete('/coupons/delete/{id}', 'destroy')->name('coupons.destroy');
 });
 
-//! Route for coupon
+//! Route for Orders
 Route::controller(AdminOrderController::class)->group(function () {
     Route::get('/orders', 'index')->name('orders.index');
     Route::get('/orders/show/{id}', 'show')->name('orders.show');
@@ -137,4 +137,17 @@ Route::controller(AdminOrderController::class)->group(function () {
     Route::get('/orders/invoice/{id}', 'invoice')->name('orders.invoice');
     Route::post('/orders/status/{id}', 'status')->name('orders.status');
     Route::delete('/orders/delete/{id}', 'destroy')->name('orders.destroy');
+});
+
+//! Route for Offers
+use App\Http\Controllers\Web\Backend\Offer\OfferController;
+Route::controller(OfferController::class)->group(function () {
+    Route::get('/offers', 'index')->name('offers.index');
+    Route::get('/offers/create', 'create')->name('offers.create');
+    Route::post('/offers/store', 'store')->name('offers.store');
+    Route::get('/offers/show/{id}', 'show')->name('offers.show');
+    Route::get('/offers/edit/{id}', 'edit')->name('offers.edit');
+    Route::patch('/offers/update/{id}', 'update')->name('offers.update');
+    Route::get('/offers/status/{id}', 'status')->name('offers.status');
+    Route::delete('/offers/delete/{id}', 'destroy')->name('offers.destroy');
 });

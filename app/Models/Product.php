@@ -50,5 +50,9 @@ class Product extends Model
     {
         return $this->belongsToMany(User::class, 'wishlists', 'product_id', 'user_id');
     }
+    public function offers()
+    {
+        return $this->belongsToMany(Offer::class, 'offer_product_maps');
+    }
 
 }

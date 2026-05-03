@@ -6,16 +6,15 @@
     {{-- PAGE-HEADER --}}
     <div class="page-header">
         <div>
-            <h1 class="page-title">Order's List</h1>
+            <h1 class="page-title">Orders</h1>
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="javascript:void(0);">Table</a></li>
+                <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Orders</li>
             </ol>
         </div>
     </div>
-    {{-- PAGE-HEADER --}}
 
     <div class="row row-sm">
         <div class="col-lg-12">
@@ -25,20 +24,18 @@
                         <table class="table table-bordered text-nowrap border-bottom w-100" id="datatable">
                             <thead>
                                 <tr>
-                                    <th class="wd-15p border-bottom-0">#</th>
-                                    <th class="wd-15p border-bottom-0">Order Time</th>
-                                    <th class="wd-15p border-bottom-0">Tracking ID</th>
-                                    <th class="wd-15p border-bottom-0">Name</th>
-                                    <th class="wd-15p border-bottom-0">Email</th>
-                                    <th class="wd-15p border-bottom-0">Number</th>
-                                    <th class="wd-15p border-bottom-0">Total</th>
-                                    <th class="wd-15p border-bottom-0">Status</th>
-                                    <th class="wd-15p border-bottom-0">Actions</th>
+                                    <th>#</th>
+                                    <th>Order Time</th>
+                                    <th>Tracking ID</th>
+                                    <th>Customer</th>
+                                    <th>Phone</th>
+                                    <th>Zone</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {{-- dynamic data --}}
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>
@@ -48,200 +45,110 @@
 @endsection
 
 @push('scripts')
-    <script>
-        $(document).ready(function() {
-
-            $.ajaxSetup({
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-                }
-            });
-            if (!$.fn.DataTable.isDataTable('#datatable')) {
-                let dTable = $('#datatable').DataTable({
-                    order: [],
-                    lengthMenu: [
-                        [10, 25, 50, 100, -1],
-                        [10, 25, 50, 100, "All"]
-                    ],
-                    processing: true,
-                    responsive: true,
-                    serverSide: true,
-
-                    language: {
-                        processing: `<div class="text-center">
-                            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                          </div>
-                            </div>`
-                    },
-
-                    scroller: {
-                        loadingIndicator: false
-                    },
-                    pagingType: "full_numbers",
-                    dom: "<'row justify-content-between table-topbar'<'col-md-2 col-sm-4 px-0'l><'col-md-2 col-sm-4 px-0'f>>tipr",
-                    ajax: {
-                        url: "{{ route('orders.index') }}",
-                        type: "GET",
-                    },
-
-                    columns: [{
-                            data: 'DT_RowIndex',
-                            name: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'created_at',
-                            name: 'created_at',
-                            orderable: true,
-                            searchable: true
-                        },
-                        {
-                            data: 'tracking_id',
-                            name: 'tracking_id',
-                            orderable: true,
-                            searchable: true
-                        },
-                        {
-                            data: 'name',
-                            name: 'name',
-                            orderable: true,
-                            searchable: true
-                        },
-                        {
-                            data: 'email',
-                            name: 'email',
-                            orderable: true,
-                            searchable: true
-                        },
-                        {
-                            data: 'number',
-                            name: 'number',
-                            orderable: true,
-                            searchable: true
-                        },
-                        {
-                            data: 'order_total',
-                            name: 'order_total',
-                            orderable: true,
-                            searchable: true
-                        },
-                        {
-                            data: 'status',
-                            name: 'status',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        },
-                    ],
-                });
-
-                dTable.buttons().container().appendTo('#file_exports');
-                new DataTable('#example', {
-                    responsive: true
-                });
-            }
+<script>
+    $(document).ready(function () {
+        $.ajaxSetup({
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
         });
 
-
-        // Status Change Confirm Alert
-        function showStatusChangeAlert(id, newStatus) {
-            event.preventDefault();
-
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'You want to update the status?',
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    statusChange(id, newStatus);
-                } else {
-                    // If canceled, reset the select field to its previous value
-                    let currentStatus = document.querySelector(`[name="status"][data-id="${id}"]`).dataset.previousStatus;
-                    document.querySelector(`[name="status"][data-id="${id}"]`).value = currentStatus;
-                }
+        if (!$.fn.DataTable.isDataTable('#datatable')) {
+            let dTable = $('#datatable').DataTable({
+                order: [],
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']],
+                processing: true,
+                responsive: true,
+                serverSide: true,
+                language: {
+                    processing: `<div class="text-center"><div class="spinner-border text-primary" style="width:3rem;height:3rem;" role="status"><span class="visually-hidden">Loading...</span></div></div>`
+                },
+                pagingType: 'full_numbers',
+                dom: "<'row justify-content-between table-topbar'<'col-md-2 col-sm-4 px-0'l><'col-md-2 col-sm-4 px-0'f>>tipr",
+                ajax: {
+                    url: '{{ route('orders.index') }}',
+                    type: 'GET',
+                },
+                columns: [
+                    { data: 'DT_RowIndex',    name: 'DT_RowIndex',   orderable: false, searchable: false },
+                    { data: 'created_at',     name: 'created_at' },
+                    { data: 'tracking_id',    name: 'tracking_id' },
+                    { data: 'name',           name: 'name' },
+                    { data: 'number',         name: 'number' },
+                    { data: 'delivery_zone',  name: 'delivery_zone',  orderable: false },
+                    { data: 'final_total',    name: 'final_total' },
+                    { data: 'status',         name: 'status',         orderable: false, searchable: false },
+                    { data: 'action',         name: 'action',         orderable: false, searchable: false },
+                ],
             });
         }
+    });
 
-        // Status Change
-        function statusChange(id, status) {
-            let url = '{{ route('orders.status', ':id') }}';
-            url = url.replace(':id', id);
+    // ── Status Change Confirmation ────────────────────────────────────────
+    function showStatusChangeAlert(id, newStatus) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Change Order Status?',
+            text: 'Update this order to: ' + newStatus,
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, update',
+            cancelButtonText: 'Cancel',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                statusChange(id, newStatus);
+            } else {
+                // Revert the select back to its previous value
+                const sel = document.querySelector(`[name="status"][data-id="${id}"]`);
+                if (sel) sel.value = sel.dataset.previousStatus;
+            }
+        });
+    }
 
-            $.ajax({
-                type: "POST",
-                url: url,
-                data: {
-                    status: status,
-                    _token: '{{ csrf_token() }}',  // CSRF token for security
-                },
-                success: function(resp) {
-                    console.log(resp);
-                    // Reload DataTable (if necessary)
-                    $('#datatable').DataTable().ajax.reload();
+    function statusChange(id, status) {
+        let url = '{{ route('orders.status', ':id') }}'.replace(':id', id);
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: { status: status, _token: '{{ csrf_token() }}' },
+            success: function (resp) {
+                $('#datatable').DataTable().ajax.reload(null, false);
+                resp.success ? toastr.success(resp.message) : toastr.error(resp.message);
+            },
+            error: function () {
+                toastr.error('An error occurred while updating the status.');
+            }
+        });
+    }
 
-                    if (resp.success === true) {
-                        // Show success toast message
-                        toastr.success(resp.message);
-                    } else {
-                        toastr.error(resp.message);
-                    }
-                },
-                error: function(error) {
-                    toastr.error("An error occurred while changing the status.");
-                }
-            });
-        }
+    // ── Delete Confirmation ───────────────────────────────────────────────
+    function showDeleteConfirm(id) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Delete this order?',
+            text: 'This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete!',
+        }).then((result) => {
+            if (result.isConfirmed) deleteItem(id);
+        });
+    }
 
-        // delete Confirm
-        function showDeleteConfirm(id) {
-            event.preventDefault();
-            Swal.fire({
-                title: 'Are you sure you want to delete this record?',
-                text: 'If you delete this, it will be gone forever.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    deleteItem(id);
-                }
-            });
-        }
-
-        // Delete Button
-        function deleteItem(id) {
-            let url = '{{ route('orders.destroy', ':id') }}';
-            let csrfToken = '{{ csrf_token() }}';
-            $.ajax({
-                type: "DELETE",
-                url: url.replace(':id', id),
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                success: function(resp) {
-                    $('#datatable').DataTable().ajax.reload();
-                    if (resp['t-success']) {
-                        toastr.success(resp.message);
-                    } else {
-                        toastr.error(resp.message);
-                    }
-                },
-                error: function(error) {
-                    toastr.error('An error occurred. Please try again.');
-                }
-            });
-        }
-    </script>
+    function deleteItem(id) {
+        let url = '{{ route('orders.destroy', ':id') }}'.replace(':id', id);
+        $.ajax({
+            type: 'DELETE',
+            url: url,
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            success: function (resp) {
+                $('#datatable').DataTable().ajax.reload(null, false);
+                resp.success ? toastr.success(resp.message) : toastr.error(resp.message);
+            },
+            error: function () {
+                toastr.error('An error occurred. Please try again.');
+            }
+        });
+    }
+</script>
 @endpush

@@ -11,6 +11,7 @@ use App\Models\DynamicPage;
 use App\Models\Faq;
 use App\Models\HomeBanner;
 use App\Models\HomeBottomBanner;
+use App\Models\Offer;
 use App\Models\Product;
 use App\Models\ProductReview;
 use App\Models\Video;
@@ -24,10 +25,29 @@ class HomeController extends Controller {
      * @return View
      */
     public function index(): View {
-        $products = Product::where('status','active')->latest()->get();
-        $home_banners = HomeBanner::where('status','active')->latest()->get();
+        $home_banners = HomeBanner::with('offers')->where('status', 'active')->latest()->get();
         $home_bottom_banner = HomeBottomBanner::first();
-        return view('frontend.pages.index',compact('products','home_banners', 'home_bottom_banner'));
+
+        // Offer Products: Products with discount_price OR linked to an active offer
+        $offer_products = Product::where('status', 'active')
+            ->where(function($query) {
+                $query->whereNotNull('discount_price')
+                      ->orWhereHas('offers', function($q) {
+                          $q->active();
+                      });
+            })
+            ->latest()
+            ->get();
+
+        // All Products: Just everything active
+        $all_products = Product::where('status', 'active')->latest()->get();
+
+        return view('frontend.pages.index', compact(
+            'offer_products',
+            'all_products',
+            'home_banners',
+            'home_bottom_banner'
+        ));
     }
 
     public function faq(): View {
@@ -37,6 +57,13 @@ class HomeController extends Controller {
 
     public function about(): View {
         return view('frontend.pages.about-us');
+    }
+
+    public function offerDetail($id): View {
+        $offer = Offer::with('products')->findOrFail($id);
+        $products = $offer->products()->where('status', 'active')->paginate(12);
+
+        return view('frontend.pages.offer-detail', compact('offer', 'products'));
     }
 
     public function blog(): View {

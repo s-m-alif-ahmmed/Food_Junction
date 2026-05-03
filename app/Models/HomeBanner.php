@@ -14,4 +14,8 @@ class HomeBanner extends Model
         'status',
     ];
 
+    public function offers()
+    {
+        return $this->belongsToMany(Offer::class, 'home_banner_offer');
+    }
 }

@@ -8,18 +8,61 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cart extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'product_id',
-        'weight',
-        'quantity',
+        'session_id',
+        'coupon_code',
+        'delivery_zone',
+        'subtotal',
+        'discount',
+        'delivery_fee',
+        'total',
     ];
 
-    public function product()
+    protected $casts = [
+        'subtotal' => 'decimal:2',
+        'discount' => 'decimal:2',
+        'delivery_fee' => 'decimal:2',
+        'total' => 'decimal:2',
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
+    public function items()
     {
-        return $this->belongsTo(Product::class);
+        return $this->hasMany(CartItem::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Helper Methods
+    |--------------------------------------------------------------------------
+    */
+
+    public function isDhaka()
+    {
+        return $this->delivery_zone === 'dhaka';
+    }
+
+    public function isOutside()
+    {
+        return $this->delivery_zone === 'outside';
+    }
+
+    public function hasCoupon()
+    {
+        return !empty($this->coupon_code);
     }
 
 }

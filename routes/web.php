@@ -20,6 +20,7 @@ Route::get('/about-us', [HomeController::class, 'about'])->name('about-us');
 Route::get('/products', [HomeController::class, 'products'])->name('products');
 Route::get('/products/{category_slug}', [HomeController::class, 'categoryProduct'])->name('category.products');
 Route::get('/product/detail/{product_slug}', [HomeController::class, 'detail'])->name('product.detail');
+Route::get('/offer/{id}', [HomeController::class, 'offerDetail'])->name('offer.detail');
 Route::get('/confirm-order', [HomeController::class, 'confirmOrder'])->name('confirm.order');
 
 //blog

@@ -16,7 +16,7 @@ class AdminMiddleware {
      * @return mixed
      */
     public function handle(Request $request, Closure $next): Response {
-        if (Auth::check() && Auth::user()->role === 'Admin') {
+        if (Auth::check() && (Auth::user()->role === 'Admin' || Auth::user()->role === 'Super Admin')) {
             return $next($request);
         }
 

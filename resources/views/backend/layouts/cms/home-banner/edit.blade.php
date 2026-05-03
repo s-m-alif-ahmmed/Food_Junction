@@ -36,6 +36,24 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="offer_ids" class="form-label">Link to Offer (Optional):</label>
+                            @php
+                                $selectedOfferIds = $data->offers->pluck('id')->toArray();
+                            @endphp
+                            <select name="offer_ids[]" id="offer_ids" class="form-control form-select select2" multiple>
+                                @foreach($offers as $offer)
+                                    <option value="{{ $offer->id }}" {{ in_array($offer->id, $selectedOfferIds) ? 'selected' : '' }}>
+                                        {{ $offer->name }} ({{ $offer->offer_type }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('offer_ids')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                            <small class="text-muted">Users will be redirected to this offer's product page when clicking the banner.</small>
+                        </div>
+
+                        <div class="form-group">
                             <button class="btn btn-primary" type="submit">Submit</button>
                             <a href="{{ route('cms.home-banner.index') }}" class="btn btn-danger me-2">Cancel</a>
                         </div>

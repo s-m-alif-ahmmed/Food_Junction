@@ -51,52 +51,52 @@
         </div>
         <div class="container my-4">
             <div class="row">
-                @if(isset($carts) && $carts->isNotEmpty())
+                @if(isset($cart) && $cart->items->isNotEmpty())
 
                     <div class="col-md-8 py-2">
                         <div class="card p-3">
-                            @foreach($carts as $cart)
+                            @foreach($cart->items as $item)
 
                                 <div class="row border-bottom py-2">
                                     <div class="col-lg-2 col-md-3 col-sm-3 col-3">
-                                        <a href="{{ route('product.detail', $cart->product->product_slug ) }}">
+                                        <a href="{{ route('product.detail', $item->product->product_slug ?? '') }}">
                                             <div class="cart-img">
-                                                <img src="{{ asset($cart->product->image ?? '/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
+                                                <img src="{{ asset($item->product->image ?? '/frontend/images/section/home/Malaichop-500x500.jpg') }}" alt="" />
                                             </div>
                                         </a>
                                     </div>
                                     <div class="col-lg-8 col-md-7 col-sm-7 col-7">
                                         <div>
                                             <div>
-                                                <a href="{{ route('product.detail', $cart->product->product_slug ) }}" class="sweet-name">
-                                                    {{ $cart->product->name ?? 'Product Name' }}
+                                                <a href="{{ route('product.detail', $item->product->product_slug ?? '') }}" class="sweet-name">
+                                                    {{ $item->product->name ?? 'Product Name' }}
                                                 </a>
                                             </div>
                                             <div>
                                                 <span class="cart-weight">
-                                                    @if($cart->product->product_type == 'Sweet')
-                                                        {{ $cart->weight < 1000 ? englishToBengali($cart->weight) . ' গ্রাম' : englishToBengali($cart->weight / 1000) . ' কেজি' }}
-                                                    @elseif($cart->product->product_type == 'Product')
-                                                        {{ $cart->quantity }} pcs
+                                                    @if($item->unit_type == 'kg')
+                                                        {{ $item->unit_value < 1000 ? englishToBengali($item->unit_value) . ' গ্রাম' : englishToBengali($item->unit_value / 1000) . ' কেজি' }}
+                                                    @else
+                                                        {{ $item->quantity }} pcs
                                                     @endif
                                                 </span>
-                                                <p class="cart-price">{{ $cart->product->discount_price ?? $cart->product->price }}Tk
-                                                    @if($cart->product->discount_price)
-                                                        <span class="discount-price">(<del>{{ $cart->product->price }}Tk</del>)</span>
+                                                <p class="cart-price">{{ $item->unit_price }}Tk
+                                                    @if($item->product && $item->product->discount_price)
+                                                        <span class="discount-price">(<del>{{ $item->product->price }}Tk</del>)</span>
                                                     @endif
                                                 </p>
                                                 <span class="single-cart-total-price">
-                                                    Total: {{ englishToBengali($cart->line_total) ?? '0' }}Tk
+                                                    Total: {{ englishToBengali($item->total_price) ?? '0' }}Tk
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-2 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
-                                        <form action="{{ route('remove.cart', ['id' => $cart->product_id]) }}" method="post" style="display: inline;">
+                                        <form action="{{ route('remove.cart', ['id' => $item->product_id]) }}" method="post" style="display: inline;">
                                             @csrf
                                             @method('POST')
 
-                                            <input type="hidden" name="product_id" value="{{ $cart->product_id }}" />
+                                            <input type="hidden" name="product_id" value="{{ $item->product_id }}" />
 
                                             <button type="submit" class="btn p-0 m-0 border-0 bg-transparent">
                                                 <i class="fa-solid fa-trash text-danger"></i>
@@ -117,23 +117,23 @@
                                 </div>
                                 <div class="col-md-12 d-flex justify-content-between">
                                     <p>Subtotal</p>
-                                    <p class="fsw-semibold">{{ englishToBengali($totalInfo->sub_total) }}Tk</p>
+                                    <p class="fsw-semibold">{{ englishToBengali($cart->subtotal) }}Tk</p>
                                 </div>
-                                @if($totalInfo->login_discount > 0)
+                                @if($cart->discount > 0)
                                     <div class="col-md-12 d-flex justify-content-between">
-                                        <p>Login Discount</p>
-                                        <p class="fsw-semibold">-{{ englishToBengali($totalInfo->login_discount) }}Tk</p>
+                                        <p>Discount</p>
+                                        <p class="fsw-semibold">-{{ englishToBengali($cart->discount) }}Tk</p>
                                     </div>
                                 @endif
                                 <div class="col-md-12 d-flex justify-content-between">
                                     <p>Delivery Fee</p>
                                     <p class="fsw-semibold">
-                                        {{ $totalInfo->delivery_fee <= 0 ? 'Free' : englishToBengali($totalInfo->delivery_fee). 'Tk' }}
+                                        {{ $cart->delivery_fee <= 0 ? 'Free' : englishToBengali($cart->delivery_fee). 'Tk' }}
                                     </p>
                                 </div>
                                 <div class="col-md-12 d-flex justify-content-between">
                                     <p class="fsw-semibold">Total</p>
-                                    <p class="fsw-semibold">{{ englishToBengali($totalInfo->total) }}Tk</p>
+                                    <p class="fsw-semibold">{{ englishToBengali($cart->total) }}Tk</p>
                                 </div>
                                 <div class="col-md-12">
                                     <a href="{{ route('checkout') }}" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">Go To Checkout <i class="fa-solid fa-long-arrow-right"></i></a>
