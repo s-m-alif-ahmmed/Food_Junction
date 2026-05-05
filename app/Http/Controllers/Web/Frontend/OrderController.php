@@ -33,6 +33,8 @@ class OrderController extends Controller
             $coupon = $this->cartService->applyCoupon($request->coupon);
             $cart   = $this->cartService->getCart();
 
+            session()->flash('t-success', 'Coupon applied successfully!');
+
             return response()->json([
                 'success'      => true,
                 'message'      => 'Coupon applied successfully!',
@@ -55,6 +57,8 @@ class OrderController extends Controller
         try {
             $this->cartService->removeCoupon();
             $cart = $this->cartService->getCart();
+
+            session()->flash('t-success', 'Coupon removed successfully!');
 
             return response()->json([
                 'success'      => true,
@@ -112,12 +116,11 @@ class OrderController extends Controller
             return redirect()->route('products')->with('t-error', 'Add products to cart first.');
         }
 
-        // ── Coupon Snapshot ─────────────────────────────────────────
+        // ── Coupon & Offer Breakdown ─────────────────────────────────────────
         $coupon       = null;
         $couponCode   = null;
         $couponType   = null;
         $couponValue  = null;
-        $couponDiscount = 0;
 
         if ($cart->coupon_code) {
             $coupon = Coupon::where('code', $cart->coupon_code)->first();
@@ -125,14 +128,11 @@ class OrderController extends Controller
                 $couponCode    = $coupon->code;
                 $couponType    = $coupon->type;
                 $couponValue   = $coupon->discount_amount;
-                $couponDiscount = $cart->discount; // discount already includes coupon in service
             }
         }
 
-        // ── Offer discount (non-coupon portion) ─────────────────────
-        $offerDiscount = $coupon
-            ? max(0, $cart->discount - $couponDiscount)
-            : $cart->discount;
+        $couponDiscount = $cart->coupon_discount;
+        $offerDiscount  = $cart->offer_discount;
 
         // If free delivery was triggered, record it
         $isFreeDelivery = $cart->delivery_fee == 0;

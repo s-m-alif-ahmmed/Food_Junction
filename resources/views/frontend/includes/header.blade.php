@@ -94,7 +94,7 @@
     </div>
 </nav>
 
-<!-- Modal -->
+<!-- Search Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -125,31 +125,52 @@
 @push('scripts')
     <script type="text/javascript">
         $(document).ready(function () {
-            // Search button click handler
-            $('#searchButton').on('click', function () {
-                var value = $('#search').val().trim(); // Get and trim the input value
+            let timeout = null;
 
+            // Real-time search on input
+            $('#search').on('keyup', function () {
+                const value = $(this).val().trim();
+                
+                clearTimeout(timeout);
+                
                 if (value.length > 0) {
-                    $.ajax({
-                        type: "GET",
-                        url: "{{ route('search') }}",
-                        data: { search: value },
-                        success: function (response) {
-                            if (response.searchProducts && response.searchProducts.length > 0) {
-                                renderSearchResults(response.searchProducts);
-                            } else {
-                                $('#search-list').html('<p class="text-muted text-center">No Product Found!</p>');
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            console.error("AJAX Error:", error);
-                            $('#search-list').html('<p class="text-muted text-center">Error fetching products!</p>');
-                        }
-                    });
+                    timeout = setTimeout(function() {
+                        performSearch(value);
+                    }, 500); // 500ms debounce
                 } else {
-                    $('#search-list').empty(); // Clear results if input is empty
+                    $('#search-list').empty();
                 }
             });
+
+            // Search button click handler
+            $('#searchButton').on('click', function () {
+                const value = $('#search').val().trim();
+                if (value.length > 0) {
+                    performSearch(value);
+                }
+            });
+
+            function performSearch(value) {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('search') }}",
+                    data: { search: value },
+                    beforeSend: function() {
+                        $('#search-list').html('<p class="text-center">Searching...</p>');
+                    },
+                    success: function (response) {
+                        if (response.searchProducts && response.searchProducts.length > 0) {
+                            renderSearchResults(response.searchProducts);
+                        } else {
+                            $('#search-list').html('<p class="text-muted text-center">No Product Found!</p>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", error);
+                        $('#search-list').html('<p class="text-muted text-center">Error fetching products!</p>');
+                    }
+                });
+            }
 
             // Function to render search results
             function renderSearchResults(searchProducts) {
@@ -160,21 +181,21 @@
                         <div class="row g-0">
                             <div class="col-md-3 col-sm-3 col-3">
                                 <a class="text-decoration-none text-black" href="/product/detail/${product.product_slug}">
-                                    <img src="/${product.image}" class="img-fluid rounded-start" alt="${product.name}" style="height: 100px;">
+                                    <img src="${product.image ? '/' + product.image : '/frontend/images/section/home/Malaichop-500x500.jpg'}" class="img-fluid rounded-start" alt="${product.name}" style="height: 100px;">
                                 </a>
                             </div>
                             <div class="col-md-9 col-sm-9 col-9">
                                 <div class="card-body">
                                     <a class="text-decoration-none text-black" href="/product/detail/${product.product_slug}">
                                         <h5 class="card-title fs-18 fsw-bold">${product.name}</h5>
-                                        <p class="card-text fs-14">${product.price} টাকা (<span><del class="text-danger">${product.discount_price} টাকা</del></span>)</p>
+                                        <p class="card-text fs-14">${product.price} টাকা ${product.discount_price ? `(<span><del class="text-danger">${product.discount_price} টাকা</del></span>)` : ''}</p>
                                     </a>
                                 </div>
                             </div>
                         </div>
                     </div>`;
                 });
-                $('#search-list').html(html); // Update the search list
+                $('#search-list').html(html);
             }
         });
     </script>

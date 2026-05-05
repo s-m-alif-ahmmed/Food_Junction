@@ -35,6 +35,12 @@
                                     <th class="wd-15p border-bottom-0">#</th>
                                     <th class="wd-15p border-bottom-0">Offer Name</th>
                                     <th class="wd-15p border-bottom-0">Type</th>
+                                    <th class="wd-15p border-bottom-0">Location Scope</th>
+                                    <th class="wd-15p border-bottom-0">Discount Value</th>
+                                    <th class="wd-15p border-bottom-0">Applies To</th>
+                                    <th class="wd-15p border-bottom-0">Priority</th>
+                                    <th class="wd-15p border-bottom-0">Start Time</th>
+                                    <th class="wd-15p border-bottom-0">End Time</th>
                                     <th class="wd-20p border-bottom-0">Status</th>
                                     <th class="wd-15p border-bottom-0">Action</th>
                                 </tr>
@@ -104,6 +110,42 @@
                         {
                             data: 'offer_type',
                             name: 'offer_type',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'location_scope',
+                            name: 'location_scope',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'discount_value',
+                            name: 'discount_value',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'applies_to',
+                            name: 'applies_to',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'priority',
+                            name: 'priority',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'start_date',
+                            name: 'start_date',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'end_date',
+                            name: 'end_date',
                             orderable: true,
                             searchable: true
                         },

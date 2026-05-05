@@ -39,10 +39,18 @@ class CouponController extends Controller
                     return $code;
                 })
                 ->addColumn('starts_at', function ($data) {
-                    return Carbon::parse($data->starts_at)->format('d M, Y, h:ia');
+                    return $data->starts_at
+                        ? Carbon::parse($data->starts_at)
+                            ->timezone('Asia/Dhaka') // GMT+6
+                            ->format('d M Y, h:i A')
+                        : '';
                 })
                 ->addColumn('expires_at', function ($data) {
-                    return Carbon::parse($data->expires_at)->format('d M, Y, h:ia');
+                    return $data->expires_at
+                        ? Carbon::parse($data->expires_at)
+                            ->timezone('Asia/Dhaka') // GMT+6
+                            ->format('d M Y, h:i A')
+                        : '';
                 })
                 ->addColumn('status', function ($data) {
                     $backgroundColor  = $data->status == "active" ? '#4CAF50' : '#ccc';

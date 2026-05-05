@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Backend\Offer;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Helpers\Helper;
@@ -11,6 +12,7 @@ use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 use Exception;
@@ -29,11 +31,28 @@ class OfferController extends Controller
             $data = Offer::latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('name', function ($data) {
-                    return $data->name;
-                })
+                ->addColumn('name', fn($data) => e(
+                    Str::limit($data->name ?? '', 25, '...')
+                ))
                 ->addColumn('offer_type', function ($data) {
                     return ucfirst(str_replace('_', ' ', $data->offer_type));
+                })
+                ->addColumn('start_date', function ($data) {
+                    return $data->start_date
+                        ? Carbon::parse($data->start_date)
+                            ->timezone('Asia/Dhaka') // GMT+6
+                            ->format('d M Y, h:i A')
+                        : '';
+                })
+                ->addColumn('end_date', function ($data) {
+                    return $data->end_date
+                        ? Carbon::parse($data->end_date)
+                            ->timezone('Asia/Dhaka') // GMT+6
+                            ->format('d M Y, h:i A')
+                        : '';
+                })
+                ->addColumn('location_scope', function ($data) {
+                    return e(Str::ucfirst($data->location_scope ?? ''));
                 })
                 ->addColumn('status', function ($data) {
                     $backgroundColor  = $data->is_active ? '#4CAF50' : '#ccc';
@@ -61,7 +80,7 @@ class OfferController extends Controller
                                 </a>
                             </div>';
                 })
-                ->rawColumns(['name', 'offer_type', 'status', 'action'])
+                ->rawColumns(['name', 'offer_type', 'location_scope', 'start_date', 'end_date', 'status', 'action'])
                 ->make();
         }
         return view('backend.layouts.offer.index');
@@ -117,7 +136,7 @@ class OfferController extends Controller
             $offer->coupon_enabled = $request->has('coupon_enabled') ? true : false;
             $offer->start_date = $request->start_date;
             $offer->end_date = $request->end_date;
-            
+
             $offer->save();
 
             if ($request->applies_to == 'product' && $request->has('product_ids')) {

@@ -26,11 +26,15 @@
 
         <div class="container">
             <div class="row pt-3 pb-5">
-                @foreach($videos as $video)
+                @forelse($videos as $video)
                     <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-4 video">
                         {!! $video->link !!}
                     </div>
-                @endforeach
+                @empty
+                    <div class="col-12 text-center py-5">
+                        <p class="fs-20 text-muted">No videos available now!</p>
+                    </div>
+                @endforelse
 
                 <div class="">
                     {{ $videos->links('pagination::bootstrap-5') }}

@@ -16,6 +16,6 @@ class HomeBanner extends Model
 
     public function offers()
     {
-        return $this->belongsToMany(Offer::class, 'home_banner_offer');
+        return $this->belongsToMany(Offer::class, 'home_banner_offer')->withTimestamps();
     }
 }

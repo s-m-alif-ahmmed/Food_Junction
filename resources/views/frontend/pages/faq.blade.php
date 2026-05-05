@@ -51,7 +51,7 @@
             <div class="row justify-content-center py-5">
                 <div class="col-md-8 col-sm-12 col-12">
                     <div class="accordion" id="accordionExample">
-                        @foreach($faqs as $index => $faq)
+                        @forelse($faqs as $index => $faq)
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="heading{{ $faq->id }}">
                                     <button class="accordion-button {{ $index === 0 ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $faq->id }}" aria-expanded="{{ $index === 0 ? 'true' : 'false' }}" aria-controls="collapse{{ $faq->id }}">
@@ -64,7 +64,11 @@
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+                        @empty
+                            <div class="text-center py-5">
+                                <p class="fs-20 text-muted">No FAQs available now!</p>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
             </div>

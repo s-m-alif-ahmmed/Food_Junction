@@ -17,6 +17,8 @@ class Cart extends Model
         'delivery_zone',
         'subtotal',
         'discount',
+        'offer_discount',
+        'coupon_discount',
         'delivery_fee',
         'total',
     ];
@@ -24,6 +26,8 @@ class Cart extends Model
     protected $casts = [
         'subtotal' => 'decimal:2',
         'discount' => 'decimal:2',
+        'offer_discount' => 'decimal:2',
+        'coupon_discount' => 'decimal:2',
         'delivery_fee' => 'decimal:2',
         'total' => 'decimal:2',
     ];

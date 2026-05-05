@@ -30,9 +30,40 @@ class DashboardController extends Controller
     public function adminDashboard(): View
     {
         $users_count = User::where('role', 'User')->count();
+        $total_orders = Order::count();
+        $total_revenue = Order::where('status', 'complete')->sum('final_total');
+        $pending_orders = Order::where('status', 'pending')->count();
+        $completed_orders = Order::where('status', 'complete')->count();
+        $recent_orders = Order::latest()->take(5)->get();
 
-        return view('backend.layouts.dashboard.index',compact('users_count'));
+        // Monthly sales for ApexCharts
+        $monthly_sales = Order::where('status', 'complete')
+            ->whereYear('created_at', date('Y'))
+            ->selectRaw('MONTH(created_at) as month, SUM(final_total) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month')
+            ->toArray();
 
+        $sales_data = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $sales_data[] = isset($monthly_sales[$m]) ? (float)$monthly_sales[$m] : 0;
+        }
+
+        $canceled_orders = Order::where('status', 'canceled')->count();
+        $returned_orders = Order::where('status', 'return')->count();
+
+        return view('backend.layouts.dashboard.index', compact(
+            'users_count',
+            'total_orders',
+            'total_revenue',
+            'pending_orders',
+            'completed_orders',
+            'canceled_orders',
+            'returned_orders',
+            'recent_orders',
+            'sales_data'
+        ));
     }
 
     public function userDashboard(): View

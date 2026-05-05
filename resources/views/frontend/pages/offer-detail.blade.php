@@ -25,15 +25,6 @@
         </div>
 
         <div class="container">
-            @if($offer->description)
-                <div class="row pt-3">
-                    <div class="col-12">
-                        <div class="alert alert-info border-0 custom-shadow">
-                            {{ $offer->description }}
-                        </div>
-                    </div>
-                </div>
-            @endif
 
             <div class="row pt-3 pb-5">
                 @forelse($products as $product)
@@ -45,10 +36,10 @@
                             <div class="card-body border-0 mb-3 d-flex flex-column">
                                 <h5 class="fsw-bold">{{ $product->name }}</h5>
                                 <p class="fsw-semibold mt-auto">
-                                    {{ $product->discount_price ?? $product->price }} টাকা 
+                                    {{ $product->discount_price ?? $product->price }} টাকা
                                     @if($product->discount_price)
-                                        ( <span class="text-danger"><del>{{ $product->price }} টাকা</del></span> ) 
-                                    @endif 
+                                        ( <span class="text-danger"><del>{{ $product->price }} টাকা</del></span> )
+                                    @endif
                                 </p>
                                 <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
                             </div>

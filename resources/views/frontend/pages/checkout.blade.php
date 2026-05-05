@@ -158,11 +158,19 @@
                                     <p class="fsw-semibold" data-subtotal>{{ englishToBengali(number_format(round($cart->subtotal), 2)) }}Tk</p>
                                 </div>
 
-                                {{-- Discount (covers login discount + offers) --}}
-                                @if($cart->discount > 0)
+                                {{-- Offer Discount (login discount + general offers) --}}
+                                @if($cart->offer_discount > 0)
                                     <div class="col-md-12 d-flex justify-content-between">
-                                        <p>Discount</p>
-                                        <p class="fsw-semibold" data-discount>-{{ englishToBengali(number_format(round($cart->discount), 2)) }}Tk</p>
+                                        <p>Offer Discount</p>
+                                        <p class="fsw-semibold">-{{ englishToBengali(number_format(round($cart->offer_discount), 2)) }}Tk</p>
+                                    </div>
+                                @endif
+
+                                {{-- Coupon Discount --}}
+                                @if($cart->coupon_discount > 0)
+                                    <div class="col-md-12 d-flex justify-content-between">
+                                        <p>Coupon Discount</p>
+                                        <p class="fsw-semibold text-success">-{{ englishToBengali(number_format(round($cart->coupon_discount), 2)) }}Tk</p>
                                     </div>
                                 @endif
 
@@ -190,7 +198,7 @@
                                 @if(!$cart->coupon_code)
                                     <div class="col-md-12" id="apply-coupon-section">
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control coupon-input" id="coupon-input" placeholder="Add Promo Code">
+                                            <input type="text" class="form-control coupon-input" id="coupon-input" name="coupon" placeholder="Add Promo Code">
                                             <button type="button" class="input-group-text bg-danger text-white coupon-btn"
                                                     onclick="applyCoupon()">Apply</button>
                                         </div>
@@ -198,7 +206,7 @@
                                 @else
                                     <div class="col-md-12" id="remove-coupon-section">
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" value="{{ $cart->coupon_code }}" readonly>
+                                            <input type="text" class="form-control" name="coupon" value="{{ $cart->coupon_code }}" readonly>
                                             <button type="button" class="input-group-text bg-dark text-white remove-coupon-btn"
                                                     onclick="removeCoupon()">Remove</button>
                                         </div>
@@ -232,7 +240,7 @@
 
     <script>
         function applyCoupon() {
-            const couponCode = $('[name="coupon"]').val().trim();
+            const couponCode = $('#coupon-input').val().trim();
 
             if (!couponCode) {
                 showErrorToast('Please enter a coupon code');
@@ -255,15 +263,8 @@
                 dataType: 'json',
                 success: function (data) {
                     if (data.success) {
-                        showSuccessToast(data.message);
-
-                        // Toggle UI correctly
-                        applySection.addClass('d-none');
-                        removeSection.removeClass('d-none');
+                        // Success toast will be shown after reload from session
                         window.location.reload();
-
-                        // Set coupon value
-                        $('#remove-coupon-section input[name="coupon"]').val(couponCode);
                     } else {
                         showErrorToast(data.message);
                     }
@@ -280,8 +281,6 @@
 
         function removeCoupon() {
             const removeBtn = $('.remove-coupon-btn');
-            const applySection = $('#apply-coupon-section');
-            const removeSection = $('#remove-coupon-section');
 
             removeBtn.prop('disabled', true).text('Removing...');
 
@@ -294,15 +293,8 @@
                 dataType: 'json',
                 success: function (data) {
                     if (data.success) {
-                        showSuccessToast(data.message);
-
-                        // Toggle UI correctly
-                        removeSection.addClass('d-none');
-                        applySection.removeClass('d-none');
+                        // Success toast will be shown after reload from session
                         window.location.reload();
-
-                        // Reset input
-                        $('#apply-coupon-section input[name="coupon"]').val('');
                     } else {
                         showErrorToast(data.message);
                     }

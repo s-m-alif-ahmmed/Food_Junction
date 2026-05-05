@@ -92,7 +92,7 @@
                         <label class="form-label">Status:</label>
                         <p class="form-control" readonly>{{ $data->is_active ? 'Active' : 'Inactive' }}</p>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Requires Coupon:</label>
                         <p class="form-control" readonly>{{ $data->coupon_enabled ? 'Yes' : 'No' }}</p>
@@ -100,7 +100,7 @@
 
                     <div class="form-group">
                         <label class="form-label">Description:</label>
-                        <div class="border p-3 rounded">
+                        <div class="border p-3">
                             {!! $data->description ?? 'No description provided.' !!}
                         </div>
                     </div>

@@ -28,6 +28,8 @@ class OfferSeeder extends Seeder
                 'coupon_enabled' => false,
                 'start_date'     => now()->subDays(10),
                 'end_date'       => now()->addDays(30),
+                'created_at'     => now(),
+                'updated_at'     => now(),
             ]
         );
 
@@ -49,6 +51,8 @@ class OfferSeeder extends Seeder
                 'coupon_enabled' => false,
                 'start_date'     => now()->subDays(5),
                 'end_date'       => now()->addDays(20),
+                'created_at'     => now(),
+                'updated_at'     => now(),
             ]
         );
 
@@ -70,6 +74,8 @@ class OfferSeeder extends Seeder
                 'coupon_enabled' => false,
                 'start_date'     => now()->subDays(3),
                 'end_date'       => now()->addDays(60),
+                'created_at'     => now(),
+                'updated_at'     => now(),
             ]
         );
 
@@ -91,6 +97,8 @@ class OfferSeeder extends Seeder
                 'coupon_enabled' => false,
                 'start_date'     => now()->subDay(),
                 'end_date'       => now()->addDays(2),
+                'created_at'     => now(),
+                'updated_at'     => now(),
             ]
         );
 
@@ -113,6 +121,8 @@ class OfferSeeder extends Seeder
                 'coupon_enabled' => false,
                 'start_date'     => now()->subDays(2),
                 'end_date'       => now()->addDays(14),
+                'created_at'     => now(),
+                'updated_at'     => now(),
             ]
         );
         // Attach products
@@ -145,6 +155,8 @@ class OfferSeeder extends Seeder
                 'coupon_enabled' => false,
                 'start_date'     => now()->subDays(1),
                 'end_date'       => now()->addDays(10),
+                'created_at'     => now(),
+                'updated_at'     => now(),
             ]
         );
         $mishtiDoi = Product::where('product_slug', 'mishti-doi-500g')->first();
@@ -175,6 +187,8 @@ class OfferSeeder extends Seeder
                 'coupon_enabled' => true, // NOT auto-applied; needs coupon
                 'start_date'     => now()->subDays(5),
                 'end_date'       => now()->addDays(30),
+                'created_at'     => now(),
+                'updated_at'     => now(),
             ]
         );
 
@@ -195,6 +209,8 @@ class OfferSeeder extends Seeder
                 'coupon_enabled' => false,
                 'start_date'     => now()->subDays(30),
                 'end_date'       => now()->subDays(5), // already expired
+                'created_at'     => now(),
+                'updated_at'     => now(),
             ]
         );
 
@@ -216,6 +232,8 @@ class OfferSeeder extends Seeder
                 'coupon_enabled' => false,
                 'start_date'     => now()->addDays(10), // future
                 'end_date'       => now()->addDays(40),
+                'created_at'     => now(),
+                'updated_at'     => now(),
             ]
         );
     }

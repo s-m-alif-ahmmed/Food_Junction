@@ -162,15 +162,15 @@ class CartService
             $item->save();
         }
 
-        $discount = 0;
+        $offerDiscount = 0;
+        $couponDiscount = 0;
         $deliveryFee = 60; // Base delivery fee
 
         // ==========================================
         // 1. LEGACY HARDCODED LOGIC (Isolated for easy removal)
         // ==========================================
-        $legacyDiscount = 0;
         if ($cart->user_id) { // Equivalent to Auth::check()
-            $legacyDiscount = $subTotal * 0.05; // 5% login discount
+            $offerDiscount += $subTotal * 0.05; // 5% login discount
         }
 
         $legacyFreeDelivery = false;
@@ -178,7 +178,6 @@ class CartService
             $legacyFreeDelivery = true; // Free delivery for >2kg sweets
         }
 
-        $discount += $legacyDiscount;
         if ($legacyFreeDelivery) {
             $deliveryFee = 0;
         }
@@ -215,9 +214,9 @@ class CartService
             } elseif ($offer->offer_type === 'discount') {
                 if ($offer->applies_to === 'cart') {
                     if ($offer->discount_type === 'percent') {
-                        $discount += ($subTotal * $offer->discount_value) / 100;
+                        $offerDiscount += ($subTotal * $offer->discount_value) / 100;
                     } elseif ($offer->discount_type === 'fixed') {
-                        $discount += $offer->discount_value;
+                        $offerDiscount += $offer->discount_value;
                     }
                 } elseif ($offer->applies_to === 'product') {
                     $applicableProductIds = $offer->products()->pluck('products.id')->toArray();
@@ -230,10 +229,10 @@ class CartService
 
                     if ($applicableSubtotal > 0) {
                         if ($offer->discount_type === 'percent') {
-                            $discount += ($applicableSubtotal * $offer->discount_value) / 100;
+                            $offerDiscount += ($applicableSubtotal * $offer->discount_value) / 100;
                         } elseif ($offer->discount_type === 'fixed') {
                             // Apply fixed discount max up to the applicable subtotal
-                            $discount += min($offer->discount_value, $applicableSubtotal);
+                            $offerDiscount += min($offer->discount_value, $applicableSubtotal);
                         }
                     }
                 }
@@ -254,9 +253,8 @@ class CartService
                 // For safety, don't let total discount exceed subtotal.
                 if ($coupon->type === 'percent') {
                     $couponDiscount = ($subTotal * $coupon->discount_amount) / 100;
-                    $discount += $couponDiscount;
                 } elseif ($coupon->type === 'fixed') {
-                    $discount += $coupon->discount_amount;
+                    $couponDiscount = $coupon->discount_amount;
                 }
             }
         }
@@ -264,17 +262,20 @@ class CartService
         // END COUPON ENGINE LOGIC
         // ==========================================
 
+        $totalDiscount = $offerDiscount + $couponDiscount;
 
         // Ensure discount doesn't exceed subtotal
-        if ($discount > $subTotal) {
-            $discount = $subTotal;
+        if ($totalDiscount > $subTotal) {
+            $totalDiscount = $subTotal;
         }
 
-        $total = ($subTotal - $discount) + $deliveryFee;
+        $total = ($subTotal - $totalDiscount) + $deliveryFee;
 
         // Save totals to cart
         $cart->subtotal = round($subTotal, 2);
-        $cart->discount = round($discount, 2);
+        $cart->discount = round($totalDiscount, 2);
+        $cart->offer_discount = round($offerDiscount, 2);
+        $cart->coupon_discount = round($couponDiscount, 2);
         $cart->delivery_fee = round($deliveryFee, 2);
         $cart->total = round($total, 2);
         $cart->save();

@@ -12,9 +12,12 @@
 
 @section('content')
 
-    <section class="user-dashboard-page py-5">
-        {!! $dynamic_page->page_content !!}
-    </section>
+    <div class="container">
+        <h2 class="text-center pt-2">{{ $dynamic_page->page_title ?? '' }}</h2>
+        <section class="user-dashboard-page py-5">
+            {!! $dynamic_page->page_content !!}
+        </section>
+    </div>
 
 @endsection
 

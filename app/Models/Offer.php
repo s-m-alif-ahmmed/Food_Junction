@@ -40,7 +40,7 @@ class Offer extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'offer_product_maps');
+        return $this->belongsToMany(Product::class, 'offer_product_maps')->withTimestamps();
     }
 
     // 🔹 Scopes
