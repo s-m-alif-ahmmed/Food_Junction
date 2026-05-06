@@ -169,9 +169,9 @@ class CartService
         // ==========================================
         // 1. LEGACY HARDCODED LOGIC (Isolated for easy removal)
         // ==========================================
-        if ($cart->user_id) { // Equivalent to Auth::check()
-            $offerDiscount += $subTotal * 0.05; // 5% login discount
-        }
+//        if ($cart->user_id) { // Equivalent to Auth::check()
+//            $offerDiscount += $subTotal * 0.05; // 5% login discount
+//        }
 
         $legacyFreeDelivery = false;
         if ($totalSweetWeight > 2000) {

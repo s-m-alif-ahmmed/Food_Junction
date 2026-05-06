@@ -42,169 +42,80 @@
             <ul class="side-menu">
                 <li class="slide">
                     @if(Auth::user()->role == 'Super Admin')
-                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('dashboard') }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon"
-                                enable-background="new 0 0 24 24" viewBox="0 0 24 24">
-                                <path
-                                    d="M19.9794922,7.9521484l-6-5.2666016c-1.1339111-0.9902344-2.8250732-0.9902344-3.9589844,0l-6,5.2666016C3.3717041,8.5219116,2.9998169,9.3435669,3,10.2069702V19c0.0018311,1.6561279,1.3438721,2.9981689,3,3h2.5h7c0.0001831,0,0.0003662,0,0.0006104,0H18c1.6561279-0.0018311,2.9981689-1.3438721,3-3v-8.7930298C21.0001831,9.3435669,20.6282959,8.5219116,19.9794922,7.9521484z M15,21H9v-6c0.0014038-1.1040039,0.8959961-1.9985962,2-2h2c1.1040039,0.0014038,1.9985962,0.8959961,2,2V21z M20,19c-0.0014038,1.1040039-0.8959961,1.9985962-2,2h-2v-6c-0.0018311-1.6561279-1.3438721-2.9981689-3-3h-2c-1.6561279,0.0018311-2.9981689,1.3438721-3,3v6H6c-1.1040039-0.0014038-1.9985962-0.8959961-2-2v-8.7930298C3.9997559,9.6313477,4.2478027,9.0836182,4.6806641,8.7041016l6-5.2666016C11.0455933,3.1174927,11.5146484,2.9414673,12,2.9423828c0.4853516-0.0009155,0.9544067,0.1751099,1.3193359,0.4951172l6,5.2665405C19.7521973,9.0835571,20.0002441,9.6313477,20,10.2069702V19z" />
-                            </svg>
+                        <a class="side-menu__item has-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" data-bs-toggle="slide" href="{{ route('dashboard') }}">
+                            <i class="side-menu__icon fe fe-home"></i>
                             <span class="side-menu__label">Dashboard</span>
                         </a>
                     @elseif(Auth::user()->role == 'Admin')
-                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('admin.dashboard') }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon"
-                                 enable-background="new 0 0 24 24" viewBox="0 0 24 24">
-                                <path
-                                    d="M19.9794922,7.9521484l-6-5.2666016c-1.1339111-0.9902344-2.8250732-0.9902344-3.9589844,0l-6,5.2666016C3.3717041,8.5219116,2.9998169,9.3435669,3,10.2069702V19c0.0018311,1.6561279,1.3438721,2.9981689,3,3h2.5h7c0.0001831,0,0.0003662,0,0.0006104,0H18c1.6561279-0.0018311,2.9981689-1.3438721,3-3v-8.7930298C21.0001831,9.3435669,20.6282959,8.5219116,19.9794922,7.9521484z M15,21H9v-6c0.0014038-1.1040039,0.8959961-1.9985962,2-2h2c1.1040039,0.0014038,1.9985962,0.8959961,2,2V21z M20,19c-0.0014038,1.1040039-0.8959961,1.9985962-2,2h-2v-6c-0.0018311-1.6561279-1.3438721-2.9981689-3-3h-2c-1.6561279,0.0018311-2.9981689,1.3438721-3,3v6H6c-1.1040039-0.0014038-1.9985962-0.8959961-2-2v-8.7930298C3.9997559,9.6313477,4.2478027,9.0836182,4.6806641,8.7041016l6-5.2666016C11.0455933,3.1174927,11.5146484,2.9414673,12,2.9423828c0.4853516-0.0009155,0.9544067,0.1751099,1.3193359,0.4951172l6,5.2665405C19.7521973,9.0835571,20.0002441,9.6313477,20,10.2069702V19z" />
-                            </svg>
+                        <a class="side-menu__item has-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" data-bs-toggle="slide" href="{{ route('admin.dashboard') }}">
+                            <i class="side-menu__icon fe fe-home"></i>
                             <span class="side-menu__label">Dashboard</span>
                         </a>
                     @endif
                 </li>
 
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('user.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        <span class="side-menu__label">Users</span>
+                <li class="slide {{ request()->routeIs('user.*') ? 'active is-expanded' : '' }}">
+                    <a class="side-menu__item has-link {{ request()->routeIs('user.*') ? 'active' : '' }}" data-bs-toggle="slide" href="{{ route('user.index') }}">
+                        <i class="side-menu__icon fe fe-users"></i>
+                        <span class="side-menu__label">User Management</span>
                     </a>
                 </li>
 
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('categories.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" x="0" y="0" viewBox="0 0 64 64" xml:space="preserve" class="side-menu__icon">
-                            <g><path d="M55.3 62H41.7C38 62 35 59 35 55.3V37c0-1.1.9-2 2-2h18.3c3.7 0 6.7 3 6.7 6.7v13.6c0 3.7-3 6.7-6.7 6.7zM39 39v16.3c0 1.5 1.2 2.7 2.7 2.7h13.6c1.5 0 2.7-1.2 2.7-2.7V41.7c0-1.5-1.2-2.7-2.7-2.7zM22.3 62H8.7C5 62 2 59 2 55.3V41.7C2 38 5 35 8.7 35H27c1.1 0 2 .9 2 2v18.3c0 3.7-3 6.7-6.7 6.7zM8.7 39C7.2 39 6 40.2 6 41.7v13.6C6 56.8 7.2 58 8.7 58h13.6c1.5 0 2.7-1.2 2.7-2.7V39zM55.3 29H37c-1.1 0-2-.9-2-2V8.7C35 5 38 2 41.7 2h13.6C59 2 62 5 62 8.7v13.6c0 3.7-3 6.7-6.7 6.7zM39 25h16.3c1.5 0 2.7-1.2 2.7-2.7V8.7C58 7.2 56.8 6 55.3 6H41.7C40.2 6 39 7.2 39 8.7zM27 29H8.7C5 29 2 26 2 22.3V8.7C2 5 5 2 8.7 2h13.6C26 2 29 5 29 8.7V27c0 1.1-.9 2-2 2zM8.7 6C7.2 6 6 7.2 6 8.7v13.6C6 23.8 7.2 25 8.7 25H25V8.7C25 7.2 23.8 6 22.3 6z" fill="#000000" opacity="1" ></path></g>
-                        </svg>
-                        <span class="side-menu__label">Categories</span>
+                <li class="slide {{ request()->routeIs('categories.*', 'products.*', 'orders.*') ? 'active is-expanded' : '' }}">
+                    <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
+                        <i class="side-menu__icon fe fe-shopping-cart"></i>
+                        <span class="side-menu__label">Shop Management</span><i class="angle fa fa-angle-right"></i>
                     </a>
+                    <ul class="slide-menu">
+                        <li><a href="{{ route('categories.index') }}" class="slide-item {{ request()->routeIs('categories.*') ? 'active' : '' }}">Categories</a></li>
+                        <li><a href="{{ route('products.index') }}" class="slide-item {{ request()->routeIs('products.*') ? 'active' : '' }}">Products</a></li>
+                        <li><a href="{{ route('orders.index') }}" class="slide-item {{ request()->routeIs('orders.*') ? 'active' : '' }}">Orders</a></li>
+                    </ul>
                 </li>
 
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('products.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" width="24" height="24" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" viewBox="0 0 512 512" xml:space="preserve">
-                            <g><path d="m473.688 301.998-39.021-67.584a7.999 7.999 0 0 0-4.029-3.456l-82.387-32.034a95.923 95.923 0 0 0 3.948-27.287c0-53.045-43.155-96.2-96.2-96.2s-96.2 43.155-96.2 96.2a95.917 95.917 0 0 0 3.948 27.287L81.36 230.958a7.999 7.999 0 0 0-4.029 3.456L38.31 301.998a7.998 7.998 0 0 0 4.029 11.456l33.919 13.189v110.08a8 8 0 0 0 5.102 7.456l171.739 66.777a7.992 7.992 0 0 0 5.798 0l171.739-66.777a8 8 0 0 0 5.102-7.456v-110.08l33.919-13.189a7.997 7.997 0 0 0 4.647-4.802 7.99 7.99 0 0 0-.616-6.654zM256 91.437c44.223 0 80.2 35.978 80.2 80.2s-35.978 80.2-80.2 80.2-80.2-35.978-80.2-80.2 35.977-80.2 80.2-80.2zm0 176.4c38.118 0 71.129-22.285 86.689-54.511l63.135 25.026L256 296.608l-149.825-58.256 63.135-25.026c15.56 32.226 48.571 54.511 86.69 54.511zM56.831 301.921l30.926-53.564 156.651 60.911-30.926 53.565zm35.429 30.943 121.821 47.368a8.002 8.002 0 0 0 9.827-3.456L248 335.048v156.758L92.26 431.25zm327.48 98.386L264 491.806V335.048l24.092 41.729a8.001 8.001 0 0 0 9.827 3.456l121.821-47.368zm-121.222-68.417-30.927-53.565 156.652-60.911 30.926 53.564zm-62.423-139.23c5.538 0 10.75-2.162 14.675-6.087l62.364-62.363c8.103-8.104 8.103-21.29-.001-29.396-3.925-3.925-9.145-6.087-14.696-6.087s-10.771 2.162-14.697 6.087l-45.906 45.907-12.252-15.417a20.662 20.662 0 0 0-16.26-7.843 20.839 20.839 0 0 0-12.912 4.51c-8.96 7.125-10.454 20.211-3.332 29.17l26.103 32.848a20.827 20.827 0 0 0 16.914 8.671zm-29.73-58.165a4.71 4.71 0 0 1 2.956-1.035c1.465 0 2.826.656 3.734 1.798l17.83 22.438a8.001 8.001 0 0 0 11.92.68l52.247-52.248c.903-.904 2.105-1.401 3.384-1.401s2.479.498 3.382 1.4a4.793 4.793 0 0 1 .001 6.77l-62.363 62.363a4.67 4.67 0 0 1-3.363 1.4 4.762 4.762 0 0 1-3.955-2.057 7.715 7.715 0 0 0-.296-.397l-26.239-33.02a4.77 4.77 0 0 1 .762-6.691zM248 45.969V8.5a8 8 0 1 1 16 0v37.469a8 8 0 0 1-16 0zm-80.779-12.666a8 8 0 0 1 13.857-8l18.734 32.449a8 8 0 0 1-13.857 8zm-60.483 50.942a7.998 7.998 0 0 1 10.928-2.928l32.449 18.734a8 8 0 0 1-8 13.856l-32.449-18.734a8 8 0 0 1-2.928-10.928zm-23.98 85.286a8 8 0 0 1 8-8h37.468c4.419 0 8 3.582 8 8s-3.581 8-8 8H90.758a8 8 0 0 1-8-8zM311.624 59.857l18.734-32.449a7.998 7.998 0 0 1 10.928-2.928 8 8 0 0 1 2.929 10.928L325.48 67.857a7.998 7.998 0 0 1-10.929 2.928 8 8 0 0 1-2.927-10.928zm45.228 54.769a8 8 0 0 1 2.928-10.928l32.449-18.734a8 8 0 0 1 8 13.856l-32.449 18.734a7.996 7.996 0 0 1-10.928-2.928zm22.711 51.116h37.468c4.419 0 8 3.582 8 8s-3.581 8-8 8h-37.468a8 8 0 1 1 0-16z" fill="#000000" opacity="1" ></path></g>
-                        </svg>
-                        <span class="side-menu__label">Products</span>
+                <li class="slide {{ request()->routeIs('coupons.*', 'offers.*') ? 'active is-expanded' : '' }}">
+                    <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
+                        <i class="side-menu__icon fe fe-percent"></i>
+                        <span class="side-menu__label">Marketing</span><i class="angle fa fa-angle-right"></i>
                     </a>
+                    <ul class="slide-menu">
+                        <li><a href="{{ route('coupons.index') }}" class="slide-item {{ request()->routeIs('coupons.*') ? 'active' : '' }}">Coupons</a></li>
+                        <li><a href="{{ route('offers.index') }}" class="slide-item {{ request()->routeIs('offers.*') ? 'active' : '' }}">Offers</a></li>
+                    </ul>
                 </li>
 
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('orders.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" x="0" y="0" viewBox="0 0 438.891 438.891" xml:space="preserve">
-                            <g><path d="M347.968 57.503h-39.706V39.74c0-5.747-6.269-8.359-12.016-8.359h-30.824C258.108 10.483 239.822.034 218.924.034c-20.668-.777-39.467 11.896-46.498 31.347h-30.302c-5.747 0-11.494 2.612-11.494 8.359v17.763H90.923c-23.53.251-42.78 18.813-43.886 42.318v299.363c0 22.988 20.898 39.706 43.886 39.706h257.045c22.988 0 43.886-16.718 43.886-39.706V99.822c-1.106-23.506-20.356-42.068-43.886-42.319zm-196.441-5.224h28.735a11.496 11.496 0 0 0 9.927-9.404c3.094-13.474 14.915-23.146 28.735-23.51 13.692.415 25.335 10.117 28.212 23.51a11.494 11.494 0 0 0 10.449 9.404h29.78v41.796H151.527V52.279zm219.429 346.906c0 11.494-11.494 18.808-22.988 18.808H90.923c-11.494 0-22.988-7.314-22.988-18.808V99.822c1.066-11.964 10.978-21.201 22.988-21.42h39.706v26.645c.552 5.854 5.622 10.233 11.494 9.927h154.122a11.493 11.493 0 0 0 12.016-9.927V78.401h39.706c12.009.22 21.922 9.456 22.988 21.42v299.364z" fill="#000000" opacity="1" data-original="#000000"></path><path d="M179.217 233.569c-3.919-4.131-10.425-4.364-14.629-.522l-33.437 31.869-14.106-14.629c-3.919-4.131-10.425-4.363-14.629-.522a10.971 10.971 0 0 0 0 15.151l21.42 21.943a9.403 9.403 0 0 0 7.314 3.135 10.446 10.446 0 0 0 7.314-3.135l40.751-38.661c4.04-3.706 4.31-9.986.603-14.025a8.78 8.78 0 0 0-.601-.604zM329.16 256.034H208.997c-5.771 0-10.449 4.678-10.449 10.449s4.678 10.449 10.449 10.449H329.16c5.771 0 10.449-4.678 10.449-10.449s-4.678-10.449-10.449-10.449zM179.217 149.977c-3.919-4.131-10.425-4.364-14.629-.522l-33.437 31.869-14.106-14.629c-3.919-4.131-10.425-4.364-14.629-.522a10.971 10.971 0 0 0 0 15.151l21.42 21.943a9.403 9.403 0 0 0 7.314 3.135 10.446 10.446 0 0 0 7.314-3.135l40.751-38.661c4.04-3.706 4.31-9.986.603-14.025a8.78 8.78 0 0 0-.601-.604zM329.16 172.442H208.997c-5.771 0-10.449 4.678-10.449 10.449s4.678 10.449 10.449 10.449H329.16c5.771 0 10.449-4.678 10.449-10.449s-4.678-10.449-10.449-10.449zM179.217 317.16c-3.919-4.131-10.425-4.363-14.629-.522l-33.437 31.869-14.106-14.629c-3.919-4.131-10.425-4.363-14.629-.522a10.971 10.971 0 0 0 0 15.151l21.42 21.943a9.403 9.403 0 0 0 7.314 3.135 10.446 10.446 0 0 0 7.314-3.135l40.751-38.661c4.04-3.706 4.31-9.986.603-14.025a9.253 9.253 0 0 0-.601-.604zM329.16 339.626H208.997c-5.771 0-10.449 4.678-10.449 10.449s4.678 10.449 10.449 10.449H329.16c5.771 0 10.449-4.678 10.449-10.449s-4.678-10.449-10.449-10.449z" fill="#000000" opacity="1" ></path></g>
-                        </svg>
-                        <span class="side-menu__label">Orders</span>
+                <li class="slide {{ request()->routeIs('cms.*', 'blogs.*', 'blog.comments.*', 'videos.*', 'faqs.*') ? 'active is-expanded' : '' }}">
+                    <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
+                        <i class="side-menu__icon fe fe-file-text"></i>
+                        <span class="side-menu__label">CMS</span><i class="angle fa fa-angle-right"></i>
                     </a>
+                    <ul class="slide-menu">
+                        <li><a href="{{ route('cms.home-banner.index') }}" class="slide-item {{ request()->routeIs('cms.home-banner.*') ? 'active' : '' }}">Home Banners</a></li>
+                        <li><a href="{{ route('cms.home-bottom-banner.edit') }}" class="slide-item {{ request()->routeIs('cms.home-bottom-banner.*') ? 'active' : '' }}">Bottom Banner</a></li>
+                        <li><a href="{{ route('blogs.index') }}" class="slide-item {{ request()->routeIs('blogs.*') ? 'active' : '' }}">Blogs</a></li>
+                        <li><a href="{{ route('blog.comments.index') }}" class="slide-item {{ request()->routeIs('blog.comments.*') ? 'active' : '' }}">Blog Comments</a></li>
+                        <li><a href="{{ route('videos.index') }}" class="slide-item {{ request()->routeIs('videos.*') ? 'active' : '' }}">Videos</a></li>
+                        <li><a href="{{ route('faqs.index') }}" class="slide-item {{ request()->routeIs('faqs.*') ? 'active' : '' }}">FAQs</a></li>
+                    </ul>
                 </li>
 
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('coupons.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="side-menu__icon" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" x="0" y="0" viewBox="0 0 512 512" xml:space="preserve">
-                            <g><path d="M504.485 217.165A7.514 7.514 0 0 0 512 209.65v-78.47c0-12.431-10.113-22.544-22.544-22.544h-7.808l-14.033-46.49c-3.591-11.899-16.19-18.663-28.096-15.068l-56.555 17.07c-3.974 1.199-6.222 5.392-5.023 9.365s5.389 6.224 9.365 5.022l56.555-17.069c3.967-1.2 8.169 1.056 9.366 5.022l12.722 42.148H287.586l70.962-21.419a7.514 7.514 0 0 0 5.023-9.365c-1.2-3.974-5.393-6.227-9.365-5.023l-118.629 35.806H105.805a7.515 7.515 0 1 0 0 15.03h383.651c4.144 0 7.515 3.371 7.515 7.515v71.479c-26.154 3.668-46.346 26.19-46.346 53.339s20.193 49.67 46.346 53.339v71.486c0 4.144-3.371 7.515-7.515 7.515h-66.975c-4.151 0-7.515 3.364-7.515 7.515s3.364 7.515 7.515 7.515h66.975c12.431 0 22.544-10.114 22.544-22.544v-78.479a7.514 7.514 0 0 0-7.515-7.515c-21.412 0-38.832-17.42-38.832-38.832.001-21.413 17.42-38.833 38.832-38.833zM392.423 388.336H22.544c-4.144 0-7.515-3.371-7.515-7.515V131.18c0-4.144 3.371-7.515 7.515-7.515h53.202a7.515 7.515 0 1 0 0-15.03H22.544C10.113 108.636 0 118.749 0 131.18v249.642c0 12.43 10.113 22.544 22.544 22.544h7.807l14.032 46.49c2.939 9.738 11.91 16.031 21.594 16.031 2.151 0 210.445-62.522 210.445-62.522h116c4.151 0 7.515-3.364 7.515-7.515s-3.364-7.514-7.514-7.514zm-324.286 62.2c-3.965 1.197-8.168-1.058-9.365-5.022L46.05 403.366h178.364z" fill="#000000" opacity="1" data-original="#000000"></path><path d="M312.478 195.759c0 4.151 3.364 7.515 7.515 7.515s7.515-3.364 7.515-7.515V180.73c0-4.151-3.364-7.515-7.515-7.515s-7.515 3.364-7.515 7.515zM312.478 285.935c0 4.151 3.364 7.515 7.515 7.515s7.515-3.364 7.515-7.515v-15.029c0-4.151-3.364-7.515-7.515-7.515s-7.515 3.364-7.515 7.515zM312.478 376.111c0 4.151 3.364 7.515 7.515 7.515s7.515-3.364 7.515-7.515v-15.029c0-4.151-3.364-7.515-7.515-7.515s-7.515 3.364-7.515 7.515zM312.478 331.023c0 4.151 3.364 7.515 7.515 7.515s7.515-3.364 7.515-7.515v-15.029c0-4.151-3.364-7.515-7.515-7.515s-7.515 3.364-7.515 7.515zM319.992 158.186a7.514 7.514 0 0 0 7.515-7.515v-15.029c0-4.151-3.364-7.515-7.515-7.515s-7.515 3.364-7.515 7.515v15.029a7.515 7.515 0 0 0 7.515 7.515zM312.478 240.847c0 4.151 3.364 7.515 7.515 7.515s7.515-3.364 7.515-7.515v-15.029c0-4.151-3.364-7.515-7.515-7.515s-7.515 3.364-7.515 7.515zM382.031 311.367v-107.73c0-4.151-3.364-7.515-7.515-7.515s-7.515 3.364-7.515 7.515v107.73a7.515 7.515 0 1 0 15.03 0zM418.102 286.253V228.75c0-4.151-3.364-7.515-7.515-7.515s-7.515 3.364-7.515 7.515v57.503c0 4.151 3.364 7.515 7.515 7.515s7.515-3.364 7.515-7.515zM83.261 221.618v20.179c0 8.871 6.628 16.205 15.188 17.358v64.799c0 12.431 10.113 22.544 22.544 22.544h98.847c12.431 0 22.544-10.113 22.544-22.544v-64.799c8.56-1.153 15.187-8.488 15.187-17.358v-20.179c0-9.668-7.865-17.534-17.534-17.534h-2.291c.157-3.58.164-7.962-.273-12.587-1.93-20.46-10.877-28.938-18.043-32.448-16.525-8.093-30.087 4.428-36.743 14.765h-24.543c-6.655-10.339-20.217-22.863-36.743-14.765-7.166 3.51-16.113 11.988-18.043 32.448-.436 4.625-.43 9.007-.273 12.587h-2.291c-9.667 0-17.533 7.866-17.533 17.534zm15.029 0a2.508 2.508 0 0 1 2.505-2.505h61.407v25.189h-61.407a2.508 2.508 0 0 1-2.505-2.505zm15.188 102.337v-64.623h48.724v72.138h-41.209c-4.144-.001-7.515-3.371-7.515-7.515zm113.877 0c0 4.144-3.371 7.515-7.515 7.515h-42.609v-72.138h50.124zm15.188-102.337v20.179a2.508 2.508 0 0 1-2.505 2.505h-62.807v-25.189h62.807a2.508 2.508 0 0 1 2.505 2.505zm-29.723-49.072c9.203 4.508 10.414 21.04 9.898 31.538h-28.176v-20.819c2.373-4.022 9.763-14.888 18.278-10.719zm-33.306 31.538H161.32v-15.241h18.194zm-51.502-31.538c5.228-4.41 15.74 5.079 18.278 10.743v20.795h-28.176c-.515-10.503.697-27.031 9.898-31.538z" fill="#000000" opacity="1" ></path></g>
-                        </svg>
-                        <span class="side-menu__label">Coupons</span>
-                    </a>
-                </li>
-
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('offers.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5" />
-                            <path d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 002-2v-6l-3.4-6.9A2 2 0 0016.8 4H7.2a2 2 0 00-1.7 1.1z" />
-                        </svg>
-                        <span class="side-menu__label">Offers</span>
-                    </a>
-                </li>
-
-
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('contact.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="side-menu__icon" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" x="0" y="0" viewBox="0 0 682.667 682.667" xml:space="preserve">
-                            <g><defs><clipPath id="b" clipPathUnits="userSpaceOnUse"><path d="M0 512h512V0H0Z" fill="#000000" opacity="1" data-original="#000000"></path></clipPath></defs><mask id="a"><rect width="100%" height="100%" fill="#ffffff" opacity="1" data-original="#ffffff"></rect><path d="M0 0c0-13.807-11.193-25-25-25S-50-13.807-50 0s11.193 25 25 25S0 13.807 0 0" style="fill-opacity:1;fill-rule:nonzero;stroke:none" transform="matrix(1.33333 0 0 -1.33333 374.667 341.333)" fill="#ffffff" data-original="#ffffff"></path><path d="M0 0c0-13.807-11.193-25-25-25S-50-13.807-50 0s11.193 25 25 25S0 13.807 0 0" style="fill-opacity:1;fill-rule:nonzero;stroke:none" transform="matrix(1.33333 0 0 -1.33333 508 341.333)" fill="#ffffff" data-original="#ffffff"></path><path d="M0 0c0-13.807-11.193-25-25-25S-50-13.807-50 0s11.193 25 25 25S0 13.807 0 0" style="fill-opacity:1;fill-rule:nonzero;stroke:none" transform="matrix(1.33333 0 0 -1.33333 241.333 341.333)" fill="#ffffff" data-original="#ffffff"></path></mask><g mask="url(#a)"><g clip-path="url(#b)" transform="matrix(1.33333 0 0 -1.33333 0 682.667)"><path d="M0 0c-130.339 0-236-105.661-236-236 0-45.885 13.109-88.702 35.766-124.937L-236-472l111.063 35.766C-88.702-458.891-45.885-472 0-472c130.339 0 236 105.661 236 236S130.339 0 0 0Z" style="stroke-width:40;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1" transform="translate(256 492)" fill="none" stroke="#000000" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-dasharray="none" stroke-opacity="" data-original="#000000"></path><path d="M0 0c0-13.807-11.193-25-25-25S-50-13.807-50 0s11.193 25 25 25S0 13.807 0 0" style="fill-opacity:1;fill-rule:nonzero;stroke:none" transform="translate(281 256)" fill="#000000" data-original="#000000"></path><path d="M0 0c0-13.807-11.193-25-25-25S-50-13.807-50 0s11.193 25 25 25S0 13.807 0 0" style="fill-opacity:1;fill-rule:nonzero;stroke:none" transform="translate(381 256)" fill="#000000" data-original="#000000"></path><path d="M0 0c0-13.807-11.193-25-25-25S-50-13.807-50 0s11.193 25 25 25S0 13.807 0 0" style="fill-opacity:1;fill-rule:nonzero;stroke:none" transform="translate(181 256)" fill="#000000" ></path></g></g></g>
-                        </svg>
-                        <span class="side-menu__label">Message Queries</span>
-                    </a>
-                </li>
-
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('faqs.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" width="24" height="24" viewBox="0 0 320 512">
-                            <path d="M80 160c0-35.3 28.7-64 64-64l32 0c35.3 0 64 28.7 64 64l0 3.6c0 21.8-11.1 42.1-29.4 53.8l-42.2 27.1c-25.2 16.2-40.4 44.1-40.4 74l0 1.4c0 17.7 14.3 32 32 32s32-14.3 32-32l0-1.4c0-8.2 4.2-15.8 11-20.2l42.2-27.1c36.6-23.6 58.8-64.1 58.8-107.7l0-3.6c0-70.7-57.3-128-128-128l-32 0C73.3 32 16 89.3 16 160c0 17.7 14.3 32 32 32s32-14.3 32-32zm80 320a40 40 0 1 0 0-80 40 40 0 1 0 0 80z"/>
-                        </svg>
-                        <span class="side-menu__label">Faqs</span>
-                    </a>
-                </li>
-
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('videos.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" width="24" height="24" viewBox="0 0 576 512">
-                            <path d="M0 128C0 92.7 28.7 64 64 64l256 0c35.3 0 64 28.7 64 64l0 256c0 35.3-28.7 64-64 64L64 448c-35.3 0-64-28.7-64-64L0 128zM559.1 99.8c10.4 5.6 16.9 16.4 16.9 28.2l0 256c0 11.8-6.5 22.6-16.9 28.2s-23 5-32.9-1.6l-96-64L416 337.1l0-17.1 0-128 0-17.1 14.2-9.5 96-64c9.8-6.5 22.4-7.2 32.9-1.6z"/>
-                        </svg>
-                        <span class="side-menu__label">Videos</span>
-                    </a>
-                </li>
-
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('blogs.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" width="24" height="24" viewBox="0 0 512 512">
-                            <path d="M192 32c0 17.7 14.3 32 32 32c123.7 0 224 100.3 224 224c0 17.7 14.3 32 32 32s32-14.3 32-32C512 128.9 383.1 0 224 0c-17.7 0-32 14.3-32 32zm0 96c0 17.7 14.3 32 32 32c70.7 0 128 57.3 128 128c0 17.7 14.3 32 32 32s32-14.3 32-32c0-106-86-192-192-192c-17.7 0-32 14.3-32 32zM96 144c0-26.5-21.5-48-48-48S0 117.5 0 144L0 368c0 79.5 64.5 144 144 144s144-64.5 144-144s-64.5-144-144-144l-16 0 0 96 16 0c26.5 0 48 21.5 48 48s-21.5 48-48 48s-48-21.5-48-48l0-224z"/>
-                        </svg>
-                        <span class="side-menu__label">Blogs</span>
-                    </a>
-                </li>
-
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('blog.comments.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" width="24" height="24" viewBox="0 0 640 512">
-                            <path d="M88.2 309.1c9.8-18.3 6.8-40.8-7.5-55.8C59.4 230.9 48 204 48 176c0-63.5 63.8-128 160-128s160 64.5 160 128s-63.8 128-160 128c-13.1 0-25.8-1.3-37.8-3.6c-10.4-2-21.2-.6-30.7 4.2c-4.1 2.1-8.3 4.1-12.6 6c-16 7.2-32.9 13.5-49.9 18c2.8-4.6 5.4-9.1 7.9-13.6c1.1-1.9 2.2-3.9 3.2-5.9zM208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 41.8 17.2 80.1 45.9 110.3c-.9 1.7-1.9 3.5-2.8 5.1c-10.3 18.4-22.3 36.5-36.6 52.1c-6.6 7-8.3 17.2-4.6 25.9C5.8 378.3 14.4 384 24 384c43 0 86.5-13.3 122.7-29.7c4.8-2.2 9.6-4.5 14.2-6.8c15.1 3 30.9 4.5 47.1 4.5zM432 480c16.2 0 31.9-1.6 47.1-4.5c4.6 2.3 9.4 4.6 14.2 6.8C529.5 498.7 573 512 616 512c9.6 0 18.2-5.7 22-14.5c3.8-8.8 2-19-4.6-25.9c-14.2-15.6-26.2-33.7-36.6-52.1c-.9-1.7-1.9-3.4-2.8-5.1C622.8 384.1 640 345.8 640 304c0-94.4-87.9-171.5-198.2-175.8c4.1 15.2 6.2 31.2 6.2 47.8l0 .6c87.2 6.7 144 67.5 144 127.4c0 28-11.4 54.9-32.7 77.2c-14.3 15-17.3 37.6-7.5 55.8c1.1 2 2.2 4 3.2 5.9c2.5 4.5 5.2 9 7.9 13.6c-17-4.5-33.9-10.7-49.9-18c-4.3-1.9-8.5-3.9-12.6-6c-9.5-4.8-20.3-6.2-30.7-4.2c-12.1 2.4-24.8 3.6-37.8 3.6c-61.7 0-110-26.5-136.8-62.3c-16 5.4-32.8 9.4-50 11.8C279 439.8 350 480 432 480z"/>
-                        </svg>
-                        <span class="side-menu__label">Blog Comments</span>
-                    </a>
-                </li>
-
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('cms.home-banner.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" width="24" height="24" viewBox="0 0 512 512">
-                            <path d="M448 80c8.8 0 16 7.2 16 16l0 319.8-5-6.5-136-176c-4.5-5.9-11.6-9.3-19-9.3s-14.4 3.4-19 9.3L202 340.7l-30.5-42.7C167 291.7 159.8 288 152 288s-15 3.7-19.5 10.1l-80 112L48 416.3l0-.3L48 96c0-8.8 7.2-16 16-16l384 0zM64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zm80 192a48 48 0 1 0 0-96 48 48 0 1 0 0 96z"/>
-                        </svg>
-                        <span class="side-menu__label">Home Banner</span>
-                    </a>
-                </li>
-
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('cms.home-bottom-banner.edit') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" width="24" height="24" viewBox="0 0 512 512">
-                            <path d="M448 80c8.8 0 16 7.2 16 16l0 319.8-5-6.5-136-176c-4.5-5.9-11.6-9.3-19-9.3s-14.4 3.4-19 9.3L202 340.7l-30.5-42.7C167 291.7 159.8 288 152 288s-15 3.7-19.5 10.1l-80 112L48 416.3l0-.3L48 96c0-8.8 7.2-16 16-16l384 0zM64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zm80 192a48 48 0 1 0 0-96 48 48 0 1 0 0 96z"/>
-                        </svg>
-                        <span class="side-menu__label">Home Bottom Banner</span>
+                <li class="slide {{ request()->routeIs('contact.*') ? 'active is-expanded' : '' }}">
+                    <a class="side-menu__item has-link {{ request()->routeIs('contact.*') ? 'active' : '' }}" data-bs-toggle="slide" href="{{ route('contact.index') }}">
+                        <i class="side-menu__icon fe fe-mail"></i>
+                        <span class="side-menu__label">Contact Messages</span>
                     </a>
                 </li>
 
                 <hr>
-                <li class="slide {{ request()->is('admin/settings*') ? 'active is-expanded' : '' }}">
-                    <a class="side-menu__item {{ request()->is('admin/settings*') ? 'active is-expanded' : '' }}"
-                        data-bs-toggle="slide" href="#">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 512 512">
-                            <path
-                                d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z" />
-                        </svg>
+                <li class="slide {{ request()->is('admin/settings*') || request()->routeIs('profile.setting', 'system.index') ? 'active is-expanded' : '' }}">
+                    <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
+                        <i class="side-menu__icon fe fe-settings"></i>
                         <span class="side-menu__label">Settings</span><i class="angle fa fa-angle-right"></i>
                     </a>
-
                     <ul class="slide-menu">
-                        <li><a href="{{ route('profile.setting') }}" class="slide-item">Profile Settings</a></li>
-                        <li><a href="{{ route('system.index') }}" class="slide-item">System Settings</a></li>
-
-                        <li>
-                            <a href="{{ route('settings.dynamic_page.index') }}"
-                                class="slide-item {{ request()->is('admin/settings/dynamic-page*') ? 'active' : '' }}">Dynamic
-                                Page Settings
-                            </a>
-                        </li>
+                        <li><a href="{{ route('profile.setting') }}" class="slide-item {{ request()->routeIs('profile.setting') ? 'active' : '' }}">Profile Settings</a></li>
+                        <li><a href="{{ route('system.index') }}" class="slide-item {{ request()->routeIs('system.index') ? 'active' : '' }}">System Settings</a></li>
+                        <li><a href="{{ route('settings.dynamic_page.index') }}" class="slide-item {{ request()->is('admin/settings/dynamic-page*') ? 'active' : '' }}">Dynamic Pages</a></li>
                     </ul>
                 </li>
             </ul>

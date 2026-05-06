@@ -79,12 +79,12 @@
 
                         <div class="">
                             @if (Auth::check())
-                                <button class="bookmark-btn border-0" type="button" onclick="toggleBookmark({{ $product->id }}, this)">
-                                    <i class="fa-solid fa-heart fs-22 wishlist-icon" style="color: {{ $product->wishlistByUsers->contains(auth()->id()) ? 'red' : '#bdbdbd' }};"></i>
+                                <button class="bookmark-btn bg-white border-0" type="button" onclick="toggleBookmark({{ $product->id }}, this)">
+                                    <i class="fa-solid fa-heart bg-white fs-22 wishlist-icon" style="color: {{ $product->wishlistByUsers->contains(auth()->id()) ? 'red' : '#bdbdbd' }};"></i>
                                 </button>
                             @else
-                                <button class="bookmark-btn border-0" type="button" onclick="toggleBookmark({{ $product->id }}, this)">
-                                    <i class="fa-solid fa-heart fs-22" style="color: #bdbdbd;"></i>
+                                <button class="bookmark-btn bg-white border-0" type="button" onclick="toggleBookmark({{ $product->id }}, this)">
+                                    <i class="fa-solid fa-heart bg-white fs-22" style="color: #bdbdbd;"></i>
                                 </button>
                             @endif
 
@@ -148,22 +148,22 @@
                             </div>
                         @endif
 
-                        @if(Auth::check())
-                            <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">
-                                <span class="">
-                                    <i class="fa-solid fa-tag me-2 text-warning"></i>Hurrah
-                                    you earn <strong>5% discount!</strong>
-                                </span>
-                            </div>
-                        @else
-                            <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">
-                                <span class="">
-                                    <i class="fa-solid fa-tag me-2 text-warning"></i>
-                                    <a href="{{ route('login') }}" class="fw-bold text-decoration-underline">Login</a>
-                                    and get <strong>5% discount!</strong>
-                                </span>
-                            </div>
-                        @endif
+{{--                        @if(Auth::check())--}}
+{{--                            <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">--}}
+{{--                                <span class="">--}}
+{{--                                    <i class="fa-solid fa-tag me-2 text-warning"></i>Hurrah--}}
+{{--                                    you earn <strong>5% discount!</strong>--}}
+{{--                                </span>--}}
+{{--                            </div>--}}
+{{--                        @else--}}
+{{--                            <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">--}}
+{{--                                <span class="">--}}
+{{--                                    <i class="fa-solid fa-tag me-2 text-warning"></i>--}}
+{{--                                    <a href="{{ route('login') }}" class="fw-bold text-decoration-underline">Login</a>--}}
+{{--                                    and get <strong>5% discount!</strong>--}}
+{{--                                </span>--}}
+{{--                            </div>--}}
+{{--                        @endif--}}
 {{--                        @if($product->product_type == 'Sweet')--}}
 {{--                            <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">--}}
 {{--                                <span class="">--}}
