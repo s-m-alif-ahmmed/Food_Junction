@@ -1,12 +1,12 @@
 @extends('backend.app')
 
-@section('title', 'Product Detail')
+@section('title', 'Product Details')
 
 @section('content')
     {{-- PAGE-HEADER --}}
     <div class="page-header">
         <div>
-            <h1 class="page-title">Product Form</h1>
+            <h1 class="page-title">Product Details</h1>
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
@@ -17,108 +17,135 @@
     </div>
     {{-- PAGE-HEADER --}}
 
-
     <div class="row">
         <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
             <div class="card box-shadow-0">
                 <div class="card-body">
-
-                    <div class="form-group">
-                        <label for="meta_title" class="form-label">Meta Title:</label>
-                        <input type="text" class="form-control @error('meta_title') is-invalid @enderror"
-                               name="meta_title" placeholder="Meta Title" id="meta_title" value="{{ $data->meta_title ?? ' ' }}" disabled readonly >
-                        @error('meta_title')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <strong>Product Image:</strong><br>
+                            @if($data->image)
+                                <img class="img-fluid rounded border mt-2" style="max-height: 200px;" src="{{ asset($data->image) }}" alt="{{ $data->name }}">
+                            @else
+                                <span class="text-muted">No Image</span>
+                            @endif
+                        </div>
+                        <div class="col-md-9">
+                            <h2 class="mb-1">{{ $data->name }}</h2>
+                            <span class="badge bg-primary mb-3">{{ $data->product_type }}</span>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <strong>Category:</strong><br>
+                                    {{ $data->category->name ?? 'N/A' }}
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Base Price:</strong><br>
+                                    {{ number_format($data->price, 2) }} Tk
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Discount Price:</strong><br>
+                                    {{ $data->discount_price ? number_format($data->discount_price, 2) . ' Tk' : 'None' }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="meta_description" class="form-label">Meta Description:</label>
-                        <p>{{ $data->meta_description ?? ' ' }}</p>
-                        @error('meta_description')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6 border-end">
+                            <h4 class="mb-3">Pricing & Variants ({{ ucfirst($data->pricing_type) }} Based)</h4>
+                            @if($data->pricing_variants && count($data->pricing_variants) > 0)
+                                <table class="table table-striped table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Unit</th>
+                                            <th>Price</th>
+                                            <th>Discount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($data->pricing_variants as $variant)
+                                            <tr>
+                                                <td>{{ $variant['unit'] }}</td>
+                                                <td>{{ number_format($variant['price'], 2) }} Tk</td>
+                                                <td>{{ $variant['discount_price'] ? number_format($variant['discount_price'], 2) . ' Tk' : '-' }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <p class="text-muted italic">No variants defined.</p>
+                            @endif
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="mb-3">Location Specific Conditions</h4>
+                            @if($data->location_conditions && count($data->location_conditions) > 0)
+                                <div class="list-group">
+                                    @foreach($data->location_conditions as $cond)
+                                        <div class="list-group-item">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1 text-primary">{{ ucfirst($cond['scope']) }}</h5>
+                                                @if($cond['free_delivery'])
+                                                    <span class="badge bg-success">Free Delivery</span>
+                                                @endif
+                                            </div>
+                                            <p class="mb-1">
+                                                @if($cond['discount'])
+                                                    <strong>Discount:</strong> {{ $cond['discount'] }} Tk<br>
+                                                @endif
+                                                @if($cond['gift'])
+                                                    <strong>Gift:</strong> {{ $cond['gift'] }}
+                                                @endif
+                                            </p>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="text-muted italic">No location conditions defined.</p>
+                            @endif
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="meta_keywords" class="form-label">Meta Keywords:</label>
-                        <p>{{ $data->meta_keywords ?? ' ' }}</p>
-                        @error('meta_keywords')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
+                    <hr>
+
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h4 class="mb-3">Associated Global Offers</h4>
+                            @forelse($data->offers as $offer)
+                                <span class="badge bg-green-light text-green p-2 m-1">
+                                    {{ $offer->name }} ({{ $offer->discount_value }}{{ $offer->discount_type == 'percent' ? '%' : '' }} off)
+                                </span>
+                            @empty
+                                <span class="text-muted italic">No global offers associated.</span>
+                            @endforelse
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="product_type" class="form-label">Product Type:</label>
-                        <select class="form-select select2" name="product_type" id="product_type" disabled readonly>
-                            <option>{{ $data->product_type }}</option>
-                        </select>
-                        @error('product_type')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h4 class="mb-2">Description:</h4>
+                            <div class="p-3 border rounded bg-light">
+                                {!! $data->description !!}
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="category_id" class="form-label">Category:</label>
-                        <select class="form-select select2" name="category_id" id="category_id" disabled readonly>
-                            <option>{{ $data->category->name }}</option>
-                        </select>
-                        @error('category_id')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h4 class="mb-2">SEO Information:</h4>
+                            <ul class="list-unstyled">
+                                <li><strong>Meta Title:</strong> {{ $data->meta_title ?? 'N/A' }}</li>
+                                <li><strong>Meta Description:</strong> {{ $data->meta_description ?? 'N/A' }}</li>
+                                <li><strong>Meta Keywords:</strong> {{ $data->meta_keywords ?? 'N/A' }}</li>
+                            </ul>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="name" class="form-label">Product Name:</label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror"
-                               name="name" placeholder="sweet name" id="name" maxlength="100" value="{{ $data->name ?? ' ' }}" disabled readonly >
-                        @error('name')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
+                    <div class="form-group mt-5">
+                        <a href="{{ route('products.edit', ['id' => $data->id]) }}" class="btn btn-warning">Edit Product</a>
+                        <a href="{{ route('products.index') }}" class="btn btn-danger me-2">Back to List</a>
                     </div>
-
-                    <div class="form-group">
-                        <label for="image" class="form-label">Product Image(500*500px):</label>
-                        <input type="file" class="form-control @error('image') is-invalid @enderror"
-                               name="image" placeholder="sweet name" id="image" value="{{ $data->image ?? ' ' }}">
-                        @if($data->image)
-                        <img class="img-fluid rounded-1 my-1" height="80px" width="80px" src="{{ asset($data->image) }}" alt="{{ $data->name ? $data->image : 'No Image' }}"  disabled readonly>
-                        @endif
-                        @error('image')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="price" class="form-label">Price:</label>
-                        <input type="text" class="form-control @error('price') is-invalid @enderror"
-                               name="price" placeholder="sweet price" id="price" value="{{ $data->price ?? ' ' }}" disabled readonly >
-                        @error('price')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="discount_price" class="form-label">Discount Price (Optional):</label>
-                        <input type="text" class="form-control @error('discount_price') is-invalid @enderror"
-                               name="discount_price" placeholder="sweet discount price" id="discount_price" value="{{ $data->discount_price ?? ' ' }}" disabled readonly >
-                        @error('discount_price')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="description" class="form-label">Description:</label>
-                        <p>{!! $data->description ?? ' ' !!}</p>
-                        @error('description')
-                        <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <a href="{{ route('products.index') }}" class="btn btn-danger me-2">Back</a>
-                    </div>
-
                 </div>
             </div>
         </div>

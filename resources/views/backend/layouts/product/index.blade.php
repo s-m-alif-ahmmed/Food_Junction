@@ -34,6 +34,8 @@
                                 <tr>
                                     <th class="wd-15p border-bottom-0">#</th>
                                     <th class="wd-15p border-bottom-0">Product Name</th>
+                                    <th class="wd-15p border-bottom-0">Category</th>
+                                    <th class="wd-15p border-bottom-0">Price</th>
                                     <th class="wd-20p border-bottom-0">Status</th>
                                     <th class="wd-15p border-bottom-0">Action</th>
                                 </tr>
@@ -97,6 +99,18 @@
                         {
                             data: 'name',
                             name: 'name',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'category',
+                            name: 'category',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'price',
+                            name: 'price',
                             orderable: true,
                             searchable: true
                         },

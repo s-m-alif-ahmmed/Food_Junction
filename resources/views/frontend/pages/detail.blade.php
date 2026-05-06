@@ -25,20 +25,6 @@
                                 <img src="{{ asset($product->image ?? '/frontend/images/section/home/roshmonjuri-500x500.jpg') }}" alt="">
                             </div>
                         </div>
-{{--                        <div class="col-12 more-img-main-box">--}}
-{{--                            <div class="more-img-box">--}}
-{{--                                <img src="{{ asset('/frontend/images/section/home/image-4.jpg') }}" alt="">--}}
-{{--                            </div>--}}
-{{--                            <div class="more-img-box">--}}
-{{--                                <img src="{{ asset('/frontend/images/section/home/image-11.jpg') }}" alt="">--}}
-{{--                            </div>--}}
-{{--                            <div class="more-img-box">--}}
-{{--                                <img src="{{ asset('/frontend/images/section/home/image-6.jpg') }}" alt="">--}}
-{{--                            </div>--}}
-{{--                            <div class="more-img-box">--}}
-{{--                                <img src="{{ asset('/frontend/images/section/home/image-8.jpg') }}" alt="">--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
                     </div>
                 </div>
                 <div class="col-md-8 col-sm-12 col-12">
@@ -110,13 +96,25 @@
                             <input type="hidden" name="user_id" value="" />
                         @endif
 
-                        @if($product->product_type == 'Sweet')
+                        @if($product->pricing_variants && count($product->pricing_variants) > 0)
+                            <div class="pricing-variants my-3">
+                                <label class="form-label">Select {{ ucfirst($product->pricing_type) }}:</label>
+                                <select name="variant_unit" id="variant_select" class="form-select w-50">
+                                    @foreach($product->pricing_variants as $index => $variant)
+                                        <option value="{{ $variant['unit'] }}" 
+                                                data-price="{{ $variant['price'] }}" 
+                                                data-discount="{{ $variant['discount_price'] }}"
+                                                {{ $index == 0 ? 'selected' : '' }}>
+                                            {{ $variant['unit'] }} - {{ $variant['discount_price'] ?? $variant['price'] }} Tk
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @elseif($product->product_type == 'Sweet')
                             <div class="sweet-weight">
                                 <div class="d-flex">
                                     <div class="pe-3">
-                                        <span>
-                                            ওজন:
-                                        </span>
+                                        <span>ওজন:</span>
                                     </div>
                                     <div class="pe-3">
                                         <select name="weight" id="" class="" style="width: 150px;">
@@ -135,7 +133,6 @@
                                             <option value="10000">১০ কেজি</option>
                                         </select>
                                     </div>
-
                                 </div>
                             </div>
                         @elseif($product->product_type == 'Product')
@@ -148,30 +145,20 @@
                             </div>
                         @endif
 
-{{--                        @if(Auth::check())--}}
-{{--                            <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">--}}
-{{--                                <span class="">--}}
-{{--                                    <i class="fa-solid fa-tag me-2 text-warning"></i>Hurrah--}}
-{{--                                    you earn <strong>5% discount!</strong>--}}
-{{--                                </span>--}}
-{{--                            </div>--}}
-{{--                        @else--}}
-{{--                            <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">--}}
-{{--                                <span class="">--}}
-{{--                                    <i class="fa-solid fa-tag me-2 text-warning"></i>--}}
-{{--                                    <a href="{{ route('login') }}" class="fw-bold text-decoration-underline">Login</a>--}}
-{{--                                    and get <strong>5% discount!</strong>--}}
-{{--                                </span>--}}
-{{--                            </div>--}}
-{{--                        @endif--}}
-{{--                        @if($product->product_type == 'Sweet')--}}
-{{--                            <div class="offer my-3 p-3 rounded shadow-sm bg-light text-center">--}}
-{{--                                <span class="">--}}
-{{--                                    <i class="fa-solid fa-tag me-2 text-warning"></i>--}}
-{{--                                    If you order <strong>2kg</strong> then <strong>delivery free</strong>!--}}
-{{--                                </span>--}}
-{{--                            </div>--}}
-{{--                        @endif--}}
+                        @if($product->location_conditions && count($product->location_conditions) > 0)
+                            <div class="location-conditions mt-3">
+                                @foreach($product->location_conditions as $cond)
+                                    <div class="alert alert-info py-2 px-3 mb-2 small">
+                                        <i class="fa-solid fa-location-dot me-1"></i>
+                                        <strong>{{ ucfirst($cond['scope']) }}:</strong> 
+                                        @if($cond['discount']) Extra {{ $cond['discount'] }} Tk off! @endif
+                                        @if($cond['free_delivery']) Free Delivery! @endif
+                                        @if($cond['gift']) Get a free {{ $cond['gift'] }}! @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+
                         <div class="mt-4">
                             <button class="btn cart-btn m-1" style="background-color: var(--yellow);" type="submit" > <i class="fa-solid fa-shopping-cart"></i> Add to Cart</button>
                         </div>
@@ -327,6 +314,21 @@
 
     <script>
         $(document).ready(function () {
+            // Handle variant selection change
+            $('#variant_select').change(function() {
+                let selected = $(this).find(':selected');
+                let price = selected.data('price');
+                let discount = selected.data('discount');
+                
+                let priceHtml = '';
+                if (discount) {
+                    priceHtml = `<p class="price">${discount} Tk</p><span class="discount-price">&nbsp;(<del>${price} Tk</del>)</span>`;
+                } else {
+                    priceHtml = `<p class="price">${price} Tk</p>`;
+                }
+                $('.sweet-price .d-flex').html(priceHtml);
+            });
+
             // Handle the form submission
             $('#add-to-cart-form').on('submit', function (e) {
                 e.preventDefault(); // Prevent the default form submission
@@ -360,6 +362,7 @@
     <script>
         (function () {
             const quantityContainer = document.querySelector(".quantity");
+            if (!quantityContainer) return;
             const minusBtn = quantityContainer.querySelector(".minus");
             const plusBtn = quantityContainer.querySelector(".plus");
             const inputBox = quantityContainer.querySelector(".input-box");

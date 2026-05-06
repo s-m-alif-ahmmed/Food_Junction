@@ -36,7 +36,7 @@ class CartService
     /**
      * Add an item to the cart.
      */
-    public function addItem($productId, $weight = null, $quantity = null)
+    public function addItem($productId, $weight = null, $quantity = null, $variantUnit = null)
     {
         $product = Product::find($productId);
         if (!$product) {
@@ -44,26 +44,48 @@ class CartService
         }
 
         $cart = $this->getCart();
-        $cartItem = CartItem::where('cart_id', $cart->id)
-            ->where('product_id', $productId)
-            ->first();
+        
+        // Find existing item with same variant
+        $query = CartItem::where('cart_id', $cart->id)
+            ->where('product_id', $productId);
+            
+        if ($variantUnit) {
+            $query->where('variant_unit', $variantUnit);
+        } else {
+            $query->whereNull('variant_unit');
+        }
+        
+        $cartItem = $query->first();
 
+        // Determine Price
         $price = $product->discount_price ?? $product->price;
+        if ($variantUnit && $product->pricing_variants) {
+            foreach ($product->pricing_variants as $variant) {
+                if ($variant['unit'] == $variantUnit) {
+                    $price = $variant['discount_price'] ?? $variant['price'];
+                    break;
+                }
+            }
+        }
 
         if ($cartItem) {
-            if ($product->product_type === 'Sweet') {
+            if ($variantUnit) {
+                $cartItem->quantity += ($quantity ?? 1);
+            } elseif ($product->product_type === 'Sweet') {
                 $cartItem->unit_value += $weight;
             } elseif ($product->product_type === 'Product') {
-                $cartItem->quantity += $quantity;
+                $cartItem->quantity += ($quantity ?? 1);
             }
+            $cartItem->unit_price = $price;
             $cartItem->save();
         } else {
             CartItem::create([
                 'cart_id' => $cart->id,
                 'product_id' => $productId,
-                'unit_type' => $product->product_type === 'Sweet' ? 'kg' : 'pcs', // Using kg/gm logic context
-                'unit_value' => $product->product_type === 'Sweet' ? $weight : 0, // for sweets, weight is stored here
-                'quantity' => $product->product_type === 'Product' ? $quantity : 1, // for sweets, qty is 1, weight varies
+                'variant_unit' => $variantUnit,
+                'unit_type' => ($variantUnit || $product->product_type === 'Sweet') ? 'kg' : 'pcs', 
+                'unit_value' => ($variantUnit) ? 0 : ($product->product_type === 'Sweet' ? $weight : 0),
+                'quantity' => ($variantUnit) ? ($quantity ?? 1) : ($product->product_type === 'Product' ? ($quantity ?? 1) : 1),
                 'unit_price' => $price,
             ]);
         }
@@ -135,15 +157,22 @@ class CartService
 
         $subTotal = 0;
         $totalSweetWeight = 0; // in grams
+        $offerDiscount = 0;
+        $deliveryFee = 60; // Base delivery fee
 
         // Calculate line totals
         foreach ($items as $item) {
             $product = $item->product;
             if (!$product) continue;
 
-            $price = $product->discount_price ?? $product->price;
+            // Use stored unit_price (which is set in addItem based on variants)
+            $price = $item->unit_price;
 
-            if ($product->product_type === 'Sweet') {
+            if ($item->variant_unit) {
+                // If it's a variant, we treat it as quantity based usually (e.g. 1 x 1kg variant)
+                $lineTotal = $item->quantity * $price;
+                $subTotal += $lineTotal;
+            } elseif ($product->product_type === 'Sweet') {
                 $gmPrice = $price / 1000;
                 $weight = $item->unit_value; // Assuming unit_value holds the weight in grams as per previous logic
                 $lineTotal = $gmPrice * $weight;
@@ -158,13 +187,27 @@ class CartService
 
             // Update item total price
             $item->total_price = $lineTotal;
-            $item->unit_price = $price;
             $item->save();
+
+            // ==========================================
+            // NEW: Product-Specific Location Conditions
+            // ==========================================
+            if ($product->location_conditions) {
+                foreach ($product->location_conditions as $cond) {
+                    if ($cond['scope'] == 'all' || ($cart->delivery_zone && $cond['scope'] == $cart->delivery_zone)) {
+                        if (!empty($cond['discount'])) {
+                            // Apply discount per item quantity
+                            $offerDiscount += ($cond['discount'] * $item->quantity);
+                        }
+                        if ($cond['free_delivery']) {
+                            $deliveryFee = 0;
+                        }
+                    }
+                }
+            }
         }
 
-        $offerDiscount = 0;
         $couponDiscount = 0;
-        $deliveryFee = 60; // Base delivery fee
 
         // ==========================================
         // 1. LEGACY HARDCODED LOGIC (Isolated for easy removal)

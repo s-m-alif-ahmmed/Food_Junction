@@ -23,6 +23,14 @@ class Product extends Model
         'product_type',
         'product_slug',
         'status',
+        'pricing_type',
+        'pricing_variants',
+        'location_conditions',
+    ];
+
+    protected $casts = [
+        'pricing_variants' => 'array',
+        'location_conditions' => 'array',
     ];
 
     public function category()

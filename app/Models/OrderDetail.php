@@ -30,6 +30,8 @@ class OrderDetail extends Model
         // totals
         'total_price',
 
+        'variant_unit',
+
         // extra
         'meta',
     ];

@@ -202,6 +202,7 @@ class OrderController extends Controller
                 'unit_type'       => $cartItem->unit_type,  // 'kg' or 'pcs'
                 'unit_value'      => $unitValue,              // grams/kg for sweets
                 'quantity'        => $quantity,
+                'variant_unit'    => $cartItem->variant_unit,
 
                 // Line total
                 'total_price'     => $totalPrice,

@@ -74,7 +74,9 @@
                                             </div>
                                             <div>
                                                 <span class="cart-weight">
-                                                    @if($item->unit_type == 'kg')
+                                                    @if($item->variant_unit)
+                                                        {{ $item->variant_unit }}
+                                                    @elseif($item->unit_type == 'kg')
                                                         {{ $item->unit_value < 1000 ? englishToBengali($item->unit_value) . ' গ্রাম' : englishToBengali($item->unit_value / 1000) . ' কেজি' }}
                                                     @else
                                                         {{ $item->quantity }} pcs

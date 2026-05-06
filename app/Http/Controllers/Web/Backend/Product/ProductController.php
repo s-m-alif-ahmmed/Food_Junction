@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Web\Backend\Product;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Offer;
 use App\Models\Product;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,12 +27,14 @@ class ProductController extends Controller
      */
     public function index(Request $request): View | JsonResponse {
         if ($request->ajax()) {
-            $data = Product::latest()->get();
+            $data = Product::with('category')->latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('name', function ($data) {
-                    $name = $data->name;
-                    return $name;
+                ->addColumn('category', function ($data) {
+                    return $data->category->name ?? '--';
+                })
+                ->addColumn('price', function ($data) {
+                    return $data->price;
                 })
                 ->addColumn('status', function ($data) {
                     $backgroundColor  = $data->status == "active" ? '#4CAF50' : '#ccc';
@@ -47,7 +51,7 @@ class ProductController extends Controller
                 })
                 ->addColumn('action', function ($data) {
                     return '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                                <a href="' . route('products.show', ['id' => $data->id]) . '" type="button" class="btn btn-secondary fs-14 text-white edit-icn" title="Edit">
+                                <a href="' . route('products.show', ['id' => $data->id]) . '" type="button" class="btn btn-secondary fs-14 text-white edit-icn" title="View Detail">
                                     <i class="fe fe-eye"></i>
                                 </a>
                                 <a href="' . route('products.edit', ['id' => $data->id]) . '" type="button" class="btn btn-primary fs-14 text-white edit-icn" title="Edit">
@@ -71,7 +75,8 @@ class ProductController extends Controller
      */
     public function create(): View {
         $categories = Category::all();
-        return view('backend.layouts.product.create',compact('categories'));
+        $offers = Offer::where('is_active', true)->where('applies_to', 'product')->get();
+        return view('backend.layouts.product.create', compact('categories', 'offers'));
     }
 
     /**
@@ -83,16 +88,19 @@ class ProductController extends Controller
     public function store(Request $request): RedirectResponse {
         try {
             $validator = Validator::make($request->all(), [
-                'meta_title'        => 'required|string',
-                'meta_description'  => 'required|string',
-                'meta_keywords'     => 'required|string',
+                'meta_title'        => 'nullable|string',
+                'meta_description'  => 'nullable|string',
+                'meta_keywords'     => 'nullable|string',
                 'category_id'       => 'required',
                 'name'              => 'required|string|max:100',
                 'description'       => 'required|string',
-                'image'             => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Max 200KB
+                'image'             => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'price'             => 'required',
                 'discount_price'    => 'nullable',
                 'product_type'      => 'nullable',
+                'pricing_type'      => 'required|in:quantity,weight',
+                'offers'            => 'nullable|array',
+                'offers.*'          => 'exists:offers,id',
             ]);
 
             if ($validator->fails()) {
@@ -109,7 +117,39 @@ class ProductController extends Controller
             $data->price                = $request->price;
             $data->discount_price       = $request->discount_price;
             $data->product_type         = $request->product_type;
+            $data->pricing_type         = $request->pricing_type;
             $data->product_slug         = Str::slug($request->name);
+
+            // Handle Pricing Variants
+            $variants = [];
+            if ($request->has('variant_unit')) {
+                foreach ($request->variant_unit as $index => $unit) {
+                    if (!empty($unit)) {
+                        $variants[] = [
+                            'unit' => $unit,
+                            'price' => $request->variant_price[$index] ?? 0,
+                            'discount_price' => $request->variant_discount_price[$index] ?? null,
+                        ];
+                    }
+                }
+            }
+            $data->pricing_variants = $variants;
+
+            // Handle Location Conditions
+            $conditions = [];
+            if ($request->has('loc_scope')) {
+                foreach ($request->loc_scope as $index => $scope) {
+                    if (!empty($scope)) {
+                        $conditions[] = [
+                            'scope' => $scope,
+                            'discount' => $request->loc_discount[$index] ?? null,
+                            'free_delivery' => isset($request->loc_free_delivery[$index]),
+                            'gift' => $request->loc_gift[$index] ?? null,
+                        ];
+                    }
+                }
+            }
+            $data->location_conditions = $conditions;
 
             // Handle file upload
             if ($request->hasFile('image')) {
@@ -125,14 +165,18 @@ class ProductController extends Controller
             }
             $data->save();
 
+            if ($request->has('offers')) {
+                $data->offers()->sync($request->offers);
+            }
+
             return redirect()->route('products.index')->with('t-success', 'Created successfully');
-        } catch (Exception) {
-            return redirect()->route('products.index')->with('t-success', 'Product failed created.');
+        } catch (Exception $e) {
+            return redirect()->route('products.index')->with('t-error', 'Product failed to create: ' . $e->getMessage());
         }
     }
 
     public function show(int $id): View {
-        $data = Product::find($id);
+        $data = Product::with(['category', 'offers'])->findOrFail($id);
         return view('backend.layouts.product.detail', compact('data'));
     }
 
@@ -144,12 +188,13 @@ class ProductController extends Controller
      */
     public function edit(int $id): View {
         $categories = Category::all();
-        $data = Product::find($id);
-        return view('backend.layouts.product.edit', compact('data','categories'));
+        $offers = Offer::where('is_active', true)->where('applies_to', 'product')->get();
+        $data = Product::with('offers')->findOrFail($id);
+        return view('backend.layouts.product.edit', compact('data', 'categories', 'offers'));
     }
 
     /**
-     * Update the specified sweet content in storage.
+     * Update the specified product content in storage.
      *
      * @param Request $request
      * @param int $id
@@ -158,16 +203,19 @@ class ProductController extends Controller
     public function update(Request $request, int $id): RedirectResponse {
         try {
             $validator = Validator::make($request->all(), [
-                'meta_title'        => 'required|string',
-                'meta_description'  => 'required|string',
-                'meta_keywords'     => 'required|string',
+                'meta_title'        => 'nullable|string',
+                'meta_description'  => 'nullable|string',
+                'meta_keywords'     => 'nullable|string',
                 'category_id'       => 'required',
                 'name'              => 'required|string|max:100',
                 'description'       => 'required|string',
-                'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Max 200KB
+                'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'price'             => 'required',
                 'discount_price'    => 'nullable',
                 'product_type'      => 'nullable',
+                'pricing_type'      => 'required|in:quantity,weight',
+                'offers'            => 'nullable|array',
+                'offers.*'          => 'exists:offers,id',
             ]);
 
             if ($validator->fails()) {
@@ -184,7 +232,39 @@ class ProductController extends Controller
             $data->price                = $request->price;
             $data->discount_price       = $request->discount_price;
             $data->product_type         = $request->product_type;
+            $data->pricing_type         = $request->pricing_type;
             $data->product_slug         = Str::slug($request->name);
+
+            // Handle Pricing Variants
+            $variants = [];
+            if ($request->has('variant_unit')) {
+                foreach ($request->variant_unit as $index => $unit) {
+                    if (!empty($unit)) {
+                        $variants[] = [
+                            'unit' => $unit,
+                            'price' => $request->variant_price[$index] ?? 0,
+                            'discount_price' => $request->variant_discount_price[$index] ?? null,
+                        ];
+                    }
+                }
+            }
+            $data->pricing_variants = $variants;
+
+            // Handle Location Conditions
+            $conditions = [];
+            if ($request->has('loc_scope')) {
+                foreach ($request->loc_scope as $index => $scope) {
+                    if (!empty($scope)) {
+                        $conditions[] = [
+                            'scope' => $scope,
+                            'discount' => $request->loc_discount[$index] ?? null,
+                            'free_delivery' => isset($request->loc_free_delivery[$index]),
+                            'gift' => $request->loc_gift[$index] ?? null,
+                        ];
+                    }
+                }
+            }
+            $data->location_conditions = $conditions;
 
             // Handle file upload if a new image is provided
             if ($request->hasFile('image')) {
@@ -206,12 +286,14 @@ class ProductController extends Controller
                 $data->image = $imagePath;
             }
 
-            $data->update();
+            $data->save();
+
+            $data->offers()->sync($request->offers ?? []);
 
             return redirect()->route('products.index')->with('t-success', 'Product Updated Successfully.');
 
-        } catch (Exception) {
-            return redirect()->route('products.index')->with('t-success', 'Product failed to update');
+        } catch (Exception $e) {
+            return redirect()->route('products.index')->with('t-error', 'Product failed to update: ' . $e->getMessage());
         }
     }
 

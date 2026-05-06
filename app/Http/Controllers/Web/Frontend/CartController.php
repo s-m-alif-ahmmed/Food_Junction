@@ -38,8 +38,9 @@ class CartController extends Controller
             $productId = $request->input('product_id');
             $newWeight = $request->input('weight');
             $newQuantity = $request->input('quantity');
+            $variantUnit = $request->input('variant_unit');
 
-            $cart = $this->cartService->addItem($productId, $newWeight, $newQuantity);
+            $cart = $this->cartService->addItem($productId, $newWeight, $newQuantity, $variantUnit);
 
             return response()->json([
                 'success' => true,
