@@ -260,7 +260,7 @@
                         <div class="col-md-6">
                             <div class="d-flex align-items-center p-3 rounded">
                                 <div class="avatar-img-box me-3">
-                                    <img src="{{ asset($review->user->avatar ?? 'frontend/images/section/home/image-2.png') }}" alt="Avatar">
+                                    <img src="{{ asset($review->user->avatar ?? 'frontend/images/default/default-avatar-profile.jpg') }}" alt="Avatar">
                                 </div>
                                 <div class="review-info">
                                     <p class="reviewer-name fw-bold mb-1">{{ $review->name }}</p>
