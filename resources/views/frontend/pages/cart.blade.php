@@ -57,6 +57,16 @@
                         <div class="card p-3">
                             @foreach($cart->items as $item)
 
+                                @php
+                                    $unit = $item->unit;
+                                    $unitText = match($unit) {
+                                        'gm' => 'গ্রাম',
+                                        'pc' => 'পিস',
+                                        'pcs' => 'পিস',
+                                        default => ucfirst($unit),
+                                     };
+                                @endphp
+
                                 <div class="row border-bottom py-2">
                                     <div class="col-lg-2 col-md-3 col-sm-3 col-3">
                                         <a href="{{ route('product.detail', $item->product->product_slug ?? '') }}">
@@ -74,21 +84,23 @@
                                             </div>
                                             <div>
                                                 <span class="cart-weight">
-                                                    @if($item->variant_unit)
-                                                        {{ $item->variant_unit }}
-                                                    @elseif($item->unit_type == 'kg')
-                                                        {{ $item->unit_value < 1000 ? englishToBengali($item->unit_value) . ' গ্রাম' : englishToBengali($item->unit_value / 1000) . ' কেজি' }}
+                                                    @if($item->variant_quantity && $item->unit)
+                                                        {{ englishToBengali($item->quantity) }} x {{ englishToBengali(number_format($item->variant_quantity, 0)) }} {{ $unitText }}
+                                                    @elseif($item->variant_name)
+                                                        {{ englishToBengali($item->quantity) }} x {{ $unitText }}
                                                     @else
-                                                        {{ $item->quantity }} pcs
+                                                        {{ englishToBengali($item->quantity) }} {{ ucfirst(number_format($item->unit, 0) ?? $unitText) }}
                                                     @endif
                                                 </span>
-                                                <p class="cart-price">{{ $item->unit_price }}Tk
-                                                    @if($item->product && $item->product->discount_price)
-                                                        <span class="discount-price">(<del>{{ $item->product->price }}Tk</del>)</span>
+                                                <p class="cart-price">{{ englishToBengali(number_format($item->unit_price, 0)) }} টাকা
+                                                    @if($item->variant && $item->variant->sale_price)
+                                                        <span class="discount-price">(<del>{{ englishToBengali(number_format($item->variant->price, 0)) }} টাকা</del>)</span>
+                                                    @elseif($item->product && $item->product->discount_price)
+                                                        <span class="discount-price">(<del>{{ englishToBengali(number_format($item->product->price, 0)) }} টাকা</del>)</span>
                                                     @endif
                                                 </p>
                                                 <span class="single-cart-total-price">
-                                                    Total: {{ englishToBengali($item->total_price) ?? '0' }}Tk
+                                                    Total: {{ englishToBengali(number_format($item->total, 0)) ?? '0' }} টাকা
                                                 </span>
                                             </div>
                                         </div>
@@ -117,25 +129,44 @@
                                 <div class="col-md-12">
                                     <p class="fsw-bold fs-20">Order Summery</p>
                                 </div>
+
+                                {{-- Delivery Zone Selector --}}
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label fsw-semibold">Delivery Zone <span class="text-danger">*</span></label>
+                                    <select id="delivery-zone-select" class="form-select"
+                                            onchange="setDeliveryZone(this.value)" required >
+                                        <option value="" disabled {{ !$cart->delivery_zone ? 'selected' : '' }}>-- Select Zone --</option>
+                                        <option value="inside_dhaka"  {{ $cart->delivery_zone === 'inside_dhaka'  ? 'selected' : '' }}>Inside Dhaka</option>
+                                        <option value="outside_dhaka" {{ $cart->delivery_zone === 'outside_dhaka' ? 'selected' : '' }}>Outside Dhaka</option>
+                                    </select>
+                                    @if($cart->delivery_zone === 'outside_dhaka')
+                                        <small class="text-muted mt-1 d-block">&#9888; Outside Dhaka delivery fee: 120 টাকা. Some offers may not apply.</small>
+                                    @elseif($cart->delivery_zone === 'inside_dhaka')
+                                        <small class="text-success mt-1 d-block">&#10003; Inside Dhaka &mdash; standard delivery rate applies.</small>
+                                    @else
+                                        <small class="text-muted mt-1 d-block">Please select your delivery zone to see the correct delivery fee.</small>
+                                    @endif
+                                </div>
+
                                 <div class="col-md-12 d-flex justify-content-between">
                                     <p>Subtotal</p>
-                                    <p class="fsw-semibold">{{ englishToBengali($cart->subtotal) }}Tk</p>
+                                    <p class="fsw-semibold" data-subtotal>{{ englishToBengali(number_format($cart->subtotal, 2)) }} টাকা</p>
                                 </div>
                                 @if($cart->discount > 0)
                                     <div class="col-md-12 d-flex justify-content-between">
                                         <p>Discount</p>
-                                        <p class="fsw-semibold">-{{ englishToBengali($cart->discount) }}Tk</p>
+                                        <p class="fsw-semibold">-{{ englishToBengali(number_format($cart->discount, 2)) }} টাকা</p>
                                     </div>
                                 @endif
                                 <div class="col-md-12 d-flex justify-content-between">
                                     <p>Delivery Fee</p>
-                                    <p class="fsw-semibold">
-                                        {{ $cart->delivery_fee <= 0 ? 'Free' : englishToBengali($cart->delivery_fee). 'Tk' }}
+                                    <p class="fsw-semibold" data-delivery-fee>
+                                        {{ $cart->delivery_fee <= 0 ? 'Free' : englishToBengali(number_format($cart->delivery_fee, 2)) . ' টাকা' }}
                                     </p>
                                 </div>
                                 <div class="col-md-12 d-flex justify-content-between">
                                     <p class="fsw-semibold">Total</p>
-                                    <p class="fsw-semibold">{{ englishToBengali($cart->total) }}Tk</p>
+                                    <p class="fsw-semibold" id="grand-total">{{ englishToBengali(number_format($cart->total, 2)) }} টাকা</p>
                                 </div>
                                 <div class="col-md-12">
                                     <a href="{{ route('checkout') }}" class="btn background-gradient text-white border-0 w-100 fs-18 fsw-semibold">Go To Checkout <i class="fa-solid fa-long-arrow-right"></i></a>
@@ -163,14 +194,57 @@
 
 @push('scripts')
     <script>
+        function setDeliveryZone(zone) {
+            if (!zone) return;
+            const select = document.getElementById('delivery-zone-select');
+            if (select) select.disabled = true;
+
+            $.ajax({
+                url: "{{ route('cart.delivery.zone') }}",
+                method: 'POST',
+                data: { zone: zone, _token: $('meta[name="csrf-token"]').attr('content') },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.success) {
+                        const feeEl = $('[data-delivery-fee]');
+                        if (data.is_free) {
+                            feeEl.text('Free');
+                        } else {
+                            feeEl.text(englishToBengali(parseFloat(data.delivery_fee).toFixed(2)) + ' টাকা');
+                        }
+                        $('#grand-total').text(englishToBengali(parseFloat(data.total).toFixed(2)) + ' টাকা');
+
+                        const hint = document.querySelector('#delivery-zone-select + small');
+                        if (hint) {
+                            if (zone === 'outside_dhaka') {
+                                hint.className = 'text-muted mt-1 d-block';
+                                hint.textContent = '⚠ Outside Dhaka delivery fee: 120.00 টাকা. Some offers may not apply.';
+                            } else {
+                                hint.className = 'text-success mt-1 d-block';
+                                hint.textContent = '✓ Inside Dhaka — standard delivery rate applies.';
+                            }
+                        }
+                        showSuccessToast('Delivery zone updated!');
+                    } else {
+                        showErrorToast(data.message || 'Failed to update delivery zone.');
+                    }
+                },
+                error: function () { showErrorToast('Failed to update delivery zone.'); },
+                complete: function () { if (select) select.disabled = false; }
+            });
+        }
+
+        function englishToBengali(number) {
+            const d = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+            return number.toString().replace(/[0-9]/g, n => d[n]);
+        }
+
         // Trigger toaster based on session messages
         @if (session('t-success'))
         showSuccessToast("{{ session('t-success') }}");
         @endif
-
         @if (session('t-error'))
         showErrorToast("{{ session('t-error') }}");
         @endif
     </script>
-
 @endpush

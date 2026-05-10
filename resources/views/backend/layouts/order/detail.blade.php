@@ -94,18 +94,16 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <span class="badge {{ $item->unit_type === 'kg' ? 'bg-primary' : 'bg-info text-dark' }}">
-                                            {{ $item->unit_type === 'kg' ? 'Sweet (kg)' : 'Product (pcs)' }}
+                                        <span class="badge bg-info text-dark">
+                                            {{ ucfirst($item->unit_type ?? 'pcs') }}
                                         </span>
                                     </td>
                                     <td>Tk {{ number_format($item->unit_price, 2) }}</td>
                                     <td>
-                                        @if($item->unit_type === 'kg')
-                                            {{ $item->unit_value < 1000
-                                                ? number_format($item->unit_value) . ' gm'
-                                                : number_format($item->unit_value / 1000, 2) . ' kg' }}
+                                        @if($item->unit_value && $item->unit_type)
+                                            {{ $item->quantity }} x {{ floatval($item->unit_value) }} {{ ucfirst($item->unit_type) }}
                                         @else
-                                            {{ $item->quantity }} pcs
+                                            {{ $item->quantity }} {{ ucfirst($item->unit_type ?? 'pcs') }}
                                         @endif
                                     </td>
                                     <td><strong>Tk {{ number_format($item->total_price, 2) }}</strong></td>

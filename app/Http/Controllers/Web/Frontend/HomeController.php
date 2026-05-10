@@ -12,6 +12,7 @@ use App\Models\Faq;
 use App\Models\HomeBanner;
 use App\Models\HomeBottomBanner;
 use App\Models\Offer;
+use App\Models\OfferCondition;
 use App\Models\Product;
 use App\Models\ProductReview;
 use App\Models\Video;
@@ -28,13 +29,18 @@ class HomeController extends Controller {
         $home_banners = HomeBanner::with('offers')->where('status', 'active')->latest()->get();
         $home_bottom_banner = HomeBottomBanner::first();
 
-        // Offer Products: Products with discount_price OR linked to an active offer
+        // Offer Products: Products with discounted variants OR linked to an active offer
+        $activeProductIds = OfferCondition::where('condition_type', 'product_id')
+            ->whereHas('offer', function($q) {
+                $q->where('is_active', true);
+            })->pluck('value')->toArray();
+
         $offer_products = Product::where('status', 'active')
-            ->where(function($query) {
-                $query->whereNotNull('discount_price')
-                      ->orWhereHas('offers', function($q) {
-                          $q->active();
-                      });
+            ->where(function($query) use ($activeProductIds) {
+                $query->whereHas('variants', function($q) {
+                          $q->whereNotNull('sale_price');
+                      })
+                      ->orWhereIn('id', $activeProductIds);
             })
             ->latest()
             ->get();
@@ -60,8 +66,14 @@ class HomeController extends Controller {
     }
 
     public function offerDetail($id): View {
-        $offer = Offer::with('products')->findOrFail($id);
-        $products = $offer->products()->where('status', 'active')->paginate(12);
+        $offer = Offer::with(['conditions', 'rewards'])->findOrFail($id);
+
+        if ($offer->applies_to == 'product') {
+            $productIds = $offer->conditions->where('condition_type', 'product_id')->pluck('value');
+            $products = Product::with('variants')->whereIn('id', $productIds)->where('status', 'active')->paginate(12);
+        } else {
+            $products = Product::with('variants')->where('status', 'active')->paginate(12);
+        }
 
         return view('frontend.pages.offer-detail', compact('offer', 'products'));
     }

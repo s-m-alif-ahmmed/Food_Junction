@@ -49,36 +49,72 @@
             </div>
         </div>
 
-        <div class="container-fluid pb-3">
-            <div class="row">
-                <div class="col-lg-12 section-heading background-gradient">
-                    <p class="heading-text">Offer Products</p>
+        @if($offer_products)
+            <div class="container-fluid pb-3">
+                <div class="row">
+                    <div class="col-lg-12 section-heading background-gradient">
+                        <p class="heading-text">Offer Products</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="container pb-5">
-            <div class="row py-3">
-                @forelse($offer_products->take(4) as $product)
-                    <div class="col-lg-3 col-md-3 col-sm-6 col-6 special-sweet-card">
-                        <div class="card border-0 custom-shadow">
-                            <div class="sweet-image">
-                                <img src="{{ asset($product->image ?? '/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top" alt="{{ $product->name }}">
-                            </div>
-                            <div class="card-body border-0 mb-3 h-100">
-                                <h5 class="fsw-bold">{{ $product->name }}</h5>
-                                <p class="fsw-semibold">{{ $product->discount_price ?? $product->price }} টাকা @if($product->discount_price)( <span class="text-danger"><del>{{ $product->price }} টাকা</del></span> ) @endif </p>
-                                <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
+            <div class="container pb-5">
+                <div class="row py-3">
+                    @forelse($offer_products->take(4) as $product)
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-6 special-sweet-card">
+                            <div class="card border-0 custom-shadow">
+                                <div class="sweet-image">
+                                    <img src="{{ asset($product->image ?? '/frontend/images/section/home/harivanga-mishti-500x500.jpg') }}" class="card-img-top" alt="{{ $product->name }}">
+                                </div>
+                                <div class="card-body border-0 mb-3 h-100">
+                                    <h5 class="fsw-bold">{{ $product->name }}</h5>
+                                    @php
+                                        $minVariant = $product->variants
+                                             ->where('status', 'Active')
+                                             ->sortBy(function($variant) {
+                                                 return $variant->sale_price ?? $variant->price;
+                                             })
+                                             ->first();
+
+                                         $price = $minVariant?->price ?? 0;
+                                         $discount = $minVariant?->sale_price;
+                                         $quantity = $minVariant?->quantity;
+                                         $unit = $minVariant?->unit;
+                                         $variantType = $minVariant?->variant_type;
+                                         $unitText = match($unit) {
+                                            'gm' => 'গ্রাম',
+                                            'pc' => 'পিস',
+                                            default => ucfirst($unit),
+                                         };
+                                    @endphp
+                                    <div class="d-flex justify-content-between">
+                                        <p class="fsw-semibold">
+                                            {{ number_format($discount ?? $price, 0) }} টাকা
+                                            @if($discount)
+                                                (
+                                                <span class="text-danger">
+                                                <del>{{ number_format($price, 0) }} টাকা</del>
+                                            </span>
+                                                )
+                                            @endif
+                                        </p>
+
+                                        <p class="fsw-semibold me-1">
+                                            {{ $quantity }} {{ $unitText }}
+                                        </p>
+                                    </div>
+                                    <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @empty
-                    <div class="col-12 text-center py-5">
-                        <p class="text-muted">No offer products available at the moment.</p>
-                    </div>
-                @endforelse
+                    @empty
+                        <div class="col-12 text-center py-5">
+                            <p class="text-muted">No offer products available at the moment.</p>
+                        </div>
+                    @endforelse
+                </div>
             </div>
-        </div>
+        @endif
 
         <div class="container-fluid pb-3">
             <div class="row">
@@ -98,7 +134,43 @@
                             </div>
                             <div class="card-body border-0 mb-3 h-100">
                                 <h5 class="fsw-bold">{{ $product->name }}</h5>
-                                <p class="fsw-semibold">{{ $product->discount_price ?? $product->price }} টাকা @if($product->discount_price)( <span class="text-danger"><del>{{ $product->price }} টাকা</del></span> ) @endif </p>
+                                @php
+                                    $minVariant = $product->variants
+                                         ->where('status', 'Active')
+                                         ->sortBy(function($variant) {
+                                             return $variant->sale_price ?? $variant->price;
+                                         })
+                                         ->first();
+
+                                     $price = $minVariant?->price ?? 0;
+                                     $discount = $minVariant?->sale_price;
+                                     $quantity = $minVariant?->quantity;
+                                     $unit = $minVariant?->unit;
+                                     $variantType = $minVariant?->variant_type;
+                                    $unitText = match($unit) {
+                                        'gm' => 'গ্রাম',
+                                        'pc' => 'পিস',
+                                        default => ucfirst($unit),
+                                    };
+
+                                @endphp
+
+                                <div class="d-flex justify-content-between">
+                                    <p class="fsw-semibold">
+                                        {{ number_format($discount ?? $price, 0) }} টাকা
+                                        @if($discount)
+                                            (
+                                            <span class="text-danger">
+                                                <del>{{ number_format($price, 0) }} টাকা</del>
+                                            </span>
+                                            )
+                                        @endif
+                                    </p>
+
+                                    <p class="fsw-semibold me-1">
+                                        {{ $quantity }} {{ $unitText }}
+                                    </p>
+                                </div>
                                 <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
                             </div>
                         </div>

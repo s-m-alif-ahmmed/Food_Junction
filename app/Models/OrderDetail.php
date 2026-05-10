@@ -13,6 +13,7 @@ class OrderDetail extends Model
     protected $fillable = [
         'order_id',
         'product_id',
+        'variant_id',
 
         // snapshot
         'product_name',
@@ -29,8 +30,6 @@ class OrderDetail extends Model
 
         // totals
         'total_price',
-
-        'variant_unit',
 
         // extra
         'meta',

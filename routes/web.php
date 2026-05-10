@@ -36,6 +36,10 @@ Route::get('/videos', [HomeController::class, 'video'])->name('videos');
 Route::post('/coupon-check', [OrderController::class, 'couponCheck'])->name('coupon.check');
 Route::post('/coupon/remove', [OrderController::class, 'couponRemove'])->name('coupon.remove');
 
+// Delivery Zone
+Route::post('/cart/delivery-zone', [OrderController::class, 'setDeliveryZone'])->name('cart.delivery.zone');
+
+
 
 //dynamic page
 Route::get('/page/{page_slug}', [HomeController::class, 'dynamicPage'])->name('user.dynamic.page');

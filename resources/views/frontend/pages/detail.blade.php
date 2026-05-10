@@ -78,9 +78,14 @@
                     </div>
                     <div class="sweet-price">
                         <div class="d-flex">
-                            <p class="price">{{ $product->discount_price ?? $product->price }} Tk</p>
-                            @if($product->discount_price)
-                                <span class="discount-price">&nbsp;(<del>{{ $product->price }} Tk</del>)</span>
+                            @php
+                                $firstVariant = $product->variants->first();
+                                $price = $firstVariant ? $firstVariant->price : 0;
+                                $discount = $firstVariant ? $firstVariant->sale_price : null;
+                            @endphp
+                            <p class="price">{{ $discount ?? $price }} টাকা</p>
+                            @if($discount)
+                                <span class="discount-price">&nbsp;(<del>{{ $price }} টাকা</del>)</span>
                             @endif
                         </div>
                     </div>
@@ -96,68 +101,45 @@
                             <input type="hidden" name="user_id" value="" />
                         @endif
 
-                        @if($product->pricing_variants && count($product->pricing_variants) > 0)
-                            <div class="pricing-variants my-3">
-                                <label class="form-label">Select {{ ucfirst($product->pricing_type) }}:</label>
-                                <select name="variant_unit" id="variant_select" class="form-select w-50">
-                                    @foreach($product->pricing_variants as $index => $variant)
-                                        <option value="{{ $variant['unit'] }}" 
-                                                data-price="{{ $variant['price'] }}" 
-                                                data-discount="{{ $variant['discount_price'] }}"
-                                                {{ $index == 0 ? 'selected' : '' }}>
-                                            {{ $variant['unit'] }} - {{ $variant['discount_price'] ?? $variant['price'] }} Tk
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        @elseif($product->product_type == 'Sweet')
-                            <div class="sweet-weight">
-                                <div class="d-flex">
+                        @if($product->type != 'pcs' && $product->variants && count($product->variants) > 0)
+                            <div class="sweet-weight my-3">
+                                <div class="d-flex align-items-center">
                                     <div class="pe-3">
-                                        <span>ওজন:</span>
+                                        <span>{{ $product->type == 'gram' ? 'ওজন:' : ucfirst($product->type) . ':' }}</span>
                                     </div>
                                     <div class="pe-3">
-                                        <select name="weight" id="" class="" style="width: 150px;">
-                                            <option value="500" selected>৫০০ গ্রাম</option>
-                                            <option value="1000">১ কেজি</option>
-                                            <option value="1500">১.৫ কেজি</option>
-                                            <option value="2000">২ কেজি</option>
-                                            <option value="2500">২.৫ কেজি</option>
-                                            <option value="3000">৩ কেজি</option>
-                                            <option value="4000">৪ কেজি</option>
-                                            <option value="5000">৫ কেজি</option>
-                                            <option value="6000">৬ কেজি</option>
-                                            <option value="7000">৭ কেজি</option>
-                                            <option value="8000">৮ কেজি</option>
-                                            <option value="9000">৯ কেজি</option>
-                                            <option value="10000">১০ কেজি</option>
+                                        <select name="variant_id" id="variant_select" class="form-select" style="width: 150px;">
+                                            @foreach($product->variants as $index => $variant)
+                                                @php
+                                                    $unit = $variant->unit_type ?? $variant->unit;
+
+                                                    $unitText = match($unit) {
+                                                        'gm' => 'গ্রাম',
+                                                        'pc' => 'পিস',
+                                                        default => ucfirst($unit),
+                                                    };
+                                                @endphp
+
+                                                <option value="{{ $variant->id }}"
+                                                        data-price="{{ $variant->price }}"
+                                                        data-discount="{{ $variant->sale_price }}"
+                                                        {{ $index == 0 ? 'selected' : '' }}>
+                                                    {{ $variant->quantity }} {{ $unitText }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                        @elseif($product->product_type == 'Product')
-                            <div class="product-detail-quantity py-2">
-                                <div class="quantity">
-                                    <button type="button" class="minus" aria-label="Decrease">&minus;</button>
-                                    <input type="number" class="input-box" name="quantity" value="1" min="1" max="100">
-                                    <button type="button" class="plus" aria-label="Increase">&plus;</button>
-                                </div>
-                            </div>
                         @endif
 
-                        @if($product->location_conditions && count($product->location_conditions) > 0)
-                            <div class="location-conditions mt-3">
-                                @foreach($product->location_conditions as $cond)
-                                    <div class="alert alert-info py-2 px-3 mb-2 small">
-                                        <i class="fa-solid fa-location-dot me-1"></i>
-                                        <strong>{{ ucfirst($cond['scope']) }}:</strong> 
-                                        @if($cond['discount']) Extra {{ $cond['discount'] }} Tk off! @endif
-                                        @if($cond['free_delivery']) Free Delivery! @endif
-                                        @if($cond['gift']) Get a free {{ $cond['gift'] }}! @endif
-                                    </div>
-                                @endforeach
+                        <div class="product-detail-quantity py-2">
+                            <div class="quantity">
+                                <button type="button" class="minus" aria-label="Decrease">&minus;</button>
+                                <input type="number" class="input-box" name="quantity" value="1" min="1" max="100">
+                                <button type="button" class="plus" aria-label="Increase">&plus;</button>
                             </div>
-                        @endif
+                        </div>
 
                         <div class="mt-4">
                             <button class="btn cart-btn m-1" style="background-color: var(--yellow);" type="submit" > <i class="fa-solid fa-shopping-cart"></i> Add to Cart</button>
@@ -319,12 +301,12 @@
                 let selected = $(this).find(':selected');
                 let price = selected.data('price');
                 let discount = selected.data('discount');
-                
+
                 let priceHtml = '';
                 if (discount) {
-                    priceHtml = `<p class="price">${discount} Tk</p><span class="discount-price">&nbsp;(<del>${price} Tk</del>)</span>`;
+                    priceHtml = `<p class="price">${discount} টাকা</p><span class="discount-price">&nbsp;(<del>${price} টাকা</del>)</span>`;
                 } else {
-                    priceHtml = `<p class="price">${price} Tk</p>`;
+                    priceHtml = `<p class="price">${price} টাকা</p>`;
                 }
                 $('.sweet-price .d-flex').html(priceHtml);
             });

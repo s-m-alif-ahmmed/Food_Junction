@@ -35,7 +35,15 @@
                                 </div>
                                 <div class="card-body border-0 mb-3 h-100">
                                     <h5 class="fsw-bold">{{ $product->name }}</h5>
-                                    <p class="fsw-semibold">{{ $product->discount_price ?? $product->price }} টাকা @if($product->discount_price)( <span class="text-danger"><del>{{ $product->price }} টাকা</del></span> ) @endif </p>
+                                    @php
+                                        $minVariant = $product->variants->sortBy(function($variant) {
+                                            return $variant->discount_price ?? $variant->price;
+                                        })->first();
+                                        $price = $minVariant ? $minVariant->price : 0;
+                                        $discount = $minVariant ? $minVariant->discount_price : null;
+                                        $unit = $minVariant ? ($minVariant->quantity . ' ' . $minVariant->unit_type) : '';
+                                    @endphp
+                                    <p class="fsw-semibold">{{ $unit ? $unit . ' - ' : '' }}{{ $discount ?? $price }} টাকা @if($discount)( <span class="text-danger"><del>{{ $price }} টাকা</del></span> ) @endif </p>
                                     <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
                                 </div>
                             </div>

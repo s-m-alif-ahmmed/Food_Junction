@@ -107,14 +107,10 @@
                                     <div class="cart-page mt-1">
                                         {{-- Quantity / Weight --}}
                                         <span class="cart-weight">
-                                            @if($item->variant_unit)
-                                                {{ $item->variant_unit }}
-                                            @elseif($item->unit_type === 'kg')
-                                                {{ $item->unit_value < 1000
-                                                    ? englishToBengali($item->unit_value) . ' গ্রাম'
-                                                    : englishToBengali($item->unit_value / 1000) . ' কেজি' }}
+                                            @if($item->unit_value && $item->unit_type)
+                                                {{ englishToBengali($item->quantity) }} x {{ englishToBengali(floatval($item->unit_value)) }} {{ ucfirst($item->unit_type) }}
                                             @else
-                                                {{ $item->quantity }} pcs
+                                                {{ englishToBengali($item->quantity) }} {{ ucfirst($item->unit_type ?? 'pcs') }}
                                             @endif
                                         </span>
 
@@ -191,11 +187,32 @@
                 <div class="card p-3 mb-3">
                     <p class="fsw-bold fs-20 mb-3">Order Summary</p>
 
+                    @php
+                        $productDiscount = 0;
+                        $regularSubtotal = 0;
+                        foreach($orderDetails as $item) {
+                            $productDiscount += ($item->discount_amount * $item->quantity);
+                            $regularSubtotal += (($item->original_price > 0 ? $item->original_price : $item->unit_price) * $item->quantity);
+                        }
+                        
+                        $totalSaved = $productDiscount + ($order->offer_discount ?? 0) + ($order->coupon_discount ?? 0);
+                    @endphp
+
                     {{-- Subtotal --}}
                     <div class="d-flex justify-content-between mb-2">
                         <p class="mb-0">Subtotal</p>
-                        <p class="fsw-semibold mb-0">{{ englishToBengali(number_format($order->subtotal, 2)) }}Tk</p>
+                        <p class="fsw-semibold mb-0">{{ englishToBengali(number_format($regularSubtotal, 2)) }}Tk</p>
                     </div>
+
+                    {{-- Product Discount --}}
+                    @if($productDiscount > 0)
+                    <div class="d-flex justify-content-between mb-2">
+                        <p class="mb-0 text-success">Product Discount</p>
+                        <p class="fsw-semibold mb-0 text-success">
+                            − {{ englishToBengali(number_format($productDiscount, 2)) }}Tk
+                        </p>
+                    </div>
+                    @endif
 
                     {{-- Offer Discount --}}
                     @if($order->offer_discount > 0)
@@ -223,11 +240,11 @@
                     @endif
 
                     {{-- Total Discount line (only if there is discount) --}}
-                    @if($order->total_discount > 0)
+                    @if($totalSaved > 0)
                     <div class="d-flex justify-content-between mb-2 border-top pt-2">
                         <p class="mb-0 text-success fsw-semibold">Total Saved</p>
                         <p class="fsw-semibold mb-0 text-success">
-                            − {{ englishToBengali(number_format($order->total_discount, 2)) }}Tk
+                            − {{ englishToBengali(number_format($totalSaved, 2)) }}Tk
                         </p>
                     </div>
                     @endif

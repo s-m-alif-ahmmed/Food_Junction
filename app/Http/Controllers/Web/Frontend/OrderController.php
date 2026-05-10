@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session as LaravelSession;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -43,6 +44,31 @@ class OrderController extends Controller
                 'delivery_fee' => $cart->delivery_fee,
                 'discount'     => $cart->discount,
                 'total'        => $cart->total,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    // ----------------------------------------------------------------
+    // DELIVERY ZONE: Set Zone
+    // ----------------------------------------------------------------
+    public function setDeliveryZone(Request $request)
+    {
+        $request->validate(['zone' => 'required|in:inside_dhaka,outside_dhaka']);
+
+        try {
+            $cart = $this->cartService->setDeliveryZone($request->zone);
+
+            return response()->json([
+                'success'         => true,
+                'zone'            => $cart->delivery_zone,
+                'delivery_fee'    => $cart->delivery_fee,
+                'offer_discount'  => $cart->offer_discount,
+                'coupon_discount' => $cart->coupon_discount,
+                'subtotal'        => $cart->subtotal,
+                'total'           => $cart->total,
+                'is_free'         => $cart->delivery_fee <= 0,
             ]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
@@ -137,85 +163,100 @@ class OrderController extends Controller
         // If free delivery was triggered, record it
         $isFreeDelivery = $cart->delivery_fee == 0;
 
-        // ── Create Order ─────────────────────────────────────────────
-        $order = Order::create([
-            'user_id'          => $user->id ?? null,
-            'coupon_id'        => $coupon?->id,
+        try {
+            DB::beginTransaction();
 
-            // Customer
-            'name'             => $request->name,
-            'email'            => $request->email,
-            'number'           => $request->number,
-            'whatsapp_number'  => $request->whatsapp_number,
-            'address'          => $request->address,
-            'note'             => $request->note,
-            'all_terms'        => $request->all_terms,
+            // ── Create Order ─────────────────────────────────────────────
+            $order = Order::create([
+                'user_id'          => $user->id ?? null,
+                'coupon_id'        => $coupon?->id,
 
-            // Delivery
-            'delivery_zone'    => $cart->delivery_zone,
-            'delivery_fee'     => $cart->delivery_fee,
-            'is_free_delivery' => $isFreeDelivery,
+                // Customer
+                'name'             => $request->name,
+                'email'            => $request->email,
+                'number'           => $request->number,
+                'whatsapp_number'  => $request->whatsapp_number,
+                'address'          => $request->address,
+                'note'             => $request->note,
+                'all_terms'        => $request->all_terms,
 
-            // Coupon snapshot
-            'coupon_code'      => $couponCode,
-            'coupon_type'      => $couponType,
-            'coupon_value'     => $couponValue,
+                // Delivery
+                'delivery_zone'    => $cart->delivery_zone,
+                'delivery_fee'     => $cart->delivery_fee,
+                'is_free_delivery' => $isFreeDelivery,
 
-            // Financials
-            'subtotal'         => $cart->subtotal,
-            'product_discount' => 0, // future: per-product discounts
-            'offer_discount'   => round($offerDiscount, 2),
-            'coupon_discount'  => round($couponDiscount, 2),
-            'total_discount'   => round($cart->discount, 2),
-            'final_total'      => $cart->total,
+                // Coupon snapshot
+                'coupon_code'      => $couponCode,
+                'coupon_type'      => $couponType,
+                'coupon_value'     => $couponValue,
 
-            // Offer snapshot (which offers were applied)
-            'applied_offers'   => null,
+                // Financials
+                'subtotal'         => $cart->subtotal,
+                'product_discount' => 0, // future: per-product discounts
+                'offer_discount'   => round($offerDiscount, 2),
+                'coupon_discount'  => round($couponDiscount, 2),
+                'total_discount'   => round($cart->discount, 2),
+                'final_total'      => $cart->total,
 
-            'tracking_id'      => $this->generateTrackingId(),
-            'status'           => 'pending',
-        ]);
+                // Offer snapshot (which offers were applied)
+                'applied_offers'   => null,
 
-        // ── Create Order Details ─────────────────────────────────────
-        foreach ($cart->items as $cartItem) {
-            $product = $cartItem->product;
-            if (!$product) continue;
-
-            $isSweet    = $cartItem->unit_type === 'kg';
-            $unitValue  = $isSweet ? $cartItem->unit_value : null;
-            $quantity   = $isSweet ? 1 : $cartItem->quantity;
-            $totalPrice = $cartItem->total_price ?? 0;
-
-            OrderDetail::create([
-                'order_id'        => $order->id,
-                'product_id'      => $cartItem->product_id,
-
-                // Snapshot
-                'product_name'    => $product->name,
-
-                // Pricing snapshot
-                'original_price'  => $product->price,
-                'unit_price'      => $cartItem->unit_price,
-                'discount_amount' => max(0, ($product->price ?? 0) - $cartItem->unit_price),
-
-                // Quantity
-                'unit_type'       => $cartItem->unit_type,  // 'kg' or 'pcs'
-                'unit_value'      => $unitValue,              // grams/kg for sweets
-                'quantity'        => $quantity,
-                'variant_unit'    => $cartItem->variant_unit,
-
-                // Line total
-                'total_price'     => $totalPrice,
+                'tracking_id'      => $this->generateTrackingId(),
+                'status'           => 'pending',
             ]);
+
+            // ── Create Order Details ─────────────────────────────────────
+            foreach ($cart->items as $cartItem) {
+                $product = $cartItem->product;
+                if (!$product) continue;
+
+                $originalPrice = 0;
+                if ($cartItem->variant) {
+                    $originalPrice = $cartItem->variant->price;
+                } elseif ($product) {
+                    $originalPrice = $product->price ?? 0;
+                }
+
+                // Ensure valid enum value for unit_type
+                $unitType = $cartItem->unit === 'gram' ? 'gram' : 'pcs';
+
+                OrderDetail::create([
+                    'order_id'        => $order->id,
+                    'product_id'      => $cartItem->product_id,
+                    'variant_id'      => $cartItem->variant_id,
+
+                    // Snapshot
+                    'product_name'    => $product->name,
+
+                    // Pricing snapshot
+                    'original_price'  => $originalPrice,
+                    'unit_price'      => $cartItem->unit_price,
+                    'discount_amount' => max(0, $originalPrice - $cartItem->unit_price),
+
+                    // Quantity
+                    'unit_type'       => $unitType,
+                    'unit_value'      => $cartItem->variant_quantity,
+                    'quantity'        => $cartItem->quantity,
+
+                    // Line total
+                    'total_price'     => $cartItem->total,
+                ]);
+            }
+
+            // ── Clear Cart ───────────────────────────────────────────────
+            $this->cartService->clearCart();
+
+            DB::commit();
+
+            // Store tracking ID in session for the thank-you page
+            session(['order' => $order->id]);
+
+            return redirect('/order-complete');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('t-error', 'Failed to place order. Error: ' . $e->getMessage());
         }
-
-        // ── Clear Cart ───────────────────────────────────────────────
-        $this->cartService->clearCart();
-
-        // Store tracking ID in session for the thank-you page
-        session(['order' => $order->id]);
-
-        return redirect('/order-complete');
     }
 
     // ----------------------------------------------------------------

@@ -12,16 +12,10 @@ class OfferUsage extends Model
     protected $table = 'offer_usages';
 
     protected $fillable = [
-        'code',
-        'name',
-        'max_uses',
-        'max_uses_user',
-        'type',
-        'discount_amount',
-        'min_amount',
-        'starts_at',
-        'expires_at',
-        'status',
+        'offer_id',
+        'user_id',
+        'order_id',
+        'usage_count',
     ];
 
     protected $hidden = [
