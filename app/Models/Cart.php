@@ -14,12 +14,13 @@ class Cart extends Model
         'user_id',
         'session_id',
         'coupon_code',
+        'offer_id',
         'delivery_zone',
+        'delivery_fee',
         'subtotal',
         'discount',
         'offer_discount',
         'coupon_discount',
-        'delivery_fee',
         'total',
     ];
 

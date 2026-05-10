@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Coupon extends Model
+class DeliveryRule extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    protected $table = 'delivery_rules';
 
     protected $fillable = [
         'code',
@@ -27,5 +28,4 @@ class Coupon extends Model
         'created_at',
         'updated_at',
     ];
-
 }

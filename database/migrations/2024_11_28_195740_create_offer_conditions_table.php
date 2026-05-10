@@ -16,15 +16,14 @@ return new class extends Migration
             $table->foreignId('offer_id')->constrained()->cascadeOnDelete();
 
             $table->enum('condition_type', [
-                'min_total_qty',
-                'min_product_qty',
-                'combined_qty',
-                'combined_mix',
-                'variant_match',
-                'complex_bundle'
+                'min_quantity',
+                'min_weight',
+                'variant_id',
+                'product_id',
+                'cart_total'
             ]);
 
-            $table->enum('operator', ['>=', '<=', '=', 'between'])->default('>=');
+            $table->enum('operator', ['>=', '<=', '=', '>', '<', 'between'])->default('>=');
 
             // main value (like 500gm, 4pcs, etc.)
             $table->decimal('value', 10, 2)->nullable();

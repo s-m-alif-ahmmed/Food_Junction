@@ -14,21 +14,126 @@ return new class extends Migration
         Schema::create('cart_items', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('cart_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            /*
+            |--------------------------------------------------------------------------
+            | Relations
+            |--------------------------------------------------------------------------
+            */
 
-            // 📏 Quantity system (kg + pcs)
-            $table->enum('unit_type', ['kg', 'pcs']);
+            $table->foreignId('cart_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-            // kg → 0.2, 0.5, 1
-            // pcs → usually null or 1
-            $table->decimal('unit_value', 10, 2)->nullable();
+            $table->foreignId('product_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
 
-            $table->integer('quantity')->default(1);
+            $table->foreignId('variant_id')
+                ->nullable()
+                ->constrained('product_variants')
+                ->nullOnDelete();
 
-            // 💰 optional cache (recommended)
-            $table->decimal('unit_price', 10, 2)->nullable();
-            $table->decimal('total_price', 12, 2)->nullable();
+            /*
+            |--------------------------------------------------------------------------
+            | Package Support
+            |--------------------------------------------------------------------------
+            */
+
+            // If user adds combo/package
+            $table->foreignId('package_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Product Type
+            |--------------------------------------------------------------------------
+            */
+
+            $table->enum('item_type', [
+                'product',
+                'package',
+                'free_product'
+            ])->default('product');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Quantity
+            |--------------------------------------------------------------------------
+            */
+
+            // Example:
+            // 1 = one package
+            // 2 = two packages
+            // 3 = three pcs
+            $table->integer('quantity')
+                ->default(1);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Variant Snapshot
+            |--------------------------------------------------------------------------
+            */
+
+            // Snapshot for order consistency
+            $table->string('variant_name')
+                ->nullable();
+
+            // pc / gm
+            $table->string('unit')
+                ->nullable();
+
+            // 4 / 8 / 500 / 1000
+            $table->decimal('variant_quantity', 10, 2)
+                ->nullable();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Pricing Snapshot
+            |--------------------------------------------------------------------------
+            */
+
+            // Single item price
+            $table->decimal('unit_price', 10, 2)
+                ->default(0);
+
+            // Before discount
+            $table->decimal('subtotal', 12, 2)
+                ->default(0);
+
+            // Item-level discount
+            $table->decimal('discount', 12, 2)
+                ->default(0);
+
+            // Final total
+            $table->decimal('total', 12, 2)
+                ->default(0);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Offer Information
+            |--------------------------------------------------------------------------
+            */
+
+            // If item came from offer/gift
+            $table->foreignId('offer_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
+            $table->boolean('is_free')
+                ->default(false);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Extra Data
+            |--------------------------------------------------------------------------
+            */
+
+            $table->json('meta')
+                ->nullable();
 
             $table->timestamps();
         });

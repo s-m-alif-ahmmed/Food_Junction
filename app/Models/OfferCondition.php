@@ -9,6 +9,8 @@ class OfferCondition extends Model
 {
     use HasFactory;
 
+    protected $table = 'offer_conditions';
+
     protected $fillable = [
         'offer_id',
         'condition_type',

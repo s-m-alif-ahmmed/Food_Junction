@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Offer;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -27,14 +28,14 @@ class ProductController extends Controller
      */
     public function index(Request $request): View | JsonResponse {
         if ($request->ajax()) {
-            $data = Product::with('category')->latest()->get();
+            $data = Product::with(['category', 'variants'])->latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('category', function ($data) {
                     return $data->category->name ?? '--';
                 })
                 ->addColumn('price', function ($data) {
-                    return $data->price;
+                    return $data->variants->first()->price ?? 0;
                 })
                 ->addColumn('status', function ($data) {
                     $backgroundColor  = $data->status == "active" ? '#4CAF50' : '#ccc';
@@ -75,8 +76,7 @@ class ProductController extends Controller
      */
     public function create(): View {
         $categories = Category::all();
-        $offers = Offer::where('is_active', true)->where('applies_to', 'product')->get();
-        return view('backend.layouts.product.create', compact('categories', 'offers'));
+        return view('backend.layouts.product.create', compact('categories'));
     }
 
     /**
@@ -95,12 +95,13 @@ class ProductController extends Controller
                 'name'              => 'required|string|max:100',
                 'description'       => 'required|string',
                 'image'             => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'price'             => 'required',
-                'discount_price'    => 'nullable',
-                'product_type'      => 'nullable',
                 'pricing_type'      => 'required|in:quantity,weight',
-                'offers'            => 'nullable|array',
-                'offers.*'          => 'exists:offers,id',
+                'variant_quantity'  => 'required|array',
+                'variant_quantity.*'=> 'required|numeric|min:1',
+                'variant_unit_type' => 'required|array',
+                'variant_price'     => 'required|array',
+                'variant_price.*'   => 'required|numeric|min:0',
+                'variant_discount_price' => 'nullable|array',
             ]);
 
             if ($validator->fails()) {
@@ -114,42 +115,8 @@ class ProductController extends Controller
             $data->category_id          = $request->category_id;
             $data->name                 = $request->name;
             $data->description          = $request->description;
-            $data->price                = $request->price;
-            $data->discount_price       = $request->discount_price;
-            $data->product_type         = $request->product_type;
-            $data->pricing_type         = $request->pricing_type;
+            $data->type                 = $request->pricing_type == 'weight' ? 'gram' : 'pcs';
             $data->product_slug         = Str::slug($request->name);
-
-            // Handle Pricing Variants
-            $variants = [];
-            if ($request->has('variant_unit')) {
-                foreach ($request->variant_unit as $index => $unit) {
-                    if (!empty($unit)) {
-                        $variants[] = [
-                            'unit' => $unit,
-                            'price' => $request->variant_price[$index] ?? 0,
-                            'discount_price' => $request->variant_discount_price[$index] ?? null,
-                        ];
-                    }
-                }
-            }
-            $data->pricing_variants = $variants;
-
-            // Handle Location Conditions
-            $conditions = [];
-            if ($request->has('loc_scope')) {
-                foreach ($request->loc_scope as $index => $scope) {
-                    if (!empty($scope)) {
-                        $conditions[] = [
-                            'scope' => $scope,
-                            'discount' => $request->loc_discount[$index] ?? null,
-                            'free_delivery' => isset($request->loc_free_delivery[$index]),
-                            'gift' => $request->loc_gift[$index] ?? null,
-                        ];
-                    }
-                }
-            }
-            $data->location_conditions = $conditions;
 
             // Handle file upload
             if ($request->hasFile('image')) {
@@ -165,8 +132,20 @@ class ProductController extends Controller
             }
             $data->save();
 
-            if ($request->has('offers')) {
-                $data->offers()->sync($request->offers);
+            // Handle Product Variants
+            if ($request->has('variant_quantity')) {
+                foreach ($request->variant_quantity as $index => $qty) {
+                    ProductVariant::create([
+                        'product_id' => $data->id,
+                        'variant_type' => $data->type,
+                        'quantity' => $qty,
+                        'unit' => $request->variant_unit_type[$index] ?? ($data->type == 'gram' ? 'gm' : 'pc'),
+                        'price' => $request->variant_price[$index] ?? 0,
+                        'sale_price' => $request->variant_discount_price[$index] ?? null,
+                        'stock' => 100, // Default stock for now
+                        'status' => 'Active',
+                    ]);
+                }
             }
 
             return redirect()->route('products.index')->with('t-success', 'Created successfully');
@@ -176,7 +155,7 @@ class ProductController extends Controller
     }
 
     public function show(int $id): View {
-        $data = Product::with(['category', 'offers'])->findOrFail($id);
+        $data = Product::with(['category', 'variants'])->findOrFail($id);
         return view('backend.layouts.product.detail', compact('data'));
     }
 
@@ -188,9 +167,8 @@ class ProductController extends Controller
      */
     public function edit(int $id): View {
         $categories = Category::all();
-        $offers = Offer::where('is_active', true)->where('applies_to', 'product')->get();
-        $data = Product::with('offers')->findOrFail($id);
-        return view('backend.layouts.product.edit', compact('data', 'categories', 'offers'));
+        $data = Product::with('variants')->findOrFail($id);
+        return view('backend.layouts.product.edit', compact('data', 'categories'));
     }
 
     /**
@@ -210,12 +188,13 @@ class ProductController extends Controller
                 'name'              => 'required|string|max:100',
                 'description'       => 'required|string',
                 'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'price'             => 'required',
-                'discount_price'    => 'nullable',
-                'product_type'      => 'nullable',
                 'pricing_type'      => 'required|in:quantity,weight',
-                'offers'            => 'nullable|array',
-                'offers.*'          => 'exists:offers,id',
+                'variant_quantity'  => 'required|array',
+                'variant_quantity.*'=> 'required|numeric|min:1',
+                'variant_unit_type' => 'required|array',
+                'variant_price'     => 'required|array',
+                'variant_price.*'   => 'required|numeric|min:0',
+                'variant_discount_price' => 'nullable|array',
             ]);
 
             if ($validator->fails()) {
@@ -229,42 +208,8 @@ class ProductController extends Controller
             $data->category_id          = $request->category_id;
             $data->name                 = $request->name;
             $data->description          = $request->description;
-            $data->price                = $request->price;
-            $data->discount_price       = $request->discount_price;
-            $data->product_type         = $request->product_type;
-            $data->pricing_type         = $request->pricing_type;
+            $data->type                 = $request->pricing_type == 'weight' ? 'gram' : 'pcs';
             $data->product_slug         = Str::slug($request->name);
-
-            // Handle Pricing Variants
-            $variants = [];
-            if ($request->has('variant_unit')) {
-                foreach ($request->variant_unit as $index => $unit) {
-                    if (!empty($unit)) {
-                        $variants[] = [
-                            'unit' => $unit,
-                            'price' => $request->variant_price[$index] ?? 0,
-                            'discount_price' => $request->variant_discount_price[$index] ?? null,
-                        ];
-                    }
-                }
-            }
-            $data->pricing_variants = $variants;
-
-            // Handle Location Conditions
-            $conditions = [];
-            if ($request->has('loc_scope')) {
-                foreach ($request->loc_scope as $index => $scope) {
-                    if (!empty($scope)) {
-                        $conditions[] = [
-                            'scope' => $scope,
-                            'discount' => $request->loc_discount[$index] ?? null,
-                            'free_delivery' => isset($request->loc_free_delivery[$index]),
-                            'gift' => $request->loc_gift[$index] ?? null,
-                        ];
-                    }
-                }
-            }
-            $data->location_conditions = $conditions;
 
             // Handle file upload if a new image is provided
             if ($request->hasFile('image')) {
@@ -288,7 +233,22 @@ class ProductController extends Controller
 
             $data->save();
 
-            $data->offers()->sync($request->offers ?? []);
+            // Handle Product Variants
+            $data->variants()->delete(); // Remove old variants
+            if ($request->has('variant_quantity')) {
+                foreach ($request->variant_quantity as $index => $qty) {
+                    ProductVariant::create([
+                        'product_id' => $data->id,
+                        'variant_type' => $data->type,
+                        'quantity' => $qty,
+                        'unit' => $request->variant_unit_type[$index] ?? ($data->type == 'gram' ? 'gm' : 'pc'),
+                        'price' => $request->variant_price[$index] ?? 0,
+                        'sale_price' => $request->variant_discount_price[$index] ?? null,
+                        'stock' => 100, // Default stock for now
+                        'status' => 'Active',
+                    ]);
+                }
+            }
 
             return redirect()->route('products.index')->with('t-success', 'Product Updated Successfully.');
 

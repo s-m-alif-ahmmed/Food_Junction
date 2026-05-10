@@ -43,6 +43,20 @@
                             <label class="form-label">Discount Value:</label>
                             <p class="form-control" readonly>{{ $data->discount_value ?? ' ' }}</p>
                         </div>
+                    @elseif($data->offer_type == 'free_product')
+                        @php
+                            $freeProductReward = $data->rewards->where('reward_type', 'free_product')->first();
+                        @endphp
+                        @if($freeProductReward)
+                            <div class="form-group">
+                                <label class="form-label">Gift Product ID:</label>
+                                <p class="form-control" readonly>{{ $freeProductReward->product_id }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Gift Quantity:</label>
+                                <p class="form-control" readonly>{{ $freeProductReward->quantity }}</p>
+                            </div>
+                        @endif
                     @endif
 
                     <div class="form-group">
@@ -52,15 +66,28 @@
 
                     @if($data->applies_to == 'product')
                         <div class="form-group">
-                            <label class="form-label">Products Included:</label>
+                            <label class="form-label">Products Included (IDs):</label>
                             <ul class="list-group">
-                                @forelse($data->products as $product)
-                                    <li class="list-group-item">{{ $product->name }}</li>
+                                @php
+                                    $productIds = $data->conditions->where('condition_type', 'product_id')->pluck('value');
+                                @endphp
+                                @forelse($productIds as $pId)
+                                    <li class="list-group-item">Product ID: {{ $pId }}</li>
                                 @empty
                                     <li class="list-group-item text-muted">No products mapped</li>
                                 @endforelse
                             </ul>
                         </div>
+                    @elseif($data->applies_to == 'cart')
+                        @php
+                            $cartCondition = $data->conditions->where('condition_type', 'cart_total')->first();
+                        @endphp
+                        @if($cartCondition)
+                        <div class="form-group">
+                            <label class="form-label">Minimum Cart Total:</label>
+                            <p class="form-control" readonly>{{ $cartCondition->value }}</p>
+                        </div>
+                        @endif
                     @endif
 
                     <div class="form-group">

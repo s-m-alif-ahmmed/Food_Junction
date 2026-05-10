@@ -12,18 +12,28 @@ class CartItem extends Model
     protected $fillable = [
         'cart_id',
         'product_id',
-        'unit_type',
-        'unit_value',
+        'variant_id',
+        'product_variants',
+        'package_id',
+        'item_type',
         'quantity',
+        'variant_name',
+        'unit',
+        'variant_quantity',
         'unit_price',
-        'total_price',
-        'variant_unit',
+        'subtotal',
+        'discount',
+        'total',
+        'offer_id',
+        'is_free',
+        'meta',
     ];
 
     protected $casts = [
-        'unit_value' => 'decimal:2',
+        'subtotal' => 'decimal:2',
+        'discount' => 'decimal:2',
         'unit_price' => 'decimal:2',
-        'total_price' => 'decimal:2',
+        'total' => 'decimal:2',
     ];
 
     /*
@@ -51,7 +61,7 @@ class CartItem extends Model
     // total kg (for offer engine)
     public function getTotalKgAttribute()
     {
-        if ($this->unit_type !== 'kg') return 0;
+        if ($this->unit_type !== 'gram') return 0;
 
         return $this->unit_value * $this->quantity;
     }
@@ -67,8 +77,8 @@ class CartItem extends Model
     // display for UI
     public function getDisplayQuantityAttribute()
     {
-        if ($this->unit_type === 'kg') {
-            return ($this->unit_value * $this->quantity) . ' kg';
+        if ($this->unit_type === 'gram') {
+            return ($this->unit_value * $this->quantity) . ' gram';
         }
 
         return $this->quantity . ' pcs';

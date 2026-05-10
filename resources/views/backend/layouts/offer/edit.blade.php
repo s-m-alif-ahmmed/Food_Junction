@@ -40,6 +40,7 @@
                             <select class="form-select select2" name="offer_type" id="offer_type" required>
                                 <option value="discount" {{ old('offer_type', $data->offer_type) == 'discount' ? 'selected' : '' }}>Discount</option>
                                 <option value="free_delivery" {{ old('offer_type', $data->offer_type) == 'free_delivery' ? 'selected' : '' }}>Free Delivery</option>
+                                <option value="free_product" {{ old('offer_type', $data->offer_type) == 'free_product' ? 'selected' : '' }}>Free Product (Gift)</option>
                             </select>
                             @error('offer_type')
                                 <span class="text-danger">{{ $message }}</span>
@@ -66,6 +67,38 @@
                             @enderror
                         </div>
 
+                        @php
+                            $freeProductReward = $data->rewards->where('reward_type', 'free_product')->first();
+                            $rewardProductId = $freeProductReward ? $freeProductReward->product_id : '';
+                            $rewardQuantity = $freeProductReward ? $freeProductReward->quantity : 1;
+                        @endphp
+                        <div class="row" id="free_product_group" style="display: none;">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="reward_product_id" class="form-label">Gift Product:</label>
+                                    <select class="form-select select2" name="reward_product_id" id="reward_product_id">
+                                        <option value="">Select Gift Product</option>
+                                        @foreach($products as $product)
+                                            <option value="{{ $product->id }}" {{ old('reward_product_id', $rewardProductId) == $product->id ? 'selected' : '' }}>{{ $product->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('reward_product_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="reward_quantity" class="form-label">Gift Quantity:</label>
+                                    <input type="number" class="form-control @error('reward_quantity') is-invalid @enderror"
+                                        name="reward_quantity" placeholder="Quantity" id="reward_quantity" value="{{ old('reward_quantity', $rewardQuantity) }}">
+                                    @error('reward_quantity')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label for="applies_to" class="form-label">Applies To:</label>
                             <select class="form-select select2" name="applies_to" id="applies_to" required>
@@ -78,8 +111,18 @@
                         </div>
 
                         @php
-                            $selectedProductIds = $data->products->pluck('id')->toArray();
+                            $selectedProductIds = $data->conditions->where('condition_type', 'product_id')->pluck('value')->toArray();
+                            $cartCondition = $data->conditions->where('condition_type', 'cart_total')->first();
+                            $minCartTotal = $cartCondition ? $cartCondition->value : '';
                         @endphp
+                        <div class="form-group" id="min_cart_total_group" style="display: none;">
+                            <label for="min_cart_total" class="form-label">Minimum Cart Total (Optional):</label>
+                            <input type="number" step="0.01" class="form-control @error('min_cart_total') is-invalid @enderror"
+                                name="min_cart_total" placeholder="Minimum Cart Total" id="min_cart_total" value="{{ old('min_cart_total', $minCartTotal) }}">
+                            @error('min_cart_total')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
                         <div class="form-group" id="product_ids_group" style="display: none;">
                             <label for="product_ids" class="form-label">Select Products:</label>
                             <select class="form-select select2" name="product_ids[]" id="product_ids" multiple>
@@ -177,16 +220,24 @@
             if (offerType === 'free_delivery') {
                 $('#discount_type_group').hide();
                 $('#discount_value_group').hide();
+                $('#free_product_group').hide();
+            } else if (offerType === 'free_product') {
+                $('#discount_type_group').hide();
+                $('#discount_value_group').hide();
+                $('#free_product_group').show();
             } else {
                 $('#discount_type_group').show();
                 $('#discount_value_group').show();
+                $('#free_product_group').hide();
             }
 
             let appliesTo = $('#applies_to').val();
             if (appliesTo === 'product') {
                 $('#product_ids_group').show();
+                $('#min_cart_total_group').hide();
             } else {
                 $('#product_ids_group').hide();
+                $('#min_cart_total_group').show();
             }
         }
 

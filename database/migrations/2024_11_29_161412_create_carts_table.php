@@ -14,21 +14,75 @@ return new class extends Migration
         if (!Schema::hasTable('carts')) {
             Schema::create('carts', function (Blueprint $table) {
                 $table->id();
-                // 👤 User OR Guest
-                $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
-                $table->string('session_id')->nullable(); // for guest users
+                /*
+                |--------------------------------------------------------------------------
+                | User / Guest
+                |--------------------------------------------------------------------------
+                */
 
-                // 🎟️ Coupon (optional)
-                $table->string('coupon_code')->nullable();
+                $table->foreignId('user_id')
+                    ->nullable()
+                    ->constrained()
+                    ->cascadeOnDelete();
 
-                // 📍 Delivery context (needed for offer engine)
-                $table->enum('delivery_zone', ['dhaka', 'outside'])->nullable();
+                // For guest cart
+                $table->string('session_id')
+                    ->nullable()
+                    ->index();
 
-                // 💰 Calculated values (optional cache)
-                $table->decimal('subtotal', 12, 2)->default(0);
-                $table->decimal('discount', 12, 2)->default(0);
-                $table->decimal('delivery_fee', 10, 2)->default(0);
-                $table->decimal('total', 12, 2)->default(0);
+                /*
+                |--------------------------------------------------------------------------
+                | Coupon & Offer
+                |--------------------------------------------------------------------------
+                */
+
+                $table->string('coupon_code')
+                    ->nullable();
+
+                $table->foreignId('offer_id')
+                    ->nullable()
+                    ->constrained()
+                    ->nullOnDelete();
+
+                /*
+                |--------------------------------------------------------------------------
+                | Delivery Information
+                |--------------------------------------------------------------------------
+                */
+
+                $table->enum('delivery_zone', [
+                    'inside_dhaka',
+                    'outside_dhaka'
+                ])->nullable();
+
+                $table->decimal('delivery_fee', 10, 2)
+                    ->default(0);
+
+                /*
+                |--------------------------------------------------------------------------
+                | Cart Calculations
+                |--------------------------------------------------------------------------
+                */
+
+                // Product total before discount
+                $table->decimal('subtotal', 12, 2)
+                    ->default(0);
+
+                // Automatic offer discount
+                $table->decimal('offer_discount', 12, 2)
+                    ->default(0);
+
+                // Coupon discount
+                $table->decimal('coupon_discount', 12, 2)
+                    ->default(0);
+
+                // Additional/manual discount
+                $table->decimal('discount', 12, 2)
+                    ->default(0);
+
+                // Final payable amount
+                $table->decimal('total', 12, 2)
+                    ->default(0);
                 $table->timestamps();
             });
         }

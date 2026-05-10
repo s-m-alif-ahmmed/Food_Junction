@@ -32,7 +32,7 @@
                         </div>
                         <div class="col-md-9">
                             <h2 class="mb-1">{{ $data->name }}</h2>
-                            <span class="badge bg-primary mb-3">{{ $data->product_type }}</span>
+                            <span class="badge bg-primary mb-3">{{ ucfirst($data->type) }}</span>
                             <div class="row">
                                 <div class="col-md-4">
                                     <strong>Category:</strong><br>
@@ -40,11 +40,11 @@
                                 </div>
                                 <div class="col-md-4">
                                     <strong>Base Price:</strong><br>
-                                    {{ number_format($data->price, 2) }} Tk
+                                    {{ number_format($data->variants->first()->price ?? 0, 2) }} Tk
                                 </div>
                                 <div class="col-md-4">
                                     <strong>Discount Price:</strong><br>
-                                    {{ $data->discount_price ? number_format($data->discount_price, 2) . ' Tk' : 'None' }}
+                                    {{ ($data->variants->first() && $data->variants->first()->discount_price) ? number_format($data->variants->first()->discount_price, 2) . ' Tk' : 'None' }}
                                 </div>
                             </div>
                         </div>
@@ -53,23 +53,23 @@
                     <hr>
 
                     <div class="row">
-                        <div class="col-md-6 border-end">
-                            <h4 class="mb-3">Pricing & Variants ({{ ucfirst($data->pricing_type) }} Based)</h4>
-                            @if($data->pricing_variants && count($data->pricing_variants) > 0)
+                        <div class="col-md-12">
+                            <h4 class="mb-3">Pricing Variants</h4>
+                            @if($data->variants && count($data->variants) > 0)
                                 <table class="table table-striped table-sm">
                                     <thead>
                                         <tr>
                                             <th>Unit</th>
                                             <th>Price</th>
-                                            <th>Discount</th>
+                                            <th>Discount Price</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($data->pricing_variants as $variant)
+                                        @foreach($data->variants as $variant)
                                             <tr>
-                                                <td>{{ $variant['unit'] }}</td>
-                                                <td>{{ number_format($variant['price'], 2) }} Tk</td>
-                                                <td>{{ $variant['discount_price'] ? number_format($variant['discount_price'], 2) . ' Tk' : '-' }}</td>
+                                                <td>{{ $variant->quantity }} {{ $variant->unit_type }}</td>
+                                                <td>{{ number_format($variant->price, 2) }} Tk</td>
+                                                <td>{{ $variant->discount_price ? number_format($variant->discount_price, 2) . ' Tk' : '-' }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -78,54 +78,12 @@
                                 <p class="text-muted italic">No variants defined.</p>
                             @endif
                         </div>
-                        <div class="col-md-6">
-                            <h4 class="mb-3">Location Specific Conditions</h4>
-                            @if($data->location_conditions && count($data->location_conditions) > 0)
-                                <div class="list-group">
-                                    @foreach($data->location_conditions as $cond)
-                                        <div class="list-group-item">
-                                            <div class="d-flex w-100 justify-content-between">
-                                                <h5 class="mb-1 text-primary">{{ ucfirst($cond['scope']) }}</h5>
-                                                @if($cond['free_delivery'])
-                                                    <span class="badge bg-success">Free Delivery</span>
-                                                @endif
-                                            </div>
-                                            <p class="mb-1">
-                                                @if($cond['discount'])
-                                                    <strong>Discount:</strong> {{ $cond['discount'] }} Tk<br>
-                                                @endif
-                                                @if($cond['gift'])
-                                                    <strong>Gift:</strong> {{ $cond['gift'] }}
-                                                @endif
-                                            </p>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <p class="text-muted italic">No location conditions defined.</p>
-                            @endif
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <div class="row mt-4">
-                        <div class="col-md-12">
-                            <h4 class="mb-3">Associated Global Offers</h4>
-                            @forelse($data->offers as $offer)
-                                <span class="badge bg-green-light text-green p-2 m-1">
-                                    {{ $offer->name }} ({{ $offer->discount_value }}{{ $offer->discount_type == 'percent' ? '%' : '' }} off)
-                                </span>
-                            @empty
-                                <span class="text-muted italic">No global offers associated.</span>
-                            @endforelse
-                        </div>
                     </div>
 
                     <div class="row mt-4">
                         <div class="col-md-12">
                             <h4 class="mb-2">Description:</h4>
-                            <div class="p-3 border rounded bg-light">
+                            <div class="p-3 border bg-light">
                                 {!! $data->description !!}
                             </div>
                         </div>

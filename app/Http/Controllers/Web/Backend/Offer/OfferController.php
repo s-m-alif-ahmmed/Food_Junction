@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 use App\Helpers\Helper;
 use App\Models\Offer;
+use App\Models\OfferCondition;
+use App\Models\OfferReward;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -108,13 +110,16 @@ class OfferController extends Controller
                 'name'              => 'required|string|max:255',
                 'description'       => 'nullable|string',
                 'priority'          => 'nullable|integer',
-                'offer_type'        => 'required|in:free_delivery,discount',
+                'offer_type'        => 'required|in:free_delivery,discount,free_product',
                 'discount_type'     => 'nullable|in:fixed,percent',
                 'discount_value'    => 'nullable|numeric',
+                'reward_product_id' => 'required_if:offer_type,free_product|nullable|exists:products,id',
+                'reward_quantity'   => 'required_if:offer_type,free_product|nullable|integer|min:1',
                 'applies_to'        => 'required|in:cart,product',
                 'location_scope'    => 'required|in:dhaka,outside,all',
                 'start_date'        => 'nullable|date',
                 'end_date'          => 'nullable|date|after_or_equal:start_date',
+                'min_cart_total'    => 'nullable|numeric|min:0',
                 'product_ids'       => 'nullable|array',
                 'product_ids.*'     => 'exists:products,id'
             ]);
@@ -139,8 +144,44 @@ class OfferController extends Controller
 
             $offer->save();
 
+            // Create Rewards
+            if ($request->offer_type == 'free_delivery') {
+                OfferReward::create([
+                    'offer_id' => $offer->id,
+                    'reward_type' => $request->location_scope == 'all' ? 'free_delivery_country' : 'free_delivery_inside_dhaka',
+                ]);
+            } elseif ($request->offer_type == 'free_product') {
+                OfferReward::create([
+                    'offer_id' => $offer->id,
+                    'reward_type' => 'free_product',
+                    'product_id' => $request->reward_product_id,
+                    'quantity' => $request->reward_quantity,
+                ]);
+            } else {
+                OfferReward::create([
+                    'offer_id' => $offer->id,
+                    'reward_type' => $request->discount_type == 'percent' ? 'discount_percent' : 'discount_amount',
+                    'discount_value' => $request->discount_value,
+                ]);
+            }
+
+            // Create Conditions
             if ($request->applies_to == 'product' && $request->has('product_ids')) {
-                $offer->products()->sync($request->product_ids);
+                foreach ($request->product_ids as $p_id) {
+                    OfferCondition::create([
+                        'offer_id' => $offer->id,
+                        'condition_type' => 'product_id',
+                        'value' => $p_id
+                    ]);
+                }
+            } elseif ($request->applies_to == 'cart') {
+                if ($request->filled('min_cart_total') && $request->min_cart_total > 0) {
+                    OfferCondition::create([
+                        'offer_id' => $offer->id,
+                        'condition_type' => 'cart_total',
+                        'value' => $request->min_cart_total
+                    ]);
+                }
             }
 
             return redirect()->route('offers.index')->with('t-success', 'Offer Created successfully');
@@ -150,7 +191,7 @@ class OfferController extends Controller
     }
 
     public function show(int $id): View {
-        $data = Offer::with('products')->find($id);
+        $data = Offer::with(['conditions', 'rewards'])->find($id);
         return view('backend.layouts.offer.detail', compact('data'));
     }
 
@@ -161,7 +202,7 @@ class OfferController extends Controller
      * @return View
      */
     public function edit(int $id): View {
-        $data = Offer::with('products')->find($id);
+        $data = Offer::with(['conditions', 'rewards'])->find($id);
         $products = Product::where('status', 'active')->get();
         return view('backend.layouts.offer.edit', compact('data', 'products'));
     }
@@ -179,13 +220,16 @@ class OfferController extends Controller
                 'name'              => 'required|string|max:255',
                 'description'       => 'nullable|string',
                 'priority'          => 'nullable|integer',
-                'offer_type'        => 'required|in:free_delivery,discount',
+                'offer_type'        => 'required|in:free_delivery,discount,free_product',
                 'discount_type'     => 'nullable|in:fixed,percent',
                 'discount_value'    => 'nullable|numeric',
+                'reward_product_id' => 'required_if:offer_type,free_product|nullable|exists:products,id',
+                'reward_quantity'   => 'required_if:offer_type,free_product|nullable|integer|min:1',
                 'applies_to'        => 'required|in:cart,product',
                 'location_scope'    => 'required|in:dhaka,outside,all',
                 'start_date'        => 'nullable|date',
                 'end_date'          => 'nullable|date|after_or_equal:start_date',
+                'min_cart_total'    => 'nullable|numeric|min:0',
                 'product_ids'       => 'nullable|array',
                 'product_ids.*'     => 'exists:products,id'
             ]);
@@ -210,10 +254,46 @@ class OfferController extends Controller
 
             $offer->update();
 
-            if ($request->applies_to == 'product' && $request->has('product_ids')) {
-                $offer->products()->sync($request->product_ids);
+            // Handle Rewards
+            $offer->rewards()->delete();
+            if ($request->offer_type == 'free_delivery') {
+                OfferReward::create([
+                    'offer_id' => $offer->id,
+                    'reward_type' => $request->location_scope == 'all' ? 'free_delivery_country' : 'free_delivery_inside_dhaka',
+                ]);
+            } elseif ($request->offer_type == 'free_product') {
+                OfferReward::create([
+                    'offer_id' => $offer->id,
+                    'reward_type' => 'free_product',
+                    'product_id' => $request->reward_product_id,
+                    'quantity' => $request->reward_quantity,
+                ]);
             } else {
-                $offer->products()->detach();
+                OfferReward::create([
+                    'offer_id' => $offer->id,
+                    'reward_type' => $request->discount_type == 'percent' ? 'discount_percent' : 'discount_amount',
+                    'discount_value' => $request->discount_value,
+                ]);
+            }
+
+            // Handle Conditions
+            $offer->conditions()->delete();
+            if ($request->applies_to == 'product' && $request->has('product_ids')) {
+                foreach ($request->product_ids as $p_id) {
+                    OfferCondition::create([
+                        'offer_id' => $offer->id,
+                        'condition_type' => 'product_id',
+                        'value' => $p_id
+                    ]);
+                }
+            } elseif ($request->applies_to == 'cart') {
+                if ($request->filled('min_cart_total') && $request->min_cart_total > 0) {
+                    OfferCondition::create([
+                        'offer_id' => $offer->id,
+                        'condition_type' => 'cart_total',
+                        'value' => $request->min_cart_total
+                    ]);
+                }
             }
 
             return redirect()->route('offers.index')->with('t-success', 'Offer Updated Successfully.');
@@ -261,7 +341,7 @@ class OfferController extends Controller
     public function destroy(int $id): JsonResponse {
         try {
             $data = Offer::findOrFail($id);
-            $data->products()->detach(); // remove relations
+            $data->rewards()->delete(); // remove rewards
             $data->conditions()->delete(); // remove conditions
             $data->delete();
 

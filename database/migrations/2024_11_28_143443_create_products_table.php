@@ -21,9 +21,7 @@ return new class extends Migration
                 $table->string('name')->nullable();
                 $table->text('description')->nullable();
                 $table->text('image')->nullable();
-                $table->string('price')->nullable();
-                $table->string('discount_price')->nullable();
-                $table->enum('product_type',['Sweet','Product'])->nullable()->default('Product');
+                $table->enum('type', ['pcs', 'gram']);
                 $table->string('product_slug')->nullable();
                 $table->enum('status',['active','inactive'])->default('active');
                 $table->timestamps();

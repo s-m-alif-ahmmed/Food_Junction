@@ -9,6 +9,8 @@ class Offer extends Model
 {
     use HasFactory;
 
+    protected $table = 'offers';
+
     protected $fillable = [
         'name',
         'description',
@@ -20,6 +22,9 @@ class Offer extends Model
         'applies_to',
         'location_scope',
         'coupon_enabled',
+        'max_total_usage',
+        'used_total',
+        'max_usage_per_user',
         'start_date',
         'end_date',
     ];
@@ -38,9 +43,9 @@ class Offer extends Model
         return $this->hasMany(OfferCondition::class);
     }
 
-    public function products()
+    public function rewards()
     {
-        return $this->belongsToMany(Product::class, 'offer_product_maps')->withTimestamps();
+        return $this->hasMany(OfferReward::class);
     }
 
     // 🔹 Scopes

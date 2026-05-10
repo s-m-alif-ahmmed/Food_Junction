@@ -21,9 +21,13 @@ class DatabaseSeeder extends Seeder {
         DB::table('coupons')->truncate();
         DB::table('categories')->truncate();
         DB::table('products')->truncate();
+        DB::table('product_variants')->truncate();
         DB::table('offers')->truncate();
         DB::table('offer_conditions')->truncate();
-        DB::table('offer_product_maps')->truncate();
+        DB::table('offer_rewards')->truncate();
+        DB::table('packages')->truncate();
+        DB::table('package_items')->truncate();
+        DB::table('delivery_rules')->truncate();
 
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');

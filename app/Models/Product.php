@@ -18,19 +18,9 @@ class Product extends Model
         'name',
         'description',
         'image',
-        'price',
-        'discount_price',
-        'product_type',
+        'type',
         'product_slug',
         'status',
-        'pricing_type',
-        'pricing_variants',
-        'location_conditions',
-    ];
-
-    protected $casts = [
-        'pricing_variants' => 'array',
-        'location_conditions' => 'array',
     ];
 
     public function category()
@@ -58,9 +48,9 @@ class Product extends Model
     {
         return $this->belongsToMany(User::class, 'wishlists', 'product_id', 'user_id');
     }
-    public function offers()
-    {
-        return $this->belongsToMany(Offer::class, 'offer_product_maps');
-    }
 
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
 }

@@ -50,16 +50,7 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="product_type" class="form-label">Product Type:</label>
-                            <select class="form-select select2" name="product_type" id="product_type">
-                                <option value="Sweet">Sweet</option>
-                                <option value="Product" selected>Product</option>
-                            </select>
-                            @error('product_type')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+
 
                         <div class="form-group">
                             <label for="category_id" class="form-label">Category:</label>
@@ -74,19 +65,7 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="offers" class="form-label">Offers (Optional):</label>
-                            <select class="form-select select2" name="offers[]" id="offers" multiple>
-                                @foreach($offers as $offer)
-                                    <option value="{{ $offer->id }}" {{ (is_array(old('offers')) && in_array($offer->id, old('offers'))) ? 'selected' : '' }}>
-                                        {{ $offer->name }} ({{ $offer->discount_value }}{{ $offer->discount_type == 'percent' ? '%' : '' }} off)
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('offers')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+
 
                         <div class="form-group">
                             <label for="name" class="form-label">Product Name:</label>
@@ -106,23 +85,7 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="price" class="form-label">Price:</label>
-                            <input type="text" class="form-control @error('price') is-invalid @enderror"
-                                name="price" placeholder="Product price" id="price" value="{{ old('price') }}">
-                            @error('price')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
 
-                        <div class="form-group">
-                            <label for="discount_price" class="form-label">Discount Price (Optional):</label>
-                            <input type="text" class="form-control @error('discount_price') is-invalid @enderror"
-                                name="discount_price" placeholder="Product discount price" id="discount_price" value="{{ old('discount_price') }}">
-                            @error('discount_price')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
 
                         <div class="card bg-light my-4 border">
                             <div class="card-header border-bottom">
@@ -142,17 +105,24 @@
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th id="unit-label">Unit (Qty/Weight)</th>
+                                                <th id="unit-label">Quantity</th>
+                                                <th>Unit Type</th>
                                                 <th>Base Price</th>
                                                 <th>Discount Price</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody id="variants-body">
-                                            @if(old('variant_unit'))
-                                                @foreach(old('variant_unit') as $index => $unit)
+                                            @if(old('variant_quantity'))
+                                                @foreach(old('variant_quantity') as $index => $qty)
                                                     <tr>
-                                                        <td><input type="text" name="variant_unit[]" class="form-control" value="{{ $unit }}" placeholder="e.g. 500g or 1pc"></td>
+                                                        <td><input type="number" name="variant_quantity[]" class="form-control" value="{{ $qty }}" placeholder="e.g. 500"></td>
+                                                        <td>
+                                                            <select name="variant_unit_type[]" class="form-select">
+                                                                <option value="gm" {{ (old('variant_unit_type')[$index] ?? '') == 'gm' ? 'selected' : '' }}>Gram (gm)</option>
+                                                                <option value="pc" {{ (old('variant_unit_type')[$index] ?? '') == 'pc' ? 'selected' : '' }}>Piece (pc)</option>
+                                                            </select>
+                                                        </td>
                                                         <td><input type="number" name="variant_price[]" class="form-control" value="{{ old('variant_price')[$index] }}" placeholder="0.00"></td>
                                                         <td><input type="number" name="variant_discount_price[]" class="form-control" value="{{ old('variant_discount_price')[$index] }}" placeholder="0.00"></td>
                                                         <td><button type="button" class="btn btn-danger remove-row"><i class="fe fe-trash"></i></button></td>
@@ -160,7 +130,13 @@
                                                 @endforeach
                                             @else
                                                 <tr>
-                                                    <td><input type="text" name="variant_unit[]" class="form-control" placeholder="e.g. 500g or 1pc"></td>
+                                                    <td><input type="number" name="variant_quantity[]" class="form-control" placeholder="e.g. 500"></td>
+                                                    <td>
+                                                        <select name="variant_unit_type[]" class="form-select">
+                                                            <option value="gm">Gram (gm)</option>
+                                                            <option value="pc">Piece (pc)</option>
+                                                        </select>
+                                                    </td>
                                                     <td><input type="number" name="variant_price[]" class="form-control" placeholder="0.00"></td>
                                                     <td><input type="number" name="variant_discount_price[]" class="form-control" placeholder="0.00"></td>
                                                     <td><button type="button" class="btn btn-danger remove-row"><i class="fe fe-trash"></i></button></td>
@@ -173,60 +149,7 @@
                             </div>
                         </div>
 
-                        <div class="card bg-light my-4 border">
-                            <div class="card-header border-bottom">
-                                <h4 class="card-title">Location Specific Conditions</h4>
-                            </div>
-                            <div class="card-body">
-                                <div id="conditions-container">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Location Scope</th>
-                                                <th>Extra Discount (Val)</th>
-                                                <th>Free Delivery</th>
-                                                <th>Gift Item</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="conditions-body">
-                                            @if(old('loc_scope'))
-                                                @foreach(old('loc_scope') as $index => $scope)
-                                                    <tr>
-                                                        <td>
-                                                            <select name="loc_scope[]" class="form-select">
-                                                                <option value="all" {{ $scope == 'all' ? 'selected' : '' }}>All</option>
-                                                                <option value="dhaka" {{ $scope == 'dhaka' ? 'selected' : '' }}>Dhaka</option>
-                                                                <option value="outside" {{ $scope == 'outside' ? 'selected' : '' }}>Outside Dhaka</option>
-                                                            </select>
-                                                        </td>
-                                                        <td><input type="number" name="loc_discount[]" class="form-control" value="{{ old('loc_discount')[$index] }}" placeholder="0.00"></td>
-                                                        <td class="text-center"><input type="checkbox" name="loc_free_delivery[]" class="form-check-input" {{ isset(old('loc_free_delivery')[$index]) ? 'checked' : '' }}></td>
-                                                        <td><input type="text" name="loc_gift[]" class="form-control" value="{{ old('loc_gift')[$index] }}" placeholder="e.g. Coke 250ml"></td>
-                                                        <td><button type="button" class="btn btn-danger remove-row"><i class="fe fe-trash"></i></button></td>
-                                                    </tr>
-                                                @endforeach
-                                            @else
-                                                <tr>
-                                                    <td>
-                                                        <select name="loc_scope[]" class="form-select">
-                                                            <option value="all">All</option>
-                                                            <option value="dhaka">Dhaka</option>
-                                                            <option value="outside">Outside Dhaka</option>
-                                                        </select>
-                                                    </td>
-                                                    <td><input type="number" name="loc_discount[]" class="form-control" placeholder="0.00"></td>
-                                                    <td class="text-center"><input type="checkbox" name="loc_free_delivery[]" class="form-check-input"></td>
-                                                    <td><input type="text" name="loc_gift[]" class="form-control" placeholder="e.g. Coke 250ml"></td>
-                                                    <td><button type="button" class="btn btn-danger remove-row"><i class="fe fe-trash"></i></button></td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                    <button type="button" class="btn btn-info btn-sm" id="add-condition"><i class="fe fe-plus"></i> Add Condition</button>
-                                </div>
-                            </div>
-                        </div>
+
 
                         <div class="form-group">
                             <label for="summernote" class="form-label">Description:</label>
@@ -253,7 +176,13 @@
         // Add Variant Row
         $('#add-variant').click(function() {
             let row = `<tr>
-                <td><input type="text" name="variant_unit[]" class="form-control" placeholder="e.g. 500g or 1pc"></td>
+                <td><input type="number" name="variant_quantity[]" class="form-control" placeholder="e.g. 500"></td>
+                <td>
+                    <select name="variant_unit_type[]" class="form-select">
+                        <option value="gm">Gram (gm)</option>
+                        <option value="pc">Piece (pc)</option>
+                    </select>
+                </td>
                 <td><input type="number" name="variant_price[]" class="form-control" placeholder="0.00"></td>
                 <td><input type="number" name="variant_discount_price[]" class="form-control" placeholder="0.00"></td>
                 <td><button type="button" class="btn btn-danger remove-row"><i class="fe fe-trash"></i></button></td>
@@ -261,23 +190,7 @@
             $('#variants-body').append(row);
         });
 
-        // Add Condition Row
-        $('#add-condition').click(function() {
-            let row = `<tr>
-                <td>
-                    <select name="loc_scope[]" class="form-select">
-                        <option value="all">All</option>
-                        <option value="dhaka">Dhaka</option>
-                        <option value="outside">Outside Dhaka</option>
-                    </select>
-                </td>
-                <td><input type="number" name="loc_discount[]" class="form-control" placeholder="0.00"></td>
-                <td class="text-center"><input type="checkbox" name="loc_free_delivery[]" class="form-check-input"></td>
-                <td><input type="text" name="loc_gift[]" class="form-control" placeholder="e.g. Coke 250ml"></td>
-                <td><button type="button" class="btn btn-danger remove-row"><i class="fe fe-trash"></i></button></td>
-            </tr>`;
-            $('#conditions-body').append(row);
-        });
+
 
         // Remove Row
         $(document).on('click', '.remove-row', function() {

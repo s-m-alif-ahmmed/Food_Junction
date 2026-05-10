@@ -63,18 +63,23 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="" target="_blank">
+                            <a class="nav-link" href="https://www.instagram.com/foodjunctiondhaka24" target="_blank">
                                 <i class="fa-brands fa-instagram"></i>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="" target="_blank">
+                            <a class="nav-link" href="https://youtube.com/@foodjunctiondhaka24?si=vtsZlIGjI3JC3-1W" target="_blank">
                                 <i class="fa-brands fa-youtube"></i>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="" target="_blank">
+                            <a class="nav-link" href="https://x.com/foodjunction24" target="_blank">
                                 <i class="fa-brands fa-x-twitter"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://www.tiktok.com/@foodjunctiondhaka?lang=en" target="_blank">
+                                <i class="fa-brands fa-tiktok"></i>
                             </a>
                         </li>
                     </ul>

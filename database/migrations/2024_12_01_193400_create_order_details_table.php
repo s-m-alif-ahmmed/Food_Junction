@@ -16,6 +16,11 @@ return new class extends Migration
                 $table->id();
                 $table->foreignId('order_id')->nullable()->constrained('orders')->cascadeOnDelete();
                 $table->foreignId('product_id')->nullable()->constrained('products')->cascadeOnDelete();
+                $table->foreignId('variant_id')
+                    ->nullable()
+                    ->constrained('product_variants')
+                    ->nullOnDelete();
+
                 // 📦 Product Snapshot (CRITICAL)
                 $table->string('product_name'); // even if product deleted later
 
@@ -26,10 +31,10 @@ return new class extends Migration
                 $table->decimal('discount_amount', 10, 2)->default(0); // per item discount
 
                 // 📏 Quantity System (Flexible for kg + pcs)
-                $table->enum('unit_type', ['kg', 'pcs']);
+                $table->enum('unit_type', ['pcs', 'gram']);
                 $table->decimal('unit_value', 10, 2)->nullable();
                 // example:
-                // kg → 0.5 (500gm), 1 (1kg)
+                // gram → 500gm, 2500gm
                 // pcs → 1, 5, 12
 
                 $table->integer('quantity')->default(1);

@@ -20,7 +20,12 @@ return new class extends Migration
             $table->integer('priority')->default(0);
 
             // free_delivery / discount
-            $table->enum('offer_type', ['free_delivery', 'discount']);
+            $table->enum('offer_type', [
+                'free_delivery',
+                'free_product',
+                'discount',
+                'bundle_offer'
+            ]);
 
             // fixed / percent (only for discount)
             $table->enum('discount_type', ['fixed', 'percent'])->nullable();
@@ -34,8 +39,30 @@ return new class extends Migration
 
             $table->boolean('coupon_enabled')->default(false);
 
-            $table->timestamp('start_date')->nullable();
-            $table->timestamp('end_date')->nullable();
+            /*
+            |--------------------------------------------------------------------------
+            | Usage Limits
+            |--------------------------------------------------------------------------
+            */
+
+            // Maximum total times this offer can be used
+            $table->integer('max_total_usage')->nullable();
+
+            // Already used total count
+            $table->integer('used_total')->default(0);
+
+            // Max usage per user
+            $table->integer('max_usage_per_user')->nullable();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Date Limits
+            |--------------------------------------------------------------------------
+            */
+
+            $table->dateTime('start_date')->nullable();
+            $table->dateTime('end_date')->nullable();
+
             $table->timestamps();
         });
     }
