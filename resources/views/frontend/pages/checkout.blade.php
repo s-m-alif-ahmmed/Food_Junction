@@ -162,13 +162,15 @@
                                     <select id="delivery-zone-select" class="form-select"
                                             onchange="setDeliveryZone(this.value)" required >
                                         <option value="" disabled {{ !$cart->delivery_zone ? 'selected' : '' }}>-- Select Zone --</option>
-                                        <option value="inside_dhaka"   {{ $cart->delivery_zone === 'inside_dhaka'   ? 'selected' : '' }}>Inside Dhaka</option>
-                                        <option value="outside_dhaka" {{ $cart->delivery_zone === 'outside_dhaka' ? 'selected' : '' }}>Outside Dhaka</option>
+                                        @foreach($deliveryZones as $zone)
+                                            <option value="{{ $zone->slug }}" {{ $cart->delivery_zone === $zone->slug ? 'selected' : '' }}>{{ $zone->name }}</option>
+                                        @endforeach
                                     </select>
-                                    @if($cart->delivery_zone === 'outside_dhaka')
-                                        <small class="text-muted mt-1 d-block">⚠️ Outside Dhaka delivery fee: Tk 120. Some offers may not apply.</small>
-                                    @elseif($cart->delivery_zone === 'inside_dhaka')
-                                        <small class="text-success mt-1 d-block">✓ Inside Dhaka — standard delivery rate applies.</small>
+                                    @php
+                                        $currentZone = $deliveryZones->where('slug', $cart->delivery_zone)->first();
+                                    @endphp
+                                    @if($currentZone)
+                                        <small class="text-success mt-1 d-block">&#10003; {{ $currentZone->name }} &mdash; Delivery Fee: {{ englishToBengali(number_format($currentZone->delivery_charge, 0)) }} টাকা</small>
                                     @else
                                         <small class="text-muted mt-1 d-block">Please select your delivery zone to see the correct delivery fee.</small>
                                     @endif

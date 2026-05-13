@@ -25,7 +25,7 @@ return new class extends Migration
                 $table->text('note')->nullable();
 
                 // 📍 Delivery Snapshot
-                $table->enum('delivery_zone', ['dhaka', 'outside'])->nullable();
+                $table->string('delivery_zone')->nullable();
                 $table->decimal('delivery_fee', 10, 2)->default(0);
                 $table->boolean('is_free_delivery')->default(false);
 

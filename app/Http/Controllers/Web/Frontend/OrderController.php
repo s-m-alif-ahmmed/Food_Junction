@@ -55,7 +55,7 @@ class OrderController extends Controller
     // ----------------------------------------------------------------
     public function setDeliveryZone(Request $request)
     {
-        $request->validate(['zone' => 'required|in:inside_dhaka,outside_dhaka']);
+        $request->validate(['zone' => 'required|string']);
 
         try {
             $cart = $this->cartService->setDeliveryZone($request->zone);
@@ -112,7 +112,8 @@ class OrderController extends Controller
             return redirect()->route('products')->with('t-error', 'Add products to cart first.');
         }
 
-        return view('frontend.pages.checkout', compact('cart'));
+        $deliveryZones = \App\Models\DeliveryZone::where('status', 'active')->get();
+        return view('frontend.pages.checkout', compact('cart', 'deliveryZones'));
     }
 
     // ----------------------------------------------------------------

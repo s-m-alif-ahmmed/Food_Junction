@@ -50,10 +50,7 @@ return new class extends Migration
                 |--------------------------------------------------------------------------
                 */
 
-                $table->enum('delivery_zone', [
-                    'inside_dhaka',
-                    'outside_dhaka'
-                ])->nullable();
+                $table->string('delivery_zone')->nullable();
 
                 $table->decimal('delivery_fee', 10, 2)
                     ->default(0);

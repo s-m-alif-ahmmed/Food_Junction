@@ -343,7 +343,7 @@ class CartService
             foreach ($offer->rewards as $reward) {
                 switch ($reward->reward_type) {
                     case 'free_delivery_inside_dhaka':
-                        if ($cart->delivery_zone === 'inside-dhaka' || $cart->delivery_zone === 'dhaka') {
+                        if ($cart->delivery_zone === 'inside-dhaka' || $cart->delivery_zone === 'dhaka' || $cart->delivery_zone === 'inside_dhaka') {
                             $deliveryFee = 0;
                         }
                         break;
