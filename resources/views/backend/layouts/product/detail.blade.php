@@ -34,15 +34,25 @@
                             <h2 class="mb-1">{{ $data->name }}</h2>
                             <span class="badge bg-primary mb-3">{{ ucfirst($data->type) }}</span>
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <strong>Category:</strong><br>
                                     {{ $data->category->name ?? 'N/A' }}
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
+                                    <strong>Delivery Zones:</strong><br>
+                                    @if($data->deliveryZones && $data->deliveryZones->count() > 0)
+                                        @foreach($data->deliveryZones as $zone)
+                                            <span class="badge bg-info">{{ $zone->name }}</span>
+                                        @endforeach
+                                    @else
+                                        <span class="text-muted">No zones set</span>
+                                    @endif
+                                </div>
+                                <div class="col-md-3">
                                     <strong>Base Price:</strong><br>
                                     {{ number_format($data->variants->first()->price ?? 0, 2) }} Tk
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <strong>Discount Price:</strong><br>
                                     {{ ($data->variants->first() && $data->variants->first()->discount_price) ? number_format($data->variants->first()->discount_price, 2) . ' Tk' : 'None' }}
                                 </div>

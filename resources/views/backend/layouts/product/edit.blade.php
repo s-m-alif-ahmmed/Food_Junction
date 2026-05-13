@@ -67,6 +67,21 @@
                             @enderror
                         </div>
 
+                        <div class="form-group">
+                            <label for="delivery_zone_ids" class="form-label">Delivery Zones:</label>
+                            <select class="form-control select2" name="delivery_zone_ids[]" id="delivery_zone_ids" multiple>
+                                @foreach($deliveryZones as $zone)
+                                    <option value="{{ $zone->id }}"
+                                        {{ (collect(old('delivery_zone_ids', $data->deliveryZones->pluck('id')->toArray()))->contains($zone->id)) ? 'selected' : '' }}>
+                                        {{ $zone->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('delivery_zone_ids')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
 
 
                         <div class="form-group">

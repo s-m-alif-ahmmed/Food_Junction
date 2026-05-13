@@ -13,6 +13,7 @@ use App\Http\Controllers\Web\Backend\Cms\HomeBottomBannerController;
 use App\Http\Controllers\Web\Backend\Video\VideoController;
 use App\Http\Controllers\Web\Backend\Blog\BlogController;
 use App\Http\Controllers\Web\Backend\Blog\BlogCommentConroller;
+use App\Http\Controllers\Web\Backend\Product\DeliveryZoneController;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Dashboard
@@ -115,6 +116,17 @@ Route::controller(ProductController::class)->group(function () {
     Route::patch('/products/update/{id}', 'update')->name('products.update');
     Route::get('/products/status/{id}', 'status')->name('products.status');
     Route::delete('/products/delete/{id}', 'destroy')->name('products.destroy');
+});
+
+//! Route for Delivery Zones
+Route::controller(DeliveryZoneController::class)->group(function () {
+    Route::get('/delivery-zones', 'index')->name('delivery-zones.index');
+    Route::get('/delivery-zones/create', 'create')->name('delivery-zones.create');
+    Route::post('/delivery-zones/store', 'store')->name('delivery-zones.store');
+    Route::get('/delivery-zones/edit/{id}', 'edit')->name('delivery-zones.edit');
+    Route::patch('/delivery-zones/update/{id}', 'update')->name('delivery-zones.update');
+    Route::get('/delivery-zones/status/{id}', 'status')->name('delivery-zones.status');
+    Route::delete('/delivery-zones/delete/{id}', 'destroy')->name('delivery-zones.destroy');
 });
 
 //! Route for coupon

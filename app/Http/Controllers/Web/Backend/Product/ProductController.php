@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Backend\Product;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\DeliveryZone;
 use App\Models\Offer;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -75,8 +76,9 @@ class ProductController extends Controller
      * @return View
      */
     public function create(): View {
-        $categories = Category::all();
-        return view('backend.layouts.product.create', compact('categories'));
+        $categories    = Category::all();
+        $deliveryZones = DeliveryZone::where('status', 'active')->orderBy('name')->get();
+        return view('backend.layouts.product.create', compact('categories', 'deliveryZones'));
     }
 
     /**
@@ -102,6 +104,8 @@ class ProductController extends Controller
                 'variant_price'     => 'required|array',
                 'variant_price.*'   => 'required|numeric|min:0',
                 'variant_discount_price' => 'nullable|array',
+                'delivery_zone_ids' => 'nullable|array',
+                'delivery_zone_ids.*' => 'exists:delivery_zones,id',
             ]);
 
             if ($validator->fails()) {
@@ -131,6 +135,9 @@ class ProductController extends Controller
                 $data->image = $imagePath;
             }
             $data->save();
+
+            // Sync Delivery Zones
+            $data->deliveryZones()->sync($request->input('delivery_zone_ids', []));
 
             // Handle Product Variants
             if ($request->has('variant_quantity')) {
@@ -166,9 +173,10 @@ class ProductController extends Controller
      * @return View
      */
     public function edit(int $id): View {
-        $categories = Category::all();
-        $data = Product::with('variants')->findOrFail($id);
-        return view('backend.layouts.product.edit', compact('data', 'categories'));
+        $categories    = Category::all();
+        $deliveryZones = DeliveryZone::where('status', 'active')->orderBy('name')->get();
+        $data          = Product::with(['variants', 'deliveryZones'])->findOrFail($id);
+        return view('backend.layouts.product.edit', compact('data', 'categories', 'deliveryZones'));
     }
 
     /**
@@ -195,6 +203,8 @@ class ProductController extends Controller
                 'variant_price'     => 'required|array',
                 'variant_price.*'   => 'required|numeric|min:0',
                 'variant_discount_price' => 'nullable|array',
+                'delivery_zone_ids' => 'nullable|array',
+                'delivery_zone_ids.*' => 'exists:delivery_zones,id',
             ]);
 
             if ($validator->fails()) {
@@ -232,6 +242,9 @@ class ProductController extends Controller
             }
 
             $data->save();
+
+            // Sync Delivery Zones
+            $data->deliveryZones()->sync($request->input('delivery_zone_ids', []));
 
             // Handle Product Variants
             $data->variants()->delete(); // Remove old variants

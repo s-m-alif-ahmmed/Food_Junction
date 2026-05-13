@@ -53,4 +53,13 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class);
     }
+
+    /**
+     * Delivery zones assigned to this product (many-to-many).
+     */
+    public function deliveryZones()
+    {
+        return $this->belongsToMany(DeliveryZone::class, 'delivery_zone_product', 'product_id', 'delivery_zone_id')
+                    ->withTimestamps();
+    }
 }
