@@ -27,7 +27,7 @@ class CartController extends Controller
         // Ensure totals are up-to-date
         $this->cartService->calculateTotals($cart);
         
-        $deliveryZones = \App\Models\DeliveryZone::where('status', 'active')->get();
+        $deliveryZones = $this->cartService->getAvailableDeliveryZones($cart);
         
         // Pass the single cart to the view, which has relations ->items
         // that contain the product and quantity details

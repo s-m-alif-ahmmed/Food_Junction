@@ -13,8 +13,10 @@ use App\Models\HomeBanner;
 use App\Models\HomeBottomBanner;
 use App\Models\Offer;
 use App\Models\OfferCondition;
+use App\Models\OfferReward;
 use App\Models\Product;
 use App\Models\ProductReview;
+use App\Models\ProductVariant;
 use App\Models\Video;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -29,19 +31,44 @@ class HomeController extends Controller {
         $home_banners = HomeBanner::with('offers')->where('status', 'active')->latest()->get();
         $home_bottom_banner = HomeBottomBanner::first();
 
-        // Offer Products: Products with discounted variants OR linked to an active offer
-        $activeProductIds = OfferCondition::where('condition_type', 'product_id')
-            ->whereHas('offer', function($q) {
-                $q->where('is_active', true);
-            })->pluck('value')->toArray();
+        // Offer Products: Products with discounted variants OR linked to an active offer (condition or reward)
+        $activeOfferIds = Offer::active()->pluck('id')->toArray();
+
+        $productIdsFromConditions = OfferCondition::whereIn('offer_id', $activeOfferIds)
+            ->where('condition_type', 'product_id')
+            ->pluck('value')
+            ->toArray();
+
+        $variantIdsFromConditions = OfferCondition::whereIn('offer_id', $activeOfferIds)
+            ->where('condition_type', 'variant_id')
+            ->pluck('value')
+            ->toArray();
+
+        $productIdsFromRewards = OfferReward::whereIn('offer_id', $activeOfferIds)
+            ->whereNotNull('product_id')
+            ->pluck('product_id')
+            ->toArray();
+
+        $variantIdsFromRewards = OfferReward::whereIn('offer_id', $activeOfferIds)
+            ->whereNotNull('variant_id')
+            ->pluck('variant_id')
+            ->toArray();
+
+        $allOfferVariantIds = array_unique(array_merge($variantIdsFromConditions, $variantIdsFromRewards));
+        $productIdsFromVariants = ProductVariant::whereIn('id', $allOfferVariantIds)->pluck('product_id')->toArray();
+
+        $allOfferProductIds = array_unique(array_merge($productIdsFromConditions, $productIdsFromRewards, $productIdsFromVariants));
 
         $offer_products = Product::where('status', 'active')
-            ->where(function($query) use ($activeProductIds) {
+            ->where(function($query) use ($allOfferProductIds) {
                 $query->whereHas('variants', function($q) {
-                          $q->whereNotNull('sale_price');
+                          $q->whereNotNull('sale_price')->where('status', 'Active');
                       })
-                      ->orWhereIn('id', $activeProductIds);
+                      ->orWhereIn('id', $allOfferProductIds);
             })
+            ->with(['variants' => function($q) {
+                $q->where('status', 'Active');
+            }])
             ->latest()
             ->get();
 

@@ -48,6 +48,27 @@ class CartService
         }
 
         $cart = $this->getCart();
+
+        // Check delivery zone compatibility
+        if ($cart->items->isNotEmpty()) {
+            $availableZones = $this->getAvailableDeliveryZones($cart);
+            $productZones = $product->deliveryZones()->where('status', 'active')->get();
+
+            if ($productZones->isNotEmpty()) {
+                $intersect = $availableZones->pluck('id')->intersect($productZones->pluck('id'));
+                if ($intersect->isEmpty()) {
+                    throw new \Exception('This product cannot be added because it is not available in the delivery zones supported by your current cart items. Please remove existing items first.');
+                }
+            }
+
+            // Also check if the already selected delivery zone in the cart is compatible with the new product
+            if ($cart->delivery_zone && $productZones->isNotEmpty()) {
+                $supportedSlugs = $productZones->pluck('slug')->toArray();
+                if (!in_array($cart->delivery_zone, $supportedSlugs)) {
+                    throw new \Exception('This product is not available in your currently selected delivery zone. Please remove the items or change the delivery zone in the cart.');
+                }
+            }
+        }
         
         // Find existing item with same variant
         $query = CartItem::where('cart_id', $cart->id)
@@ -494,6 +515,36 @@ class CartService
             'between' => is_array($target) ? ($actual >= $target[0] && $actual <= $target[1]) : ($actual >= $target), // fallback
             default => true,
         };
+    }
+
+    /**
+     * Get available delivery zones based on products in the cart.
+     * Only returns zones that are active and supported by all products in the cart.
+     */
+    public function getAvailableDeliveryZones(Cart $cart)
+    {
+        $items = $cart->items()->with('product.deliveryZones')->get();
+        if ($items->isEmpty()) {
+            return \App\Models\DeliveryZone::where('status', 'active')->get();
+        }
+
+        $allActiveZones = \App\Models\DeliveryZone::where('status', 'active')->get();
+        $availableZoneIds = $allActiveZones->pluck('id')->toArray();
+
+        foreach ($items as $item) {
+            $product = $item->product;
+            if (!$product) continue;
+
+            $productZones = $product->deliveryZones()->where('status', 'active')->pluck('delivery_zones.id')->toArray();
+
+            // If product has specific zones assigned, intersect with current available zones
+            if (!empty($productZones)) {
+                $availableZoneIds = array_intersect($availableZoneIds, $productZones);
+            }
+            // If product has no zones assigned, we assume it's available in all zones (no-op)
+        }
+
+        return \App\Models\DeliveryZone::whereIn('id', $availableZoneIds)->where('status', 'active')->get();
     }
 
     /**

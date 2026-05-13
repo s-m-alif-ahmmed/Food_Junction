@@ -325,16 +325,19 @@
                     data: formData, // Serialized form data
                     success: function (response) {
                         if (response.success) {
-                            // Success feedback
                             showSuccessToast(response['t-success'] || 'Item successfully added to cart!');
                         } else {
-                            // Handle potential errors from the server
-                            showErrorToast(response['t-error'] || 'Something went wrong. Please try again.');
+                            showErrorToast(response.error || response['t-error'] || 'Something went wrong.');
                         }
                     },
                     error: function (xhr) {
-                        // Handle AJAX errors
-                        showErrorToast('An error occurred while adding the item to the cart. Please try again.');
+                        let message = 'An error occurred. Please try again.';
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            message = xhr.responseJSON.error;
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            message = xhr.responseJSON.message;
+                        }
+                        showErrorToast(message);
                     }
                 });
             });

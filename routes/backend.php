@@ -14,6 +14,8 @@ use App\Http\Controllers\Web\Backend\Video\VideoController;
 use App\Http\Controllers\Web\Backend\Blog\BlogController;
 use App\Http\Controllers\Web\Backend\Blog\BlogCommentConroller;
 use App\Http\Controllers\Web\Backend\Product\DeliveryZoneController;
+use App\Http\Controllers\Web\Backend\Offer\OfferController;
+use App\Http\Controllers\Web\Backend\Settings\ScriptController;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Dashboard
@@ -152,7 +154,6 @@ Route::controller(AdminOrderController::class)->group(function () {
 });
 
 //! Route for Offers
-use App\Http\Controllers\Web\Backend\Offer\OfferController;
 Route::controller(OfferController::class)->group(function () {
     Route::get('/offers', 'index')->name('offers.index');
     Route::get('/offers/create', 'create')->name('offers.create');
@@ -166,7 +167,6 @@ Route::controller(OfferController::class)->group(function () {
 });
 
 //! Route for Script Settings
-use App\Http\Controllers\Web\Backend\Settings\ScriptController;
 Route::controller(ScriptController::class)->group(function () {
     Route::get('/settings/scripts', 'index')->name('scripts.index');
     Route::get('/settings/scripts/create', 'create')->name('scripts.create');

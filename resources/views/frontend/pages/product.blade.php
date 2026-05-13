@@ -36,14 +36,36 @@
                                 <div class="card-body border-0 mb-3 h-100">
                                     <h5 class="fsw-bold">{{ $product->name }}</h5>
                                     @php
-                                        $minVariant = $product->variants->sortBy(function($variant) {
-                                            return $variant->discount_price ?? $variant->price;
-                                        })->first();
-                                        $price = $minVariant ? $minVariant->price : 0;
-                                        $discount = $minVariant ? $minVariant->discount_price : null;
-                                        $unit = $minVariant ? ($minVariant->quantity . ' ' . $minVariant->unit_type) : '';
+                                        $minVariant = $product->variants
+                                             ->where('status', 'Active')
+                                             ->sortBy(function($variant) {
+                                                 return $variant->sale_price ?? $variant->price;
+                                             })
+                                             ->first();
+
+                                         $price = $minVariant?->price ?? 0;
+                                         $discount = $minVariant?->sale_price;
+                                         $quantity = $minVariant?->quantity;
+                                         $unit = $minVariant?->unit;
+                                         $variantType = $minVariant?->variant_type;
                                     @endphp
-                                    <p class="fsw-semibold">{{ $unit ? $unit . ' - ' : '' }}{{ $discount ?? $price }} টাকা @if($discount)( <span class="text-danger"><del>{{ $price }} টাকা</del></span> ) @endif </p>
+                                    <div class="d-flex justify-content-between">
+                                        <p class="fsw-semibold">
+                                            {{ number_format($discount ?? $price, 0) }} টাকা
+                                            @if($discount)
+                                                (
+                                                <span class="text-danger">
+                                                <del>{{ number_format($price, 0) }} টাকা</del>
+                                            </span>
+                                                )
+                                            @endif
+                                        </p>
+
+                                        <p class="fsw-semibold me-1">
+                                            {{ $quantity }} {{ $unit }}
+                                            ({{ strtoupper($variantType) }})
+                                        </p>
+                                    </div>
                                     <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
                                 </div>
                             </div>

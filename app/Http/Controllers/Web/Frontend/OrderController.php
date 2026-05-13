@@ -112,7 +112,7 @@ class OrderController extends Controller
             return redirect()->route('products')->with('t-error', 'Add products to cart first.');
         }
 
-        $deliveryZones = \App\Models\DeliveryZone::where('status', 'active')->get();
+        $deliveryZones = $this->cartService->getAvailableDeliveryZones($cart);
         return view('frontend.pages.checkout', compact('cart', 'deliveryZones'));
     }
 
