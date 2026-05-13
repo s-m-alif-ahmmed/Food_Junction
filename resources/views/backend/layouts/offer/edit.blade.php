@@ -104,6 +104,7 @@
                             <select class="form-select select2" name="applies_to" id="applies_to" required>
                                 <option value="cart" {{ old('applies_to', $data->applies_to) == 'cart' ? 'selected' : '' }}>Entire Cart</option>
                                 <option value="product" {{ old('applies_to', $data->applies_to) == 'product' ? 'selected' : '' }}>Specific Products</option>
+                                <option value="variant" {{ old('applies_to', $data->applies_to) == 'variant' ? 'selected' : '' }}>Specific Variants</option>
                             </select>
                             @error('applies_to')
                                 <span class="text-danger">{{ $message }}</span>
@@ -112,8 +113,24 @@
 
                         @php
                             $selectedProductIds = $data->conditions->where('condition_type', 'product_id')->pluck('value')->toArray();
+                            $selectedVariantIds = $data->conditions->where('condition_type', 'variant_id')->pluck('value')->toArray();
+                            
+                            $firstVariant = null;
+                            $selectedProductIdForVariant = '';
+                            if (!empty($selectedVariantIds)) {
+                                $firstVariant = \App\Models\ProductVariant::find($selectedVariantIds[0]);
+                                $selectedProductIdForVariant = $firstVariant ? $firstVariant->product_id : '';
+                            }
+
                             $cartCondition = $data->conditions->where('condition_type', 'cart_total')->first();
                             $minCartTotal = $cartCondition ? $cartCondition->value : '';
+
+                            $qtyCondition = $data->conditions->where('condition_type', 'min_quantity')->first();
+                            $weightCondition = $data->conditions->where('condition_type', 'min_weight')->first();
+                            $activeCondition = $qtyCondition ?? $weightCondition;
+                            $condType = $qtyCondition ? 'quantity' : ($weightCondition ? 'weight' : '');
+                            $condOperator = $activeCondition ? $activeCondition->operator : '>=';
+                            $condValue = $activeCondition ? $activeCondition->value : '';
                         @endphp
                         <div class="form-group" id="min_cart_total_group" style="display: none;">
                             <label for="min_cart_total" class="form-label">Minimum Cart Total (Optional):</label>
@@ -135,12 +152,72 @@
                             @enderror
                         </div>
 
+                        <div id="variant_selection_group" style="display: none;">
+                            <div class="form-group">
+                                <label for="select_product" class="form-label">Select Product:</label>
+                                <select class="form-select select2" id="select_product">
+                                    <option value="">Select Product</option>
+                                    @foreach($products as $product)
+                                        <option value="{{ $product->id }}" {{ $selectedProductIdForVariant == $product->id ? 'selected' : '' }}>{{ $product->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="variant_ids" class="form-label">Select Variants:</label>
+                                <select class="form-select select2" name="variant_ids[]" id="variant_ids" multiple>
+                                    @if($data->applies_to == 'variant')
+                                        @foreach(\App\Models\ProductVariant::with('product')->whereIn('id', $selectedVariantIds)->get() as $variant)
+                                            <option value="{{ $variant->id }}" selected>{{ $variant->product->name }} - {{ $variant->quantity }} {{ $variant->unit }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                @error('variant_ids')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div id="condition_details_group" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="condition_type" class="form-label">Condition Based On:</label>
+                                        <select class="form-select select2" name="condition_type" id="condition_type">
+                                            <option value="">No Condition</option>
+                                            <option value="quantity" {{ old('condition_type', $condType) == 'quantity' ? 'selected' : '' }}>Quantity</option>
+                                            <option value="weight" {{ old('condition_type', $condType) == 'weight' ? 'selected' : '' }}>Weight</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="operator" class="form-label">Operator:</label>
+                                        <select class="form-select select2" name="operator" id="operator">
+                                            <option value="=" {{ old('operator', $condOperator) == '=' ? 'selected' : '' }}>Equal</option>
+                                            <option value=">=" {{ old('operator', $condOperator) == '>=' ? 'selected' : '' }}>Greater than or Equal</option>
+                                            <option value="<=" {{ old('operator', $condOperator) == '<=' ? 'selected' : '' }}>Less than or Equal</option>
+                                            <option value=">" {{ old('operator', $condOperator) == '>' ? 'selected' : '' }}>Greater than</option>
+                                            <option value="<" {{ old('operator', $condOperator) == '<' ? 'selected' : '' }}>Less than</option>
+                                            <option value="between" {{ old('operator', $condOperator) == 'between' ? 'selected' : '' }}>Between</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="condition_value" class="form-label">Value:</label>
+                                        <input type="number" step="0.01" class="form-control" name="condition_value" id="condition_value" value="{{ old('condition_value', $condValue) }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label for="location_scope" class="form-label">Location Scope:</label>
                             <select class="form-select select2" name="location_scope" id="location_scope" required>
                                 <option value="all" {{ old('location_scope', $data->location_scope) == 'all' ? 'selected' : '' }}>All Locations</option>
-                                <option value="dhaka" {{ old('location_scope', $data->location_scope) == 'dhaka' ? 'selected' : '' }}>Inside Dhaka</option>
-                                <option value="outside" {{ old('location_scope', $data->location_scope) == 'outside' ? 'selected' : '' }}>Outside Dhaka</option>
+                                @foreach($deliveryZones as $zone)
+                                    <option value="{{ $zone->slug }}" {{ old('location_scope', $data->location_scope) == $zone->slug ? 'selected' : '' }}>{{ $zone->name }}</option>
+                                @endforeach
                             </select>
                             @error('location_scope')
                                 <span class="text-danger">{{ $message }}</span>
@@ -232,16 +309,41 @@
             }
 
             let appliesTo = $('#applies_to').val();
+            $('#min_cart_total_group').hide();
+            $('#product_ids_group').hide();
+            $('#variant_selection_group').hide();
+            $('#condition_details_group').hide();
+
             if (appliesTo === 'product') {
                 $('#product_ids_group').show();
-                $('#min_cart_total_group').hide();
+                $('#condition_details_group').show();
+            } else if (appliesTo === 'variant') {
+                $('#variant_selection_group').show();
+                $('#condition_details_group').show();
             } else {
-                $('#product_ids_group').hide();
                 $('#min_cart_total_group').show();
             }
         }
 
         $('#offer_type, #applies_to').on('change', toggleFields);
+
+        $('#select_product').on('change', function() {
+            let productId = $(this).val();
+            if (productId) {
+                $.ajax({
+                    url: "{{ route('get.variants', ':id') }}".replace(':id', productId),
+                    type: "GET",
+                    success: function(data) {
+                        $('#variant_ids').empty();
+                        $.each(data, function(key, variant) {
+                            $('#variant_ids').append('<option value="' + variant.id + '">' + variant.product.name + ' - ' + variant.quantity + ' ' + variant.unit + '</option>');
+                        });
+                        $('#variant_ids').trigger('change');
+                    }
+                });
+            }
+        });
+
         toggleFields(); // Initial call
     });
 </script>

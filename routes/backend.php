@@ -157,9 +157,23 @@ Route::controller(OfferController::class)->group(function () {
     Route::get('/offers', 'index')->name('offers.index');
     Route::get('/offers/create', 'create')->name('offers.create');
     Route::post('/offers/store', 'store')->name('offers.store');
-    Route::get('/offers/show/{id}', 'show')->name('offers.show');
     Route::get('/offers/edit/{id}', 'edit')->name('offers.edit');
+    Route::get('/offers/show/{id}', 'show')->name('offers.show');
     Route::patch('/offers/update/{id}', 'update')->name('offers.update');
     Route::get('/offers/status/{id}', 'status')->name('offers.status');
     Route::delete('/offers/delete/{id}', 'destroy')->name('offers.destroy');
+    Route::get('/get-variants/{product_id}', 'getVariants')->name('get.variants');
 });
+
+//! Route for Script Settings
+use App\Http\Controllers\Web\Backend\Settings\ScriptController;
+Route::controller(ScriptController::class)->group(function () {
+    Route::get('/settings/scripts', 'index')->name('scripts.index');
+    Route::get('/settings/scripts/create', 'create')->name('scripts.create');
+    Route::post('/settings/scripts/store', 'store')->name('scripts.store');
+    Route::get('/settings/scripts/edit/{id}', 'edit')->name('scripts.edit');
+    Route::patch('/settings/scripts/update/{id}', 'update')->name('scripts.update');
+    Route::get('/settings/scripts/status/{id}', 'status')->name('scripts.status');
+    Route::delete('/settings/scripts/delete/{id}', 'destroy')->name('scripts.destroy');
+});
+

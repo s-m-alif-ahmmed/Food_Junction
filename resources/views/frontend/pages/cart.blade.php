@@ -106,16 +106,20 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-2 col-md-2 col-sm-2 col-2 d-flex align-items-center justify-content-end">
-                                        <form action="{{ route('remove.cart', ['id' => $item->product_id]) }}" method="post" style="display: inline;">
-                                            @csrf
-                                            @method('POST')
+                                        @if($item->is_free)
+                                            <span class="badge bg-success">উপহার</span>
+                                        @else
+                                            <form action="{{ route('remove.cart', ['id' => $item->product_id]) }}" method="post" style="display: inline;">
+                                                @csrf
+                                                @method('POST')
 
-                                            <input type="hidden" name="product_id" value="{{ $item->product_id }}" />
+                                                <input type="hidden" name="product_id" value="{{ $item->product_id }}" />
 
-                                            <button type="submit" class="btn p-0 m-0 border-0 bg-transparent">
-                                                <i class="fa-solid fa-trash text-danger"></i>
-                                            </button>
-                                        </form>
+                                                <button type="submit" class="btn p-0 m-0 border-0 bg-transparent">
+                                                    <i class="fa-solid fa-trash text-danger"></i>
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </div>
                             @endforeach
@@ -136,13 +140,15 @@
                                     <select id="delivery-zone-select" class="form-select"
                                             onchange="setDeliveryZone(this.value)" required >
                                         <option value="" disabled {{ !$cart->delivery_zone ? 'selected' : '' }}>-- Select Zone --</option>
-                                        <option value="inside_dhaka"  {{ $cart->delivery_zone === 'inside_dhaka'  ? 'selected' : '' }}>Inside Dhaka</option>
-                                        <option value="outside_dhaka" {{ $cart->delivery_zone === 'outside_dhaka' ? 'selected' : '' }}>Outside Dhaka</option>
+                                        @foreach($deliveryZones as $zone)
+                                            <option value="{{ $zone->slug }}" {{ $cart->delivery_zone === $zone->slug ? 'selected' : '' }}>{{ $zone->name }}</option>
+                                        @endforeach
                                     </select>
-                                    @if($cart->delivery_zone === 'outside_dhaka')
-                                        <small class="text-muted mt-1 d-block">&#9888; Outside Dhaka delivery fee: 120 টাকা. Some offers may not apply.</small>
-                                    @elseif($cart->delivery_zone === 'inside_dhaka')
-                                        <small class="text-success mt-1 d-block">&#10003; Inside Dhaka &mdash; standard delivery rate applies.</small>
+                                    @php
+                                        $currentZone = $deliveryZones->where('slug', $cart->delivery_zone)->first();
+                                    @endphp
+                                    @if($currentZone)
+                                        <small class="text-success mt-1 d-block">&#10003; {{ $currentZone->name }} &mdash; Delivery Fee: {{ englishToBengali(number_format($currentZone->delivery_charge, 0)) }} টাকা</small>
                                     @else
                                         <small class="text-muted mt-1 d-block">Please select your delivery zone to see the correct delivery fee.</small>
                                     @endif

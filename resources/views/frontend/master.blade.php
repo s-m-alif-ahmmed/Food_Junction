@@ -25,6 +25,14 @@
 
     @stack('styles')
 
+    {{-- Render Header Scripts --}}
+    @php
+        $headerScripts = \App\Models\ScriptSetting::where('place', 'header')->where('status', 'active')->get();
+    @endphp
+    @foreach($headerScripts as $script)
+        {!! $script->script !!}
+    @endforeach
+
 </head>
 <body>
 

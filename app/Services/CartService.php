@@ -233,17 +233,17 @@ class CartService
     }
 
     /**
-     * Set delivery zone (dhaka / outside) and recalculate totals.
+     * Set delivery zone (slug) and recalculate totals.
      */
-    public function setDeliveryZone(string $zone): Cart
+    public function setDeliveryZone(string $zoneSlug): Cart
     {
-        $allowed = ['inside_dhaka', 'outside_dhaka'];
-        if (!in_array($zone, $allowed)) {
-            throw new \Exception('Invalid delivery zone selected.');
+        $zone = \App\Models\DeliveryZone::where('slug', $zoneSlug)->where('status', 'active')->first();
+        if (!$zone) {
+            throw new \Exception('Invalid or inactive delivery zone selected.');
         }
 
         $cart = $this->getCart();
-        $cart->delivery_zone = $zone;
+        $cart->delivery_zone = $zoneSlug;
         $cart->save();
 
         $this->calculateTotals($cart);
@@ -257,94 +257,61 @@ class CartService
      */
     public function calculateTotals(Cart $cart)
     {
-        $items = $cart->items()->with('product')->get();
+        $items = $cart->items()->with(['product', 'variant'])->get();
 
         $subTotal = 0;
         $totalSweetWeight = 0; // in grams
         $offerDiscount = 0;
 
-        // Zone-aware base delivery fee
-        $zone = $cart->delivery_zone;
-        $deliveryFee = match($zone) {
-            'outside_dhaka' => 120,
-            'inside_dhaka'  => 60,
-            default         => 60,
-        };
+        // Dynamic Delivery Zone Calculation
+        $deliveryFee = 0;
+        if ($cart->delivery_zone) {
+            $zone = \App\Models\DeliveryZone::where('slug', $cart->delivery_zone)->first();
+            if ($zone) {
+                $deliveryFee = $zone->delivery_charge;
+            }
+        } else {
+            // Default or fallback
+            $deliveryFee = 60; 
+        }
 
-        // Calculate line totals
+        // Calculate line totals and identify standard items (exclude existing gifts)
         foreach ($items as $item) {
+            if ($item->is_free) continue;
+
             $product = $item->product;
             if (!$product) continue;
 
-            // Use stored unit_price (which is set in addItem based on variants)
             $price = $item->unit_price;
+            $lineTotal = $item->quantity * $price;
+            $subTotal += $lineTotal;
 
-            if ($item->variant_id) {
-                // If it's a variant, we treat it as quantity based usually (e.g. 1 x 1kg variant)
-                $lineTotal = $item->quantity * $price;
-                $subTotal += $lineTotal;
-            } elseif ($product->product_type === 'Sweet') {
-                if ($item->unit_value > 0) {
-                    $gmPrice = $price / 1000;
-                    $weight = $item->unit_value;
-                    $lineTotal = $gmPrice * $weight;
-                    $subTotal += $lineTotal;
-                    $totalSweetWeight += $weight;
-                } else {
-                    $lineTotal = $item->quantity * $price;
-                    $subTotal += $lineTotal;
-                }
-            } elseif ($product->product_type === 'Product') {
-                $lineTotal = $item->quantity * $price;
-                $subTotal += $lineTotal;
-            } else {
-                $lineTotal = $item->quantity * $price;
-                $subTotal += $lineTotal;
+            if ($product->product_type === 'Sweet' && $item->variant_quantity > 0) {
+                $totalSweetWeight += ($item->variant_quantity * $item->quantity);
             }
 
             // Update item total price
             $item->subtotal = $lineTotal;
             $item->total = $lineTotal;
             $item->save();
-
-            // ==========================================
-            // NEW: Product-Specific Location Conditions
-            // ==========================================
-            if ($product->location_conditions) {
-                foreach ($product->location_conditions as $cond) {
-                    if ($cond['scope'] == 'all' || ($cart->delivery_zone && $cond['scope'] == $cart->delivery_zone)) {
-                        if (!empty($cond['discount'])) {
-                            // Apply discount per item quantity
-                            $offerDiscount += ($cond['discount'] * $item->quantity);
-                        }
-                        if ($cond['free_delivery']) {
-                            $deliveryFee = 0;
-                        }
-                    }
-                }
-            }
         }
+
+        // Remove old gifts before recalculating
+        $cart->items()->where('is_free', true)->delete();
+        $items = $cart->items()->with(['product', 'variant'])->get(); // Refresh items after deletion
 
         $couponDiscount = 0;
 
         // ==========================================
-        // 1. LEGACY HARDCODED LOGIC (Isolated for easy removal)
+        // 1. LEGACY HARDCODED LOGIC
         // ==========================================
-//        if ($cart->user_id) { // Equivalent to Auth::check()
-//            $offerDiscount += $subTotal * 0.05; // 5% login discount
-//        }
-
-        $legacyFreeDelivery = false;
         if ($totalSweetWeight > 2000) {
-            $legacyFreeDelivery = true; // Free delivery for >2kg sweets
-        }
-
-        if ($legacyFreeDelivery) {
-            $deliveryFee = 0;
+            $deliveryFee = 0; // Free delivery for >2kg sweets
         }
         // ==========================================
         // END LEGACY HARDCODED LOGIC
         // ==========================================
+
         // ==========================================
         // 2. ADVANCED DYNAMIC OFFER ENGINE LOGIC
         // ==========================================
@@ -355,13 +322,8 @@ class CartService
 
         foreach ($activeOffers as $offer) {
             // Check location scope at offer level
-            if ($offer->location_scope !== 'all') {
-                $mappedZone = match($cart->delivery_zone) {
-                    'inside_dhaka' => 'dhaka',
-                    'outside_dhaka' => 'outside',
-                    default => null,
-                };
-                if ($mappedZone !== $offer->location_scope) {
+            if ($offer->location_scope && $offer->location_scope !== 'all') {
+                if ($cart->delivery_zone !== $offer->location_scope) {
                     continue;
                 }
             }
@@ -381,7 +343,7 @@ class CartService
             foreach ($offer->rewards as $reward) {
                 switch ($reward->reward_type) {
                     case 'free_delivery_inside_dhaka':
-                        if ($cart->delivery_zone === 'inside_dhaka') {
+                        if ($cart->delivery_zone === 'inside-dhaka' || $cart->delivery_zone === 'dhaka') {
                             $deliveryFee = 0;
                         }
                         break;
@@ -394,11 +356,28 @@ class CartService
                     case 'discount_amount':
                         $offerDiscount += $reward->discount_value;
                         break;
-                    // Add other reward types as needed
+                    case 'free_product':
+                        if ($reward->product_id) {
+                            $giftProduct = Product::find($reward->product_id);
+                            if ($giftProduct) {
+                                CartItem::create([
+                                    'cart_id' => $cart->id,
+                                    'product_id' => $giftProduct->id,
+                                    'item_type' => 'product',
+                                    'quantity' => $reward->quantity ?? 1,
+                                    'unit_price' => 0,
+                                    'is_free' => true,
+                                    'offer_id' => $offer->id,
+                                    'subtotal' => 0,
+                                    'total' => 0,
+                                ]);
+                            }
+                        }
+                        break;
                 }
             }
 
-            // Handle legacy offer_type if rewards are empty (for backward compatibility if needed)
+            // Backward compatibility for legacy offer fields
             if ($offer->rewards->isEmpty()) {
                 if ($offer->offer_type === 'free_delivery') {
                     $deliveryFee = 0;
@@ -450,18 +429,49 @@ class CartService
      */
     private function checkOfferCondition($condition, $cart, $items, $subTotal): bool
     {
+        // Identify if this condition is linked to a specific product/variant in the same offer
+        // Usually, if multiple conditions exist, they are ANDed.
+        // If an offer has a variant_id condition, then min_quantity should check THAT variant.
+        
         switch ($condition->condition_type) {
             case 'min_quantity':
-                $totalQty = $items->sum('quantity');
-                return $this->evaluateCondition($totalQty, $condition->operator, $condition->value);
+                // Check if there's a variant_id or product_id condition in the SAME offer
+                $offer = $condition->offer;
+                $vCond = $offer->conditions->where('condition_type', 'variant_id')->first();
+                $pCond = $offer->conditions->where('condition_type', 'product_id')->first();
+
+                if ($vCond) {
+                    $qty = $items->where('variant_id', $vCond->value)->sum('quantity');
+                } elseif ($pCond) {
+                    $qty = $items->where('product_id', $pCond->value)->sum('quantity');
+                } else {
+                    $qty = $items->sum('quantity');
+                }
+                return $this->evaluateCondition($qty, $condition->operator, $condition->value);
+
             case 'min_weight':
+                $offer = $condition->offer;
+                $vCond = $offer->conditions->where('condition_type', 'variant_id')->first();
+                $pCond = $offer->conditions->where('condition_type', 'product_id')->first();
+
                 $totalWeight = 0;
-                foreach ($items as $item) {
-                    if ($item->product->product_type === 'Sweet') {
-                        $totalWeight += $item->unit_value;
+                if ($vCond) {
+                    $vItems = $items->where('variant_id', $vCond->value);
+                    foreach ($vItems as $vi) {
+                        $totalWeight += ($vi->variant_quantity * $vi->quantity);
+                    }
+                } elseif ($pCond) {
+                    $pItems = $items->where('product_id', $pCond->value);
+                    foreach ($pItems as $pi) {
+                        $totalWeight += ($pi->variant_quantity * $pi->quantity);
+                    }
+                } else {
+                    foreach ($items as $item) {
+                        $totalWeight += ($item->variant_quantity * $item->quantity);
                     }
                 }
                 return $this->evaluateCondition($totalWeight, $condition->operator, $condition->value);
+
             case 'cart_total':
                 return $this->evaluateCondition($subTotal, $condition->operator, $condition->value);
             case 'product_id':
@@ -481,6 +491,7 @@ class CartService
             '='  => $actual == $target,
             '>'  => $actual > $target,
             '<'  => $actual < $target,
+            'between' => is_array($target) ? ($actual >= $target[0] && $actual <= $target[1]) : ($actual >= $target), // fallback
             default => true,
         };
     }

@@ -117,6 +117,7 @@
                         <li><a href="{{ route('profile.setting') }}" class="slide-item {{ request()->routeIs('profile.setting') ? 'active' : '' }}">Profile Settings</a></li>
                         <li><a href="{{ route('system.index') }}" class="slide-item {{ request()->routeIs('system.index') ? 'active' : '' }}">System Settings</a></li>
                         <li><a href="{{ route('settings.dynamic_page.index') }}" class="slide-item {{ request()->is('admin/settings/dynamic-page*') ? 'active' : '' }}">Dynamic Pages</a></li>
+                        <li><a href="{{ route('scripts.index') }}" class="slide-item {{ request()->routeIs('scripts.*') ? 'active' : '' }}">Script Settings</a></li>
                     </ul>
                 </li>
             </ul>

@@ -35,7 +35,7 @@ return new class extends Migration
             $table->enum('applies_to', ['cart', 'product'])->default('cart');
 
             // dhaka / outside / all
-            $table->enum('location_scope', ['dhaka', 'outside', 'all'])->default('all');
+            $table->string('location_scope')->nullable();
 
             $table->boolean('coupon_enabled')->default(false);
 

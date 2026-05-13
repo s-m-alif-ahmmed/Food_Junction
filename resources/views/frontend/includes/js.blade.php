@@ -9,19 +9,15 @@
 {{--Toast--}}
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-        s1.async=true;
-        s1.src='https://embed.tawk.to/69ff5c8d70a2851c33d2867e/1jo6o3304';
-        s1.charset='UTF-8';
-        s1.setAttribute('crossorigin','*');
-        s0.parentNode.insertBefore(s1,s0);
-    })();
-</script>
-<!--End of Tawk.to Script-->
+
+{{-- Render Footer Scripts --}}
+@php
+    $footerScripts = \App\Models\ScriptSetting::where('place', 'footer')->where('status', 'active')->get();
+@endphp
+@foreach($footerScripts as $script)
+    {!! $script->script !!}
+@endforeach
+
 
 <script>
     // Toaster
