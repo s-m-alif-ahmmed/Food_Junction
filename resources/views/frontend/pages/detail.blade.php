@@ -77,15 +77,27 @@
                         </div>
                     </div>
                     <div class="sweet-price">
-                        <div class="d-flex">
-                            @php
-                                $firstVariant = $product->variants->first();
-                                $price = $firstVariant ? $firstVariant->price : 0;
-                                $discount = $firstVariant ? $firstVariant->sale_price : null;
-                            @endphp
-                            <p class="price">{{ $discount ?? $price }} টাকা</p>
-                            @if($discount)
-                                <span class="discount-price">&nbsp;(<del>{{ $price }} টাকা</del>)</span>
+                        <div id="price-variant-display" class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                @php
+                                    $firstVariant = $product->variants->first();
+                                    $price = $firstVariant ? $firstVariant->price : 0;
+                                    $discount = $firstVariant ? $firstVariant->sale_price : null;
+                                    $quantity = $firstVariant ? $firstVariant->quantity : '';
+                                    $unit = $firstVariant ? ($firstVariant->unit_type ?? $firstVariant->unit) : '';
+                                    $unitText = match($unit) {
+                                        'gm' => 'গ্রাম',
+                                        'pc' => 'পিস',
+                                        default => ucfirst($unit),
+                                    };
+                                @endphp
+                                <p class="price mb-0 fs-24 fw-bold">{{ $discount ?? $price }} টাকা</p>
+                                @if($discount)
+                                    <span class="discount-price">&nbsp;(<del>{{ $price }} টাকা</del>)</span>
+                                @endif
+                            </div>
+                            @if($quantity)
+                                <p class="variant-quantity mb-0 fw-bold fs-18 text-muted">{{ $quantity }} {{ $unitText }}</p>
                             @endif
                         </div>
                     </div>
@@ -124,6 +136,8 @@
                                                         data-price="{{ $variant->price }}"
                                                         data-discount="{{ $variant->sale_price }}"
                                                         data-unit="{{ $unit }}"
+                                                        data-quantity="{{ $variant->quantity }}"
+                                                        data-unit-text="{{ $unitText }}"
                                                         {{ $index == 0 ? 'selected' : '' }}>
                                                     {{ $variant->quantity }} {{ $unitText }}
                                                 </option>
@@ -304,14 +318,18 @@
                 let price = selected.data('price');
                 let discount = selected.data('discount');
                 let unit = selected.data('unit');
+                let quantity = selected.data('quantity');
+                let unitText = selected.data('unit-text');
  
-                let priceHtml = '';
-                if (discount) {
-                    priceHtml = `<p class="price">${discount} টাকা</p><span class="discount-price">&nbsp;(<del>${price} টাকা</del>)</span>`;
-                } else {
-                    priceHtml = `<p class="price">${price} টাকা</p>`;
-                }
-                $('.sweet-price .d-flex').html(priceHtml);
+                let priceHtml = `
+                    <div class="d-flex align-items-center">
+                        <p class="price mb-0 fs-24 fw-bold">${discount || price} টাকা</p>
+                        ${discount ? `<span class="discount-price">&nbsp;(<del>${price} টাকা</del>)</span>` : ''}
+                    </div>
+                    ${quantity ? `<p class="variant-quantity mb-0 fw-bold fs-18 text-muted">${quantity} ${unitText}</p>` : ''}
+                `;
+                
+                $('#price-variant-display').html(priceHtml);
 
                 // Update label dynamically
                 let label = (unit === 'pc' || unit === 'pcs') ? 'পিস:' : (("{{ $product->type }}" === 'gram') ? 'ওজন:' : "{{ ucfirst($product->type) }}:");
