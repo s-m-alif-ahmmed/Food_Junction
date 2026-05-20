@@ -69,9 +69,14 @@ class OrderDetail extends Model
     // total quantity in KG
     public function getTotalKgAttribute()
     {
-        if ($this->unit_type !== 'kg') return 0;
+        if ($this->unit_type === 'kg') {
+            return $this->unit_value * $this->quantity;
+        }
+        if ($this->unit_type === 'gram') {
+            return ($this->unit_value * $this->quantity) / 1000;
+        }
 
-        return $this->unit_value * $this->quantity;
+        return 0;
     }
 
     // total pieces
@@ -87,6 +92,13 @@ class OrderDetail extends Model
     {
         if ($this->unit_type === 'kg') {
             return ($this->unit_value * $this->quantity) . ' kg';
+        }
+        if ($this->unit_type === 'gram') {
+            $totalGrams = $this->unit_value * $this->quantity;
+            if ($totalGrams < 1000) {
+                return $totalGrams . ' gm';
+            }
+            return ($totalGrams / 1000) . ' kg';
         }
 
         return $this->quantity . ' pcs';

@@ -56,54 +56,70 @@
                             <tbody>
 
                             @foreach($order_data as $product)
-                                    <?php
-                                    $price = banglaToEnglish($product->product->price);
-                                    $discount_price = banglaToEnglish($product->product->discount_price);
-                                    $product_type = $product->product->product_type;
-
-                                    $main_price = $discount_price ?? $price;
-
-                                    if ($product_type == 'Sweet'){
-                                        $gm = $main_price / 1000;
-                                        $total = $gm * $product->weight;
-                                    }elseif ($product_type == 'Product'){
-                                        $total = $main_price * $product->quantity;
-                                    }
-
-                                    ?>
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>
-                                        <p class="font-w600 mb-1">{{ $product->product->name }}</p>
+                                        <p class="font-w600 mb-1">{{ $product->product_name }}</p>
                                     </td>
-                                    <td class="text-center">{{ $product->product->discount_price ?? $product->product->price }}Tk @if($product->product->discount_price)(<span><del>{{ $product->product->price }}Tk</del></span>) @endif </td>
-                                    <td class="text-end">
-                                        @if($product->weight)
-                                            {{ $product->weight < 1000 ? englishToBengali($product->weight) . ' গ্রাম' : englishToBengali($product->weight / 1000) . ' কেজি' }}
-                                        @elseif($product->quantity)
-                                            {{ $product->quantity }} pcs
+                                    <td class="text-center">
+                                        {{ englishToBengali(floatval($product->unit_price)) }} Tk
+                                        @if($product->discount_amount > 0)
+                                            (<span><del>{{ englishToBengali(floatval($product->original_price)) }} Tk</del></span>)
                                         @endif
                                     </td>
-                                    <td class="text-end">{{ englishToBengali($total) ?? '0' }}Tk</td>
+                                    <td class="text-end">
+                                        @if(($product->unit_type === 'gram' || $product->unit_type === 'kg') && $product->unit_value)
+                                            @php
+                                                $total_weight = $product->unit_value * $product->quantity;
+                                            @endphp
+                                            {{ $total_weight < 1000 ? englishToBengali($total_weight) . ' গ্রাম' : englishToBengali($total_weight / 1000) . ' কেজি' }}
+                                        @else
+                                            {{ englishToBengali($product->quantity) }} pcs
+                                        @endif
+                                    </td>
+                                    <td class="text-end">{{ englishToBengali(floatval($product->total_price)) }} Tk</td>
                                 </tr>
                             @endforeach
                             <tr>
                                 <td colspan="4" class="text-end">Sub Total</td>
-                                <td class="text-end">{{ englishToBengali($data->order_total) }} Tk</td>
+                                <td class="text-end">{{ englishToBengali(floatval($data->subtotal)) }} Tk</td>
                             </tr>
-                            @if($data->login_discount)
+                            @if($data->offer_discount > 0)
                                 <tr>
-                                    <td colspan="4" class="text-end">Login Discount</td>
-                                    <td class="text-end">- {{ englishToBengali($data->login_discount) }} Tk</td>
+                                    <td colspan="4" class="text-end">Offer Discount</td>
+                                    <td class="text-end">- {{ englishToBengali(floatval($data->offer_discount)) }} Tk</td>
+                                </tr>
+                            @endif
+                            @if($data->coupon_discount > 0)
+                                <tr>
+                                    <td colspan="4" class="text-end">
+                                        Coupon Discount
+                                        @if($data->coupon_code)
+                                            ({{ $data->coupon_code }})
+                                        @endif
+                                    </td>
+                                    <td class="text-end">- {{ englishToBengali(floatval($data->coupon_discount)) }} Tk</td>
+                                </tr>
+                            @endif
+                            @if($data->total_discount > 0 && !($data->offer_discount > 0 || $data->coupon_discount > 0))
+                                <tr>
+                                    <td colspan="4" class="text-end">Discount</td>
+                                    <td class="text-end">- {{ englishToBengali(floatval($data->total_discount)) }} Tk</td>
                                 </tr>
                             @endif
                             <tr>
                                 <td colspan="4" class="text-end">Delivery Charge</td>
-                                <td class="text-end">{{ englishToBengali( $data->delivery_fee.'Tk' ) }}</td>
+                                <td class="text-end">
+                                    @if($data->is_free_delivery || $data->delivery_fee == 0)
+                                        Free
+                                    @else
+                                        {{ englishToBengali(floatval($data->delivery_fee)) }} Tk
+                                    @endif
+                                </td>
                             </tr>
                             <tr>
                                 <td colspan="4" class="text-end">Total</td>
-                                <td class="text-end">{{ englishToBengali($data->estimate_total) }} Tk</td>
+                                <td class="text-end">{{ englishToBengali(floatval($data->final_total)) }} Tk</td>
                             </tr>
                             </tbody>
                         </table>
