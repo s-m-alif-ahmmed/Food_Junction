@@ -5,8 +5,11 @@ namespace App\Services;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Coupon;
+use App\Models\DeliveryZone;
 use App\Models\Offer;
+use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -69,17 +72,17 @@ class CartService
                 }
             }
         }
-        
+
         // Find existing item with same variant
         $query = CartItem::where('cart_id', $cart->id)
             ->where('product_id', $productId);
-            
+
         if ($variantId) {
             $query->where('variant_id', $variantId);
         } else {
             $query->whereNull('variant_id');
         }
-        
+
         $cartItem = $query->first();
 
         // Determine Price
@@ -89,7 +92,7 @@ class CartService
         $variantQuantity = null;
 
         if ($variantId) {
-            $variant = \App\Models\ProductVariant::find($variantId);
+            $variant = ProductVariant::find($variantId);
             if ($variant) {
                 $price = $variant->sale_price ?? $variant->price;
                 $variantName = $variant->variant_type ?? ($variant->quantity . ' ' . $variant->unit);
@@ -174,7 +177,7 @@ class CartService
 
         // 6. Global usage limit check
         if ($coupon->max_uses) {
-            $usedCount = \App\Models\Order::where('coupon_code', $coupon->code)
+            $usedCount = Order::where('coupon_code', $coupon->code)
                 ->whereIn('status', ['pending', 'complete'])
                 ->count();
             if ($usedCount >= $coupon->max_uses) {
@@ -183,9 +186,9 @@ class CartService
         }
 
         // 7. Per-user usage limit check
-        if ($coupon->max_uses_user && \Illuminate\Support\Facades\Auth::check()) {
-            $userId = \Illuminate\Support\Facades\Auth::id();
-            $userUsedCount = \App\Models\Order::where('coupon_code', $coupon->code)
+        if ($coupon->max_uses_user && Auth::check()) {
+            $userId = Auth::id();
+            $userUsedCount = Order::where('coupon_code', $coupon->code)
                 ->where('user_id', $userId)
                 ->whereIn('status', ['pending', 'complete'])
                 ->count();
@@ -258,7 +261,7 @@ class CartService
      */
     public function setDeliveryZone(string $zoneSlug): Cart
     {
-        $zone = \App\Models\DeliveryZone::where('slug', $zoneSlug)->where('status', 'active')->first();
+        $zone = DeliveryZone::where('slug', $zoneSlug)->where('status', 'active')->first();
         if (!$zone) {
             throw new \Exception('Invalid or inactive delivery zone selected.');
         }
@@ -287,13 +290,13 @@ class CartService
         // Dynamic Delivery Zone Calculation
         $deliveryFee = 0;
         if ($cart->delivery_zone) {
-            $zone = \App\Models\DeliveryZone::where('slug', $cart->delivery_zone)->first();
+            $zone = DeliveryZone::where('slug', $cart->delivery_zone)->first();
             if ($zone) {
                 $deliveryFee = $zone->delivery_charge;
             }
         } else {
             // Default or fallback
-            $deliveryFee = 60; 
+            $deliveryFee = 60;
         }
 
         // Calculate line totals and identify standard items (exclude existing gifts)
@@ -453,7 +456,7 @@ class CartService
         // Identify if this condition is linked to a specific product/variant in the same offer
         // Usually, if multiple conditions exist, they are ANDed.
         // If an offer has a variant_id condition, then min_quantity should check THAT variant.
-        
+
         switch ($condition->condition_type) {
             case 'min_quantity':
                 // Check if there's a variant_id or product_id condition in the SAME offer
@@ -525,10 +528,10 @@ class CartService
     {
         $items = $cart->items()->with('product.deliveryZones')->get();
         if ($items->isEmpty()) {
-            return \App\Models\DeliveryZone::where('status', 'active')->get();
+            return DeliveryZone::where('status', 'active')->get();
         }
 
-        $allActiveZones = \App\Models\DeliveryZone::where('status', 'active')->get();
+        $allActiveZones = DeliveryZone::where('status', 'active')->get();
         $availableZoneIds = $allActiveZones->pluck('id')->toArray();
 
         foreach ($items as $item) {
@@ -544,7 +547,7 @@ class CartService
             // If product has no zones assigned, we assume it's available in all zones (no-op)
         }
 
-        return \App\Models\DeliveryZone::whereIn('id', $availableZoneIds)->where('status', 'active')->get();
+        return DeliveryZone::whereIn('id', $availableZoneIds)->where('status', 'active')->get();
     }
 
     /**

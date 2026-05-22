@@ -16,6 +16,10 @@
     background-color: var(--yellow);
 }
 
+.brand-red {
+    background-color: var(--red);
+}
+
 .text-yellow {
     color: var(--yellow);
 }
@@ -939,12 +943,32 @@ textarea:focus {
 }
 
 .cart-btn {
+    background-color: var(--yellow);
+    padding: 8px 25px;
     width: 50%;
     color: white;
     font-weight: 600;
 }
 
 .cart-btn:hover {
+    background-color: var(--yellow);
+    padding: 8px 25px;
+    width: 50%;
+    color: white;
+    font-weight: 600;
+}
+
+.buy-now-btn {
+    background-color: var(--red);
+    padding: 8px 25px;
+    width: 50%;
+    color: white;
+    font-weight: 600;
+}
+
+.buy-now-btn:hover {
+    background-color: var(--red);
+    padding: 8px 25px;
     width: 50%;
     color: white;
     font-weight: 600;

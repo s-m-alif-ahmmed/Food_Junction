@@ -77,15 +77,27 @@
                         </div>
                     </div>
                     <div class="sweet-price">
-                        <div class="d-flex">
-                            @php
-                                $firstVariant = $product->variants->first();
-                                $price = $firstVariant ? $firstVariant->price : 0;
-                                $discount = $firstVariant ? $firstVariant->sale_price : null;
-                            @endphp
-                            <p class="price">{{ $discount ?? $price }} টাকা</p>
-                            @if($discount)
-                                <span class="discount-price">&nbsp;(<del>{{ $price }} টাকা</del>)</span>
+                        <div id="price-variant-display" class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                @php
+                                    $firstVariant = $product->variants->first();
+                                    $price = $firstVariant ? $firstVariant->price : 0;
+                                    $discount = $firstVariant ? $firstVariant->sale_price : null;
+                                    $quantity = $firstVariant ? $firstVariant->quantity : '';
+                                    $unit = $firstVariant ? ($firstVariant->unit_type ?? $firstVariant->unit) : '';
+                                    $unitText = match($unit) {
+                                        'gm' => 'গ্রাম',
+                                        'pc' => 'পিস',
+                                        default => ucfirst($unit),
+                                    };
+                                @endphp
+                                <p class="price mb-0 fs-24 fw-bold">{{ $discount ?? $price }} টাকা</p>
+                                @if($discount)
+                                    <span class="discount-price">&nbsp;(<del>{{ $price }} টাকা</del>)</span>
+                                @endif
+                            </div>
+                            @if($quantity)
+                                <p class="variant-quantity mb-0 fw-bold fs-18 text-muted">{{ $quantity }} {{ $unitText }}</p>
                             @endif
                         </div>
                     </div>
@@ -105,7 +117,7 @@
                             <div class="sweet-weight my-3">
                                 <div class="d-flex align-items-center">
                                     <div class="pe-3">
-                                        <span>{{ $product->type == 'gram' ? 'ওজন:' : ucfirst($product->type) . ':' }}</span>
+                                        <span class="unit-label">{{ ($product->variants->first() && in_array($product->variants->first()->unit_type ?? $product->variants->first()->unit, ['pc', 'pcs'])) ? 'পিস:' : ($product->type == 'gram' ? 'ওজন:' : ucfirst($product->type) . ':') }}</span>
                                     </div>
                                     <div class="pe-3">
                                         <select name="variant_id" id="variant_select" class="form-select" style="width: 150px;">
@@ -123,6 +135,9 @@
                                                 <option value="{{ $variant->id }}"
                                                         data-price="{{ $variant->price }}"
                                                         data-discount="{{ $variant->sale_price }}"
+                                                        data-unit="{{ $unit }}"
+                                                        data-quantity="{{ $variant->quantity }}"
+                                                        data-unit-text="{{ $unitText }}"
                                                         {{ $index == 0 ? 'selected' : '' }}>
                                                     {{ $variant->quantity }} {{ $unitText }}
                                                 </option>
@@ -141,8 +156,9 @@
                             </div>
                         </div>
 
-                        <div class="mt-4">
-                            <button class="btn cart-btn m-1" style="background-color: var(--yellow);" type="submit" > <i class="fa-solid fa-shopping-cart"></i> Add to Cart</button>
+                        <div class="mt-4 d-flex flex-column flex-md-row">
+                            <button class="btn cart-btn m-1" type="submit" > <i class="fa-solid fa-shopping-cart"></i> Add to Cart</button>
+                            <button class="btn buy-now-btn m-1" type="button"> <i class="fa-solid fa-bolt"></i> Order Now</button>
                         </div>
 
                     </form>
@@ -301,31 +317,52 @@
                 let selected = $(this).find(':selected');
                 let price = selected.data('price');
                 let discount = selected.data('discount');
+                let unit = selected.data('unit');
+                let quantity = selected.data('quantity');
+                let unitText = selected.data('unit-text');
+ 
+                let priceHtml = `
+                    <div class="d-flex align-items-center">
+                        <p class="price mb-0 fs-24 fw-bold">${discount || price} টাকা</p>
+                        ${discount ? `<span class="discount-price">&nbsp;(<del>${price} টাকা</del>)</span>` : ''}
+                    </div>
+                    ${quantity ? `<p class="variant-quantity mb-0 fw-bold fs-18 text-muted">${quantity} ${unitText}</p>` : ''}
+                `;
+                
+                $('#price-variant-display').html(priceHtml);
 
-                let priceHtml = '';
-                if (discount) {
-                    priceHtml = `<p class="price">${discount} টাকা</p><span class="discount-price">&nbsp;(<del>${price} টাকা</del>)</span>`;
-                } else {
-                    priceHtml = `<p class="price">${price} টাকা</p>`;
-                }
-                $('.sweet-price .d-flex').html(priceHtml);
+                // Update label dynamically
+                let label = (unit === 'pc' || unit === 'pcs') ? 'পিস:' : (("{{ $product->type }}" === 'gram') ? 'ওজন:' : "{{ ucfirst($product->type) }}:");
+                $('.unit-label').text(label);
             });
 
             // Handle the form submission
             $('#add-to-cart-form').on('submit', function (e) {
                 e.preventDefault(); // Prevent the default form submission
+                submitCartForm($(this));
+            });
 
+            // Handle "Order Now" button click
+            $('.buy-now-btn').on('click', function () {
+                submitCartForm($('#add-to-cart-form'), true);
+            });
+
+            function submitCartForm(form, redirect = false) {
                 // Get the form data
-                let formData = $(this).serialize();
+                let formData = form.serialize();
 
                 // Send the AJAX request
                 $.ajax({
-                    url: $(this).attr('action'), // Form action URL
-                    method: $(this).attr('method'), // Form method (POST)
+                    url: form.attr('action'), // Form action URL
+                    method: form.attr('method'), // Form method (POST)
                     data: formData, // Serialized form data
                     success: function (response) {
                         if (response.success) {
-                            showSuccessToast(response['t-success'] || 'Item successfully added to cart!');
+                            if (redirect) {
+                                window.location.href = "{{ route('checkout') }}";
+                            } else {
+                                showSuccessToast(response['t-success'] || 'Item successfully added to cart!');
+                            }
                         } else {
                             showErrorToast(response.error || response['t-error'] || 'Something went wrong.');
                         }
@@ -340,7 +377,7 @@
                         showErrorToast(message);
                     }
                 });
-            });
+            }
         });
     </script>
 

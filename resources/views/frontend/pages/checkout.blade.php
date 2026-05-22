@@ -72,7 +72,7 @@
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email <span>(Optional)</span></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="email" id="email"
-                                       placeholder="Enter email address here" value="{{ old('email') }}" required >
+                                       placeholder="Enter email address here" value="{{ old('email') }}" >
                             </div>
                             <div class="mb-3">
                                 <label for="number" class="form-label">Phone Number<span class="text-danger">*</span></label>
