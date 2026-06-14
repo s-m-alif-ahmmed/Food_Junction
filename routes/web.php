@@ -13,6 +13,21 @@ use App\Http\Controllers\Web\Backend\Blog\BlogCommentConroller;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
+
+Route::get('/dev/clear-all', function () {
+
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('config:cache');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+    Artisan::call('optimize:clear');
+
+    return response()->json([
+        'message' => 'All caches cleared successfully'
+    ]);
+});
+
 //! Route for Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/faq', [HomeController::class, 'faq'])->name('faq');

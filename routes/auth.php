@@ -30,9 +30,9 @@ Route::middleware('guest')->group(function () {
     Route::post('/reset/password', [RegisteredUserController::class, 'handleResetPassword'])->name('reset.password');
 
 
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login')->middleware('nocache');
 
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    Route::post('login', [AuthenticatedSessionController::class, 'store'])->middleware('debug.login');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');

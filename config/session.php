@@ -156,7 +156,7 @@ return [
     |
      */
 
-    'domain'          => env('SESSION_DOMAIN'),
+    'domain'          => env('SESSION_DOMAIN', isset($_SERVER['HTTP_HOST']) ? '.' . preg_replace('/^www\./', '', parse_url((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'], PHP_URL_HOST)) : null),
 
     /*
     |--------------------------------------------------------------------------
@@ -169,7 +169,7 @@ return [
     |
      */
 
-    'secure'          => env('SESSION_SECURE_COOKIE'),
+    'secure'          => env('SESSION_SECURE_COOKIE') ?? (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
 
     /*
     |--------------------------------------------------------------------------

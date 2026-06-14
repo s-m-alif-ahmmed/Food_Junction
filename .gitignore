@@ -19,3 +19,5 @@ yarn-error.log
 /.idea
 /.vscode
 /public/uploads
+/bootstrap/cache/*.php
+!/bootstrap/cache/.gitignore
