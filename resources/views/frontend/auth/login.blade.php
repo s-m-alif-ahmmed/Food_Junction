@@ -4,6 +4,10 @@
     <meta name="author" content="Food Junction">
     <meta name="description" content="Food Junction">
     <meta name="keywords" content="Food Junction, Food, Junction, Dhaka, Sweets">
+    <!-- Prevent caching to avoid CSRF token mismatch (419 Page Expired) -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
 @endsection
 
 @section('title')
@@ -200,5 +204,16 @@
 
 
     </style>
+@endpush
+
+@push('scripts')
+    <script>
+        // Force reload if page is loaded from bfcache (Back-Forward Cache)
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+    </script>
 @endpush
 
