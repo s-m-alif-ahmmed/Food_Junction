@@ -212,104 +212,44 @@
 
 @push('scripts')
     <script>
-        // ---- CSRF Token Auto-Refresh for Login Form ----
-        // This prevents 419 errors on mobile and desktop by ensuring
-        // the CSRF token is always fresh before form submission.
-
         (function() {
             var loginForm = document.getElementById('loginForm');
             if (!loginForm) return;
 
-            // 1. Force reload if page is loaded from bfcache (Back-Forward Cache)
+            // 1. Mobile bfcache protection: Force reload if page is restored from browser cache
             window.addEventListener('pageshow', function(event) {
-                if (event.persisted) {
+                if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
                     window.location.reload();
                 }
             });
 
-            // 2. Refresh CSRF token when the page becomes visible again (tab switch, screen unlock)
+            // 2. Silent token refresh when mobile tab regains focus or visibility
+            var lastRefresh = Date.now();
+            function checkAndRefreshSession() {
+                // If page was backgrounded for more than 5 minutes, reload to guarantee fresh session
+                if (Date.now() - lastRefresh > 300000) {
+                    window.location.reload();
+                    return;
+                }
+                lastRefresh = Date.now();
+            }
+
             document.addEventListener('visibilitychange', function() {
                 if (document.visibilityState === 'visible') {
-                    refreshCsrfToken();
+                    checkAndRefreshSession();
                 }
             });
 
-            // 3. Refresh CSRF token when the window regains focus
-            window.addEventListener('focus', function() {
-                refreshCsrfToken();
-            });
+            window.addEventListener('focus', checkAndRefreshSession);
 
-            // 4. Intercept form submission: fetch a fresh token before submitting
-            loginForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                var form = this;
-                var submitBtn = form.querySelector('button[type="submit"]');
+            // 3. Clean form submission UX
+            loginForm.addEventListener('submit', function() {
+                var submitBtn = this.querySelector('button[type="submit"]');
                 if (submitBtn) {
                     submitBtn.disabled = true;
                     submitBtn.textContent = 'Signing In...';
                 }
-
-                // Fetch a fresh CSRF token, then submit
-                fetch('{{ route("login") }}', {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'text/html'
-                    },
-                    credentials: 'same-origin'
-                })
-                .then(function(response) { return response.text(); })
-                .then(function(html) {
-                    // Extract fresh CSRF token from the fetched page
-                    var match = html.match(/name="_token"[^>]*value="([^"]+)"/);
-                    if (match && match[1]) {
-                        var tokenInput = form.querySelector('input[name="_token"]');
-                        if (tokenInput) {
-                            tokenInput.value = match[1];
-                        }
-                        // Also update the meta tag
-                        var metaToken = document.querySelector('meta[name="csrf-token"]');
-                        if (metaToken) {
-                            metaToken.setAttribute('content', match[1]);
-                        }
-                    }
-                    // Now submit the form with the fresh token
-                    form.submit();
-                })
-                .catch(function() {
-                    // If fetch fails, submit anyway (let server handle it)
-                    form.submit();
-                });
             });
-
-            // Helper: refresh the CSRF token silently
-            function refreshCsrfToken() {
-                fetch('{{ route("login") }}', {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'text/html'
-                    },
-                    credentials: 'same-origin'
-                })
-                .then(function(response) { return response.text(); })
-                .then(function(html) {
-                    var match = html.match(/name="_token"[^>]*value="([^"]+)"/);
-                    if (match && match[1]) {
-                        var tokenInput = document.querySelector('#loginForm input[name="_token"]');
-                        if (tokenInput) {
-                            tokenInput.value = match[1];
-                        }
-                        var metaToken = document.querySelector('meta[name="csrf-token"]');
-                        if (metaToken) {
-                            metaToken.setAttribute('content', match[1]);
-                        }
-                    }
-                })
-                .catch(function() {
-                    // Silent fail - next submit will attempt refresh anyway
-                });
-            }
         })();
     </script>
 @endpush

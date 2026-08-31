@@ -154,9 +154,9 @@ return [
     | available to. By default, the cookie will be available to the root
     | domain and all subdomains. Typically, this shouldn't be changed.
     |
-     */
+    */
 
-    'domain'          => env('SESSION_DOMAIN', isset($_SERVER['HTTP_HOST']) ? '.' . preg_replace('/^www\./', '', parse_url((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'], PHP_URL_HOST)) : null),
+    'domain'          => env('SESSION_DOMAIN'),
 
     /*
     |--------------------------------------------------------------------------
@@ -167,9 +167,9 @@ return [
     | to the server if the browser has a HTTPS connection. This will keep
     | the cookie from being sent to you when it can't be done securely.
     |
-     */
+    */
 
-    'secure'          => env('SESSION_SECURE_COOKIE') ?? (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
+    'secure'          => env('SESSION_SECURE_COOKIE'),
 
     /*
     |--------------------------------------------------------------------------
@@ -180,7 +180,7 @@ return [
     | value of the cookie and the cookie will only be accessible through
     | the HTTP protocol. It's unlikely you should disable this option.
     |
-     */
+    */
 
     'http_only'       => env('SESSION_HTTP_ONLY', true),
 
@@ -197,7 +197,7 @@ return [
     |
     | Supported: "lax", "strict", "none", null
     |
-     */
+    */
 
     'same_site'       => env('SESSION_SAME_SITE', 'lax'),
 

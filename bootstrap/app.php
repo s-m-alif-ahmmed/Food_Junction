@@ -45,36 +45,27 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function ($exceptions) {
-
-        $exceptions->render(function (
-            \Symfony\Component\HttpKernel\Exception\HttpException $e,
-                                                                  $request
-        ) {
-
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\HttpException $e, $request) {
             if ($e->getStatusCode() === 419) {
-
-                \Log::error('419 CSRF Error', [
+                \Log::warning('419 CSRF Error Encountered', [
                     'url' => $request->fullUrl(),
                     'method' => $request->method(),
-
                     '_token' => $request->input('_token'),
-
-                    'session_token' => $request->session()->token(),
-
-                    'session_id' => session()->getId(),
-
-                    'cookie_xsrf' => $request->cookie('XSRF-TOKEN'),
-
-                    'session_cookie' => $request->cookie(config('session.cookie')),
-
-                    'all_cookies' => $request->cookies->all(),
-
+                    'session_token' => $request->hasSession() ? $request->session()->token() : null,
+                    'session_id' => $request->hasSession() ? session()->getId() : null,
                     'ip' => $request->ip(),
-
                     'user_agent' => $request->userAgent(),
-
-                    'referer' => $request->headers->get('referer'),
                 ]);
+
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json([
+                        'message' => 'Your session has expired. Please refresh the page and try again.',
+                    ], 419);
+                }
+
+                return redirect()->route('login')
+                    ->withInput($request->except('_token', 'password', 'password_confirmation'))
+                    ->with('error', 'Your session expired due to inactivity. Please try signing in again.');
             }
         });
     })->create();

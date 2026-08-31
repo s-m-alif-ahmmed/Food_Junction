@@ -16,8 +16,7 @@ class AppServiceProvider extends ServiceProvider {
      * Bootstrap any application services.
      */
     public function boot(): void {
-        // Force HTTPS if APP_URL is https or if running behind a proxy with https
-        if (str_contains(config('app.url'), 'https://') || request()->header('x-forwarded-proto') === 'https' || !app()->environment('local')) {
+        if (!app()->environment('local') || str_contains(config('app.url'), 'https://')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
     }
