@@ -14,17 +14,27 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
         then: function () {
-            Route::middleware(['web', 'auth', 'Super Admin'])
-                ->prefix('super-admin')
-                ->group(base_path('routes/superAdmin.php'));
+            $superAdminPath = file_exists(base_path('routes/superAdmin.php')) 
+                ? base_path('routes/superAdmin.php') 
+                : (file_exists(base_path('routes/superadmin.php')) ? base_path('routes/superadmin.php') : null);
 
-            Route::middleware(['web', 'auth', 'Admin'])
-                ->prefix('admin')
-                ->group(base_path('routes/backend.php'));
+            if ($superAdminPath) {
+                Route::middleware(['web', 'auth', 'Super Admin'])
+                    ->prefix('super-admin')
+                    ->group($superAdminPath);
+            }
 
-            Route::middleware(['web', 'auth', 'Admin'])
-                ->prefix('admin/settings')
-                ->group(base_path('routes/settings.php'));
+            if (file_exists(base_path('routes/backend.php'))) {
+                Route::middleware(['web', 'auth', 'Admin'])
+                    ->prefix('admin')
+                    ->group(base_path('routes/backend.php'));
+            }
+
+            if (file_exists(base_path('routes/settings.php'))) {
+                Route::middleware(['web', 'auth', 'Admin'])
+                    ->prefix('admin/settings')
+                    ->group(base_path('routes/settings.php'));
+            }
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
