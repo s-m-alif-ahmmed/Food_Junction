@@ -50,7 +50,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'Admin' => AdminMiddleware::class,
             'Super Admin' => SuperAdminMiddleware::class,
-            'debug.login' => \App\Http\Middleware\DebugLoginRequest::class,
             'nocache' => \App\Http\Middleware\NoCache::class,
         ]);
     })
