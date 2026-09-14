@@ -37,6 +37,8 @@ Route::get('/products/{category_slug}', [HomeController::class, 'categoryProduct
 Route::get('/product/detail/{product_slug}', [HomeController::class, 'detail'])->name('product.detail');
 Route::get('/offer/{id}', [HomeController::class, 'offerDetail'])->name('offer.detail');
 Route::get('/confirm-order', [HomeController::class, 'confirmOrder'])->name('confirm.order');
+Route::get('/baklava-offer', [HomeController::class, 'baklavaOffer'])->name('baklava.offer');
+Route::get('/special-offer/{slug}', [HomeController::class, 'specialOffer'])->name('special.offer.show');
 
 //blog
 Route::get('/blog', [HomeController::class, 'blog'])->name('blogs');
@@ -77,6 +79,7 @@ Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('re
 //Order
 Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
 Route::post('/new/order', [OrderController::class, 'newOrder'])->name('new.order');
+Route::post('/special-offer/order', [OrderController::class, 'directLandingOrder'])->name('special-offer.direct-order');
 Route::get('/order-complete', [OrderController::class, 'orderComplete'])->name('order.confirm');
 Route::get('/order-detail/{tracking_id}', [OrderController::class, 'orderDetails'])->name('order.details');
 

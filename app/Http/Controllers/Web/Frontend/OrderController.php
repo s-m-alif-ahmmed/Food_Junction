@@ -261,6 +261,193 @@ class OrderController extends Controller
     }
 
     // ----------------------------------------------------------------
+    // DIRECT LANDING / SPECIAL OFFER ORDER
+    // ----------------------------------------------------------------
+    public function directLandingOrder(Request $request)
+    {
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'name'            => 'required|string|max:255',
+            'address'         => 'required|string|max:500',
+            'email'           => 'nullable|email|max:255',
+            'whatsapp_number' => ['nullable', 'regex:/^\d{11}$/'],
+            'number'          => ['required', 'regex:/^\d{11}$/'],
+            'note'            => 'nullable|string|max:500',
+            'all_terms'       => 'required|accepted',
+            'delivery_zone'   => 'required|string',
+            'quantity'        => 'nullable|integer|min:1|max:100',
+            'product_id'      => 'nullable|exists:products,id',
+            'variant_id'      => 'nullable|exists:product_variants,id',
+            'offer_id'        => 'nullable|exists:baklava_offers,id',
+        ], [
+            'name.required'          => 'Please enter your full name.',
+            'number.required'        => 'The phone number is required.',
+            'number.regex'           => 'The phone number must be exactly 11 digits (e.g. 017XXXXXXXX).',
+            'whatsapp_number.regex'  => 'The WhatsApp number must be 11 digits.',
+            'address.required'       => 'Please enter your full delivery address.',
+            'all_terms.required'     => 'You must accept the terms and conditions.',
+            'all_terms.accepted'     => 'You must accept the terms and conditions.',
+            'delivery_zone.required' => 'Please select your delivery zone.',
+        ]);
+
+        if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first(),
+                    'errors'  => $validator->errors()
+                ], 422);
+            }
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $user = Auth::user();
+
+            // Resolve Special Offer & Product
+            $offer = null;
+            if ($request->offer_id) {
+                $offer = \App\Models\BaklavaOffer::find($request->offer_id);
+            } elseif ($request->offer_slug) {
+                $offer = \App\Models\BaklavaOffer::where('slug', $request->offer_slug)->first();
+            }
+
+            $productId = $request->product_id ?? $offer?->product_id;
+            $product = $productId ? \App\Models\Product::with('variants')->find($productId) : \App\Models\Product::with('variants')->where('product_slug', 'like', '%baklava%')->first() ?? \App\Models\Product::with('variants')->first();
+
+            $variantId = $request->variant_id ?? $offer?->variant_id;
+            $variant = $variantId ? \App\Models\ProductVariant::find($variantId) : $product?->variants?->first();
+
+            $qty = max(1, (int)($request->quantity ?? 1));
+
+            // Determine unit price & package name
+            if ($offer && $offer->offer_price) {
+                $unitPrice = (float)$offer->offer_price;
+                $originalPrice = (float)($offer->regular_price ?? $unitPrice);
+                $packageName = $offer->package_title ?? ($product?->name ?? 'Special Offer Package');
+            } elseif ($variant) {
+                $unitPrice = (float)($variant->sale_price ?? $variant->price);
+                $originalPrice = (float)$variant->price;
+                $packageName = ($product?->name ?? 'Product') . ' - ' . ($variant->variant_type ?? ($variant->quantity . ' ' . $variant->unit));
+            } elseif ($product) {
+                $unitPrice = (float)($product->discount_price ?? $product->price);
+                $originalPrice = (float)($product->price ?? $unitPrice);
+                $packageName = $product->name;
+            } else {
+                $unitPrice = 1350;
+                $originalPrice = 1850;
+                $packageName = 'Special Offer Package';
+            }
+
+            $subtotal = $unitPrice * $qty;
+
+            // Determine delivery fee
+            $deliveryZone = $request->delivery_zone;
+            if ($offer) {
+                $deliveryFee = ($deliveryZone === 'outside_dhaka')
+                    ? (float)($offer->outside_dhaka_delivery_fee ?? 150)
+                    : (float)($offer->inside_dhaka_delivery_fee ?? 80);
+            } else {
+                $deliveryFee = ($deliveryZone === 'outside_dhaka') ? 150 : 80;
+            }
+
+            $finalTotal = $subtotal + $deliveryFee;
+
+            // Create Order
+            $order = Order::create([
+                'user_id'          => $user->id ?? null,
+                'coupon_id'        => null,
+
+                // Customer
+                'name'             => $request->name,
+                'email'            => $request->email,
+                'number'           => $request->number,
+                'whatsapp_number'  => $request->whatsapp_number,
+                'address'          => $request->address,
+                'note'             => $request->note,
+                'all_terms'        => $request->all_terms,
+
+                // Delivery
+                'delivery_zone'    => $deliveryZone,
+                'delivery_fee'     => $deliveryFee,
+                'is_free_delivery' => $deliveryFee == 0,
+
+                // Coupon snapshot
+                'coupon_code'      => null,
+                'coupon_type'      => null,
+                'coupon_value'     => 0,
+
+                // Financials
+                'subtotal'         => $subtotal,
+                'product_discount' => max(0, ($originalPrice - $unitPrice) * $qty),
+                'offer_discount'   => 0,
+                'coupon_discount'  => 0,
+                'total_discount'   => max(0, ($originalPrice - $unitPrice) * $qty),
+                'final_total'      => $finalTotal,
+
+                'applied_offers'   => null,
+                'tracking_id'      => $this->generateTrackingId(),
+                'status'           => 'pending',
+            ]);
+
+            // Create OrderDetail
+            OrderDetail::create([
+                'order_id'        => $order->id,
+                'product_id'      => $product?->id,
+                'variant_id'      => $variant?->id,
+
+                // Snapshot
+                'product_name'    => $packageName,
+
+                // Pricing snapshot
+                'original_price'  => $originalPrice,
+                'unit_price'      => $unitPrice,
+                'discount_amount' => max(0, $originalPrice - $unitPrice),
+
+                // Quantity
+                'unit_type'       => $variant?->unit === 'gram' ? 'gram' : 'pcs',
+                'unit_value'      => $variant?->quantity,
+                'quantity'        => $qty,
+
+                // Line total
+                'total_price'     => $subtotal,
+            ]);
+
+            // Clear cart to avoid conflict with existing cart sessions
+            try {
+                $this->cartService->clearCart();
+            } catch (\Throwable $t) {}
+
+            DB::commit();
+
+            session(['order' => $order->id]);
+            session()->flash('t-success', 'আপনার অর্ডারটি সফলভাবে গৃহীত হয়েছে!');
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success'      => true,
+                    'message'      => 'অর্ডারটি সফলভাবে সম্পন্ন হয়েছে!',
+                    'redirect_url' => route('order.confirm'),
+                    'tracking_id'  => $order->tracking_id,
+                ]);
+            }
+
+            return redirect()->route('order.confirm');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'অর্ডার সম্পন্ন করতে সমস্যা হয়েছে: ' . $e->getMessage()
+                ], 500);
+            }
+            return redirect()->back()->with('t-error', 'অর্ডার সম্পন্ন করতে সমস্যা হয়েছে: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    // ----------------------------------------------------------------
     // ORDER COMPLETE PAGE
     // ----------------------------------------------------------------
     public function orderComplete(Request $request)

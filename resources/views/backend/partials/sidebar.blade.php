@@ -61,7 +61,7 @@
                     </a>
                 </li>
 
-                <li class="slide {{ request()->routeIs('categories.*', 'delivery-zones.*', 'products.*', 'orders.*') ? 'active is-expanded' : '' }}">
+                <li class="slide {{ request()->routeIs('categories.*', 'delivery-zones.*', 'products.*', 'special-offers.*', 'orders.*') ? 'active is-expanded' : '' }}">
                     <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0)">
                         <i class="side-menu__icon fe fe-shopping-cart"></i>
                         <span class="side-menu__label">Shop Management</span><i class="angle fa fa-angle-right"></i>
@@ -70,6 +70,7 @@
                         <li><a href="{{ route('categories.index') }}" class="slide-item {{ request()->routeIs('categories.*') ? 'active' : '' }}">Categories</a></li>
                         <li><a href="{{ route('delivery-zones.index') }}" class="slide-item {{ request()->routeIs('delivery-zones.*') ? 'active' : '' }}">Delivery Zones</a></li>
                         <li><a href="{{ route('products.index') }}" class="slide-item {{ request()->routeIs('products.*') ? 'active' : '' }}">Products</a></li>
+                        <li><a href="{{ route('special-offers.index') }}" class="slide-item {{ request()->routeIs('special-offers.*') ? 'active' : '' }}">Special Offer Pages</a></li>
                         <li><a href="{{ route('orders.index') }}" class="slide-item {{ request()->routeIs('orders.*') ? 'active' : '' }}">Orders</a></li>
                     </ul>
                 </li>

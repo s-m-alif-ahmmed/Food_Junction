@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\Backend\Product\CategoryController;
 use App\Http\Controllers\Web\Backend\Faq\FaqController;
 use App\Http\Controllers\Web\Backend\Cms\HomeBannerController;
 use App\Http\Controllers\Web\Backend\Cms\HomeBottomBannerController;
+use App\Http\Controllers\Web\Backend\Product\SpecialOfferController;
 use App\Http\Controllers\Web\Backend\Video\VideoController;
 use App\Http\Controllers\Web\Backend\Blog\BlogController;
 use App\Http\Controllers\Web\Backend\Blog\BlogCommentConroller;
@@ -94,6 +95,19 @@ Route::controller(HomeBannerController::class)->group(function () {
 Route::controller(HomeBottomBannerController::class)->group(function () {
     Route::get('/cms/home-bottom-banner/edit', 'edit')->name('cms.home-bottom-banner.edit');
     Route::patch('/cms/home-bottom-banner/update', 'update')->name('cms.home-bottom-banner.update');
+});
+
+//! Route for Special Offer Landing Pages (Shop Management)
+Route::controller(SpecialOfferController::class)->group(function () {
+    Route::get('/special-offers', 'index')->name('special-offers.index');
+    Route::get('/special-offers/create', 'create')->name('special-offers.create');
+    Route::post('/special-offers/store', 'store')->name('special-offers.store');
+    Route::get('/special-offers/show/{id}', 'show')->name('special-offers.show');
+    Route::get('/special-offers/edit/{id}', 'edit')->name('special-offers.edit');
+    Route::patch('/special-offers/update/{id}', 'update')->name('special-offers.update');
+    Route::get('/special-offers/status/{id}', 'status')->name('special-offers.status');
+    Route::delete('/special-offers/delete/{id}', 'destroy')->name('special-offers.destroy');
+    Route::delete('/special-offers/{id}/delete-review/{index}', 'deleteReview')->name('special-offers.delete-review');
 });
 
 //! Route for Category

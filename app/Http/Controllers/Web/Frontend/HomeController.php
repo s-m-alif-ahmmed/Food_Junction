@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\BaklavaOffer;
 use App\Models\Blog;
 use App\Models\BlogComment;
 use App\Models\Cart;
@@ -168,6 +169,36 @@ class HomeController extends Controller {
 
     public function confirmOrder(): View {
         return view('frontend.pages.confirm-order');
+    }
+
+    public function baklavaOffer(): View {
+        $data = BaklavaOffer::where('slug', 'baklava-offer')->first() ?? BaklavaOffer::getSettings();
+
+        $linkedProduct = $data->product_id ? Product::with('variants')->find($data->product_id) : null;
+        $baklavaProduct = $linkedProduct ?? Product::where('product_slug', 'like', '%baklava%')
+            ->orWhere('name', 'like', '%Baklava%')
+            ->orWhere('name', 'like', '%বাকলাভা%')
+            ->with('variants')
+            ->first();
+
+        $defaultProduct = $baklavaProduct ?? Product::with('variants')->first();
+
+        return view('frontend.pages.baklava-offer', compact('data', 'baklavaProduct', 'defaultProduct'));
+    }
+
+    public function specialOffer(string $slug): View {
+        $data = BaklavaOffer::where('slug', $slug)->firstOrFail();
+
+        $linkedProduct = $data->product_id ? Product::with('variants')->find($data->product_id) : null;
+        $baklavaProduct = $linkedProduct ?? Product::where('product_slug', 'like', '%baklava%')
+            ->orWhere('name', 'like', '%Baklava%')
+            ->orWhere('name', 'like', '%বাকলাভা%')
+            ->with('variants')
+            ->first();
+
+        $defaultProduct = $baklavaProduct ?? Product::with('variants')->first();
+
+        return view('frontend.pages.baklava-offer', compact('data', 'baklavaProduct', 'defaultProduct'));
     }
 
     public function dynamicPage($page_slug): View {

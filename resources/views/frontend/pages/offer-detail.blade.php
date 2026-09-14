@@ -66,7 +66,7 @@
                                         ({{ strtoupper($variantType) }})
                                     </p>
                                 </div>
-                                <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold">Order Now</a>
+                                <a href="{{ route('product.detail', $product->product_slug) }}" class="order-now-btn w-auto fw-bold stretched-link">Order Now</a>
                             </div>
                         </div>
                     </div>

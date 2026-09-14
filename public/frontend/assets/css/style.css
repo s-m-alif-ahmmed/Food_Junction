@@ -385,6 +385,11 @@
     padding-bottom: 40px;
 }
 
+.special-sweet-card .card {
+    cursor: pointer;
+    position: relative;
+}
+
 .special-sweet-card .card-body {
     padding: 10px 0 0 0;
 }

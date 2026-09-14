@@ -157,7 +157,7 @@
                         </div>
 
                         <div class="mt-4 d-flex flex-column flex-md-row">
-                            <button class="btn cart-btn m-1" type="submit" > <i class="fa-solid fa-shopping-cart"></i> Add to Cart</button>
+{{--                            <button class="btn cart-btn m-1" type="submit" > <i class="fa-solid fa-shopping-cart"></i> Add to Cart</button>--}}
                             <button class="btn buy-now-btn m-1" type="button"> <i class="fa-solid fa-bolt"></i> Order Now</button>
                         </div>
 
@@ -320,7 +320,7 @@
                 let unit = selected.data('unit');
                 let quantity = selected.data('quantity');
                 let unitText = selected.data('unit-text');
- 
+
                 let priceHtml = `
                     <div class="d-flex align-items-center">
                         <p class="price mb-0 fs-24 fw-bold">${discount || price} টাকা</p>
@@ -328,7 +328,7 @@
                     </div>
                     ${quantity ? `<p class="variant-quantity mb-0 fw-bold fs-18 text-muted">${quantity} ${unitText}</p>` : ''}
                 `;
-                
+
                 $('#price-variant-display').html(priceHtml);
 
                 // Update label dynamically
