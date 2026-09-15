@@ -439,7 +439,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group mb-4 p-3 bg-light rounded border">
+                                <div class="form-group mb-4 p-3 bg-light border">
                                     <label class="form-label fw-bold">
                                         <i class="fa fa-cloud-upload me-1 text-primary"></i> Upload New Customer Review Screenshots (Multiple):
                                     </label>
@@ -562,7 +562,7 @@
                                             @enderror
                                         </div>
 
-                                        <div class="p-3 bg-light rounded border mt-3">
+                                        <div class="p-3 bg-light border mt-3">
                                             <h6 class="fw-bold mb-2">Delivery Guarantees (2 Columns):</h6>
                                             <div class="row g-2">
                                                 <div class="col-12 mb-2">
