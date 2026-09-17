@@ -1,6 +1,5 @@
 {{--Jquery--}}
 <script src="{{ asset('/frontend/assets/jquery/jquery-3.7.1.js') }}"></script>
-<script src="{{ asset('/frontend/assets/js/my-custom.js') }}"></script>
 
 {{--Font Awesome--}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
@@ -48,5 +47,9 @@
     }
 
 </script>
+
+{{-- Custom Application Scripts --}}
+<script src="{{ asset('/frontend/assets/js/my-custom.js') }}"></script>
+
 
 

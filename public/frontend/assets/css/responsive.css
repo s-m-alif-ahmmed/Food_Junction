@@ -2086,3 +2086,39 @@
     /*Cart Page End*/
 
 }
+
+/* ==========================================================================
+   Baklava Offer Landing Page Responsive Styles
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    .problem-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .steps-grid-3 {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+    .checklist-pills-bar {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 12px 14px;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .dual-benefit-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media screen and (max-width: 540px) {
+    .hero-tray-img {
+        border-radius: 14px;
+        margin: 14px auto;
+    }
+    .hero-trust-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}

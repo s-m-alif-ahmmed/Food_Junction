@@ -105,11 +105,29 @@ class SpecialOfferController extends Controller
      */
     public function create(): View
     {
-        $products = Product::with('variants')->where('status', 'active')->get();
-        $defaultIngredients = BaklavaOffer::getDefaultIngredients();
-        $defaultTrustBadges = BaklavaOffer::getDefaultTrustBadges();
+        $products               = Product::with('variants')->where('status', 'active')->get();
+        $defaultIngredients     = BaklavaOffer::getDefaultIngredients();
+        $defaultTrustBadges     = BaklavaOffer::getDefaultTrustBadges();
+        $defaultProblemCards    = BaklavaOffer::getDefaultProblemCards();
+        $defaultComparisonRows  = BaklavaOffer::getDefaultComparisonRows();
+        $defaultFeaturePills    = BaklavaOffer::getDefaultFeaturePills();
+        $defaultProcessSteps    = BaklavaOffer::getDefaultProcessSteps();
+        $defaultChecklistItems  = BaklavaOffer::getDefaultChecklistItems();
+        $defaultRatingBreakdown = BaklavaOffer::getDefaultRatingBreakdown();
+        $defaultTestimonials    = BaklavaOffer::getDefaultTestimonials();
 
-        return view('backend.layouts.special-offer.create', compact('products', 'defaultIngredients', 'defaultTrustBadges'));
+        return view('backend.layouts.special-offer.create', compact(
+            'products',
+            'defaultIngredients',
+            'defaultTrustBadges',
+            'defaultProblemCards',
+            'defaultComparisonRows',
+            'defaultFeaturePills',
+            'defaultProcessSteps',
+            'defaultChecklistItems',
+            'defaultRatingBreakdown',
+            'defaultTestimonials'
+        ));
     }
 
     /**
@@ -161,12 +179,42 @@ class SpecialOfferController extends Controller
             $offer->save_amount                = $request->save_amount;
             $offer->video_url                  = $request->video_url;
 
-            $offer->ingredient_title           = $request->ingredient_title ?? 'INGREDIENTS';
-            $offer->ingredient_subtitle        = $request->ingredient_subtitle;
+            // Problem Agitation Section
+            $offer->problem_title              = $request->problem_title ?? 'আপনার কি মিষ্টি কিনতে এই সমস্যাগুলো হয়?';
+            $offer->problem_subtitle           = $request->problem_subtitle ?? 'কেন সাধারণ মিষ্টি নয়, এখনই সঠিক সিদ্ধান্ত নেবেন';
 
-            $offer->reviews_title              = $request->reviews_title ?? 'Trusted by 5000+ Happy Customers';
-            $offer->reviews_subtitle           = $request->reviews_subtitle;
+            // Comparison Matrix Section
+            $offer->comparison_title           = $request->comparison_title ?? 'সাধারণ মিষ্টি বা বাকলাভা কেন সমাধান নয়?';
+            $offer->comparison_subtitle        = $request->comparison_subtitle ?? 'Food Junction এর প্রিমিয়াম প্যাকেজ কেন অন্যদের চেয়ে সম্পূর্ণ আলাদা ও অনন্য';
+            $offer->comparison_bad_header      = $request->comparison_bad_header ?? 'সাধারণ রেগুলার মিষ্টি';
+            $offer->comparison_good_header     = $request->comparison_good_header ?? 'Food Junction বাকলাভা';
 
+            // 3-Step Process & Highlights
+            $offer->step_section_title         = $request->step_section_title ?? '৩০ সেকেন্ডে মুগ্ধ হবেন সেরা স্বাদে';
+            $offer->step_section_subtitle      = $request->step_section_subtitle ?? 'খাঁটি স্বাদ ও রাজকীয় আভিজাত্য — প্রতিটি কামড়ে তুর্কি ঐতিহ্যের অনন্য অনুভূতি';
+
+            // Dual Benefits
+            $offer->dual_benefit_1_title       = $request->dual_benefit_1_title ?? 'টার্কিশ বাকলাভা';
+            $offer->dual_benefit_1_neg         = $request->dual_benefit_1_neg ?? 'সাধারণ মিষ্টির মতো অতিরিক্ত কড়া বা ভারী লাগে না';
+            $offer->dual_benefit_1_pos         = $request->dual_benefit_1_pos ?? 'পেস্তা-কাজুর মুচমুচে ক্রাঞ্চ ও খাঁটি ঘৃত সুবাসে ভরপুর';
+            $offer->dual_benefit_2_title       = $request->dual_benefit_2_title ?? 'পাবনার পেরা সন্দেশ';
+            $offer->dual_benefit_2_neg         = $request->dual_benefit_2_neg ?? 'বাজারে পাউডার দুধের কৃত্রিম ক্ষীর নয়';
+            $offer->dual_benefit_2_pos         = $request->dual_benefit_2_pos ?? 'খাঁটি তরল দুধ ঘণ্টার পর ঘণ্টা জ্বাল দিয়ে তৈরি শতাব্দী প্রাচীন ঐতিহ্য';
+
+            // Trust Stats Widget
+            $offer->rating_score               = $request->rating_score ?? '৪.৯';
+            $offer->total_reviews_count        = $request->total_reviews_count ?? '৫,২৩০+ রিভিউ';
+            $offer->delivered_orders_text      = $request->delivered_orders_text ?? 'সারা বাংলাদেশে ৬,০০০+ সফল ডেলিভার্ড অর্ডার';
+
+            // Ingredients
+            $offer->ingredient_title           = $request->ingredient_title ?? '১০০% খাঁটি ও সেরা উপাদানসমূহ';
+            $offer->ingredient_subtitle        = $request->ingredient_subtitle ?? 'আমাদের প্রতিটি মিষ্টি প্রস্তুত হয় প্রাকৃতিক ও হাইজেনিক উপাদান দিয়ে';
+
+            // Reviews
+            $offer->reviews_title              = $request->reviews_title ?? 'বাস্তব গ্রাহকদের পাঠানো রিভিউসমূহ';
+            $offer->reviews_subtitle           = $request->reviews_subtitle ?? 'ছবিতে ট্যাপ করে বড় করে দেখুন';
+
+            // Story & Guarantees
             $offer->why_title                  = $request->why_title ?? 'Why We Made This?';
             $offer->why_subtitle               = $request->why_subtitle;
             $offer->why_heading                = $request->why_heading ?? 'Delivery All Over Bangladesh';
@@ -178,11 +226,16 @@ class SpecialOfferController extends Controller
             $offer->guarantee_2_title          = $request->guarantee_2_title ?? '100% Secure Packaging';
             $offer->guarantee_2_text           = $request->guarantee_2_text ?? 'নিরাপদ ও স্বাস্থ্যসম্মত ভ্যাকুয়াম সিল প্যাকেজিং';
 
-            $offer->package_title              = $request->package_title ?? $request->name;
+            // Order & Package
+            $offer->package_title              = $request->package_title ?? '২০ পিস টার্কিশ বাকলাভা + হাফকেজি পাবনার পেরা সন্দেশ (ফ্রী)';
             $offer->package_subtitle           = $request->package_subtitle ?? 'সম্পূর্ণ প্রিমিয়াম গিফট বক্স প্যাকেজিং সহ';
             $offer->inside_dhaka_delivery_fee  = $request->inside_dhaka_delivery_fee ?? 80;
             $offer->outside_dhaka_delivery_fee = $request->outside_dhaka_delivery_fee ?? 150;
             $offer->whatsapp_number            = $request->whatsapp_number ?? '8801672756634';
+            $offer->phone_number               = $request->phone_number ?? '8801672756634';
+            $offer->facebook_url               = $request->facebook_url ?? 'https://www.facebook.com';
+            $offer->timer_badge                = $request->timer_badge ?? 'অফার শেষ হতে বাকি';
+            $offer->countdown_end_time         = $request->filled('countdown_end_time') ? $request->countdown_end_time : null;
             $offer->status                     = $request->status ?? 'active';
 
             // Hero image upload
@@ -214,6 +267,95 @@ class SpecialOfferController extends Controller
                 }
             }
 
+            // Problem Agitation Cards JSON
+            $problemCards = [];
+            $pTitles = $request->input('problem_card_titles', []);
+            $pDescs  = $request->input('problem_card_descs', []);
+            $pIcons  = $request->input('problem_card_icons', []);
+            foreach ($pTitles as $pIdx => $pTitle) {
+                if (!empty($pTitle)) {
+                    $problemCards[] = [
+                        'title' => $pTitle,
+                        'desc'  => $pDescs[$pIdx] ?? '',
+                        'icon'  => $pIcons[$pIdx] ?? 'fa-triangle-exclamation',
+                    ];
+                }
+            }
+            $offer->problem_cards = !empty($problemCards) ? $problemCards : BaklavaOffer::getDefaultProblemCards();
+
+            // Comparison Rows JSON
+            $compRows = [];
+            $cLabels = $request->input('comp_row_labels', []);
+            $cBads   = $request->input('comp_row_bads', []);
+            $cGoods  = $request->input('comp_row_goods', []);
+            foreach ($cLabels as $cIdx => $cLabel) {
+                if (!empty($cLabel)) {
+                    $compRows[] = [
+                        'label' => $cLabel,
+                        'bad'   => $cBads[$cIdx] ?? '',
+                        'good'  => $cGoods[$cIdx] ?? '',
+                    ];
+                }
+            }
+            $offer->comparison_rows = !empty($compRows) ? $compRows : BaklavaOffer::getDefaultComparisonRows();
+
+            // Quick Feature Pills JSON
+            $featurePills = array_values(array_filter($request->input('feature_pills', [])));
+            $offer->feature_pills = !empty($featurePills) ? $featurePills : BaklavaOffer::getDefaultFeaturePills();
+
+            // 3-Step Process Steps JSON
+            $processSteps = [];
+            $sNums   = $request->input('step_nums', []);
+            $sTitles = $request->input('step_titles', []);
+            $sDescs  = $request->input('step_descs', []);
+            $sIcons  = $request->input('step_icons', []);
+            foreach ($sTitles as $sIdx => $sTitle) {
+                if (!empty($sTitle)) {
+                    $processSteps[] = [
+                        'num'   => $sNums[$sIdx] ?? '0' . ($sIdx + 1),
+                        'title' => $sTitle,
+                        'desc'  => $sDescs[$sIdx] ?? '',
+                        'icon'  => $sIcons[$sIdx] ?? 'fa-wand-magic-sparkles',
+                    ];
+                }
+            }
+            $offer->process_steps = !empty($processSteps) ? $processSteps : BaklavaOffer::getDefaultProcessSteps();
+
+            // Checklist Items JSON
+            $checklistItems = array_values(array_filter($request->input('checklist_items', [])));
+            $offer->checklist_items = !empty($checklistItems) ? $checklistItems : BaklavaOffer::getDefaultChecklistItems();
+
+            // Rating Breakdown JSON
+            $ratingBreakdown = [];
+            $rPercents = $request->input('rating_percents', []);
+            foreach ([5, 4, 3, 2, 1] as $s) {
+                $ratingBreakdown[] = [
+                    'star'    => $s,
+                    'percent' => (int)($rPercents[$s] ?? ($s == 5 ? 88 : ($s == 4 ? 10 : ($s == 3 ? 2 : 0)))),
+                ];
+            }
+            $offer->rating_breakdown = $ratingBreakdown;
+
+            // Verified Testimonials JSON
+            $testimonials = [];
+            $tNames     = $request->input('testi_names', []);
+            $tLocations = $request->input('testi_locations', []);
+            $tLetters   = $request->input('testi_letters', []);
+            $tStars     = $request->input('testi_stars', []);
+            $tTexts     = $request->input('testi_texts', []);
+            foreach ($tNames as $tIdx => $tName) {
+                if (!empty($tName)) {
+                    $testimonials[] = [
+                        'name'          => $tName,
+                        'location'      => $tLocations[$tIdx] ?? '',
+                        'avatar_letter' => !empty($tLetters[$tIdx]) ? $tLetters[$tIdx] : mb_substr($tName, 0, 1),
+                        'stars'         => (int)($tStars[$tIdx] ?? 5),
+                        'text'          => $tTexts[$tIdx] ?? '',
+                    ];
+                }
+            }
+            $offer->testimonials = !empty($testimonials) ? $testimonials : BaklavaOffer::getDefaultTestimonials();
+
             // Ingredients
             $ingredients = [];
             $ingNames = $request->input('ingredient_names', ['দেশী গাওয়া ঘি', 'প্রিমিয়াম পেস্তা', 'জাম্বু কাজু', 'প্রাকৃতিক মধু', 'প্রিমিয়াম ফ্লাওয়ার']);
@@ -238,9 +380,9 @@ class SpecialOfferController extends Controller
 
             // Trust badges
             $badges = [];
-            $titles = $request->input('trust_badge_titles', ['Handmade in Bangladesh', 'Premium Gift Packaging', 'Carefully Finished by Hand', 'Nationwide Delivery']);
-            $subtitles = $request->input('trust_badge_subtitles', ['সম্পূর্ণ হাতে তৈরি ফ্রেশ', 'আকর্ষণীয় গিফট বক্স ফ্রি', 'নিখুঁত ও হাইজেনিক ফিনিশ', 'সারাদেশে হোম ডেলিভারি']);
-            $icons = $request->input('trust_badge_icons', ['fa-hands-holding', 'fa-gift', 'fa-medal', 'fa-truck-fast']);
+            $titles = $request->input('trust_badge_titles', ['১০০% খাঁটি গাওয়া ঘি', 'চেক করে মূল্য পরিশোধ', '৫,০০০+ সন্তুষ্ট কাস্টমার']);
+            $subtitles = $request->input('trust_badge_subtitles', ['খাঁটি উপাদানের নিশ্চয়তা', 'ক্যাশ অন ডেলিভারি', 'সারা বাংলাদেশে ডেলিভারি']);
+            $icons = $request->input('trust_badge_icons', ['fa-shield-halved', 'fa-hand-holding-dollar', 'fa-award']);
 
             foreach ($titles as $idx => $title) {
                 $badges[] = [
@@ -251,7 +393,7 @@ class SpecialOfferController extends Controller
             }
             $offer->trust_badges = $badges;
 
-            // Reviews
+            // Reviews Screenshots
             $reviews = [];
             if ($request->hasFile('new_review_images')) {
                 foreach ($request->file('new_review_images') as $i => $revImg) {
@@ -337,12 +479,42 @@ class SpecialOfferController extends Controller
             $offer->save_amount                = $request->save_amount;
             $offer->video_url                  = $request->video_url;
 
+            // Problem Agitation Section
+            $offer->problem_title              = $request->problem_title;
+            $offer->problem_subtitle           = $request->problem_subtitle;
+
+            // Comparison Matrix Section
+            $offer->comparison_title           = $request->comparison_title;
+            $offer->comparison_subtitle        = $request->comparison_subtitle;
+            $offer->comparison_bad_header      = $request->comparison_bad_header;
+            $offer->comparison_good_header     = $request->comparison_good_header;
+
+            // 3-Step Process & Highlights
+            $offer->step_section_title         = $request->step_section_title;
+            $offer->step_section_subtitle      = $request->step_section_subtitle;
+
+            // Dual Benefits
+            $offer->dual_benefit_1_title       = $request->dual_benefit_1_title;
+            $offer->dual_benefit_1_neg         = $request->dual_benefit_1_neg;
+            $offer->dual_benefit_1_pos         = $request->dual_benefit_1_pos;
+            $offer->dual_benefit_2_title       = $request->dual_benefit_2_title;
+            $offer->dual_benefit_2_neg         = $request->dual_benefit_2_neg;
+            $offer->dual_benefit_2_pos         = $request->dual_benefit_2_pos;
+
+            // Trust Stats Widget
+            $offer->rating_score               = $request->rating_score;
+            $offer->total_reviews_count        = $request->total_reviews_count;
+            $offer->delivered_orders_text      = $request->delivered_orders_text;
+
+            // Ingredients
             $offer->ingredient_title           = $request->ingredient_title;
             $offer->ingredient_subtitle        = $request->ingredient_subtitle;
 
+            // Reviews
             $offer->reviews_title              = $request->reviews_title;
             $offer->reviews_subtitle           = $request->reviews_subtitle;
 
+            // Story & Guarantees
             $offer->why_title                  = $request->why_title;
             $offer->why_subtitle               = $request->why_subtitle;
             $offer->why_heading                = $request->why_heading;
@@ -354,11 +526,16 @@ class SpecialOfferController extends Controller
             $offer->guarantee_2_title          = $request->guarantee_2_title;
             $offer->guarantee_2_text           = $request->guarantee_2_text;
 
+            // Order & Package
             $offer->package_title              = $request->package_title;
             $offer->package_subtitle           = $request->package_subtitle;
             $offer->inside_dhaka_delivery_fee  = $request->inside_dhaka_delivery_fee;
             $offer->outside_dhaka_delivery_fee = $request->outside_dhaka_delivery_fee;
             $offer->whatsapp_number            = $request->whatsapp_number;
+            $offer->phone_number               = $request->phone_number;
+            $offer->facebook_url               = $request->facebook_url;
+            $offer->timer_badge                = $request->timer_badge ?? 'অফার শেষ হতে বাকি';
+            $offer->countdown_end_time         = $request->filled('countdown_end_time') ? $request->countdown_end_time : null;
             $offer->status                     = $request->status ?? 'active';
 
             // Handle Hero Image
@@ -400,6 +577,107 @@ class SpecialOfferController extends Controller
                 if ($videoPath) {
                     $offer->video_url = asset($videoPath);
                 }
+            }
+
+            // Problem Agitation Cards JSON
+            if ($request->has('problem_card_titles')) {
+                $problemCards = [];
+                $pTitles = $request->input('problem_card_titles', []);
+                $pDescs  = $request->input('problem_card_descs', []);
+                $pIcons  = $request->input('problem_card_icons', []);
+                foreach ($pTitles as $pIdx => $pTitle) {
+                    if (!empty($pTitle)) {
+                        $problemCards[] = [
+                            'title' => $pTitle,
+                            'desc'  => $pDescs[$pIdx] ?? '',
+                            'icon'  => $pIcons[$pIdx] ?? 'fa-triangle-exclamation',
+                        ];
+                    }
+                }
+                $offer->problem_cards = $problemCards;
+            }
+
+            // Comparison Rows JSON
+            if ($request->has('comp_row_labels')) {
+                $compRows = [];
+                $cLabels = $request->input('comp_row_labels', []);
+                $cBads   = $request->input('comp_row_bads', []);
+                $cGoods  = $request->input('comp_row_goods', []);
+                foreach ($cLabels as $cIdx => $cLabel) {
+                    if (!empty($cLabel)) {
+                        $compRows[] = [
+                            'label' => $cLabel,
+                            'bad'   => $cBads[$cIdx] ?? '',
+                            'good'  => $cGoods[$cIdx] ?? '',
+                        ];
+                    }
+                }
+                $offer->comparison_rows = $compRows;
+            }
+
+            // Quick Feature Pills JSON
+            if ($request->has('feature_pills')) {
+                $offer->feature_pills = array_values(array_filter($request->input('feature_pills', [])));
+            }
+
+            // 3-Step Process Steps JSON
+            if ($request->has('step_titles')) {
+                $processSteps = [];
+                $sNums   = $request->input('step_nums', []);
+                $sTitles = $request->input('step_titles', []);
+                $sDescs  = $request->input('step_descs', []);
+                $sIcons  = $request->input('step_icons', []);
+                foreach ($sTitles as $sIdx => $sTitle) {
+                    if (!empty($sTitle)) {
+                        $processSteps[] = [
+                            'num'   => $sNums[$sIdx] ?? '0' . ($sIdx + 1),
+                            'title' => $sTitle,
+                            'desc'  => $sDescs[$sIdx] ?? '',
+                            'icon'  => $sIcons[$sIdx] ?? 'fa-wand-magic-sparkles',
+                        ];
+                    }
+                }
+                $offer->process_steps = $processSteps;
+            }
+
+            // Checklist Items JSON
+            if ($request->has('checklist_items')) {
+                $offer->checklist_items = array_values(array_filter($request->input('checklist_items', [])));
+            }
+
+            // Rating Breakdown JSON
+            if ($request->has('rating_percents')) {
+                $ratingBreakdown = [];
+                $rPercents = $request->input('rating_percents', []);
+                foreach ([5, 4, 3, 2, 1] as $s) {
+                    $ratingBreakdown[] = [
+                        'star'    => $s,
+                        'percent' => (int)($rPercents[$s] ?? 0),
+                    ];
+                }
+                $offer->rating_breakdown = $ratingBreakdown;
+            }
+
+            // Verified Testimonials JSON
+            if ($request->has('testi_names')) {
+                $testimonials = [];
+                $tNames     = $request->input('testi_names', []);
+                $tLocations = $request->input('testi_locations', []);
+                $tLetters   = $request->input('testi_letters', []);
+                $tStars     = $request->input('testi_stars', []);
+                $tTexts     = $request->input('testi_texts', []);
+                foreach ($tNames as $tIdx => $tName) {
+                    if (!empty($tName)) {
+                        $testimonials[] = [
+                            'name'          => $tName,
+                            'location'      => $tLocations[$tIdx] ?? '',
+                            'avatar_letter' => !empty($tLetters[$tIdx]) ? $tLetters[$tIdx] : mb_substr($tName, 0, 1),
+                            'stars'         => (int)($tStars[$tIdx] ?? 5),
+                            'text'          => $tTexts[$tIdx] ?? '',
+                        ];
+                    }
+                }
+                $offer->testimonials = $testimonials;
             }
 
             // Handle Ingredients

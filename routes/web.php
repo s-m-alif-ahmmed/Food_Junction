@@ -56,8 +56,6 @@ Route::post('/coupon/remove', [OrderController::class, 'couponRemove'])->name('c
 // Delivery Zone
 Route::post('/cart/delivery-zone', [OrderController::class, 'setDeliveryZone'])->name('cart.delivery.zone');
 
-
-
 //dynamic page
 Route::get('/page/{page_slug}', [HomeController::class, 'dynamicPage'])->name('user.dynamic.page');
 
@@ -94,7 +92,6 @@ Route::middleware('auth')->group(function () {
     //Wishlist
     Route::post('/wishlist/add/{id}', [WishlistController::class, 'add'])->name('product.wishlist.add');
     Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('product.wishlist.remove');
-
 
 });
 
