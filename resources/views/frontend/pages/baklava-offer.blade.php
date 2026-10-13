@@ -76,6 +76,14 @@
                 </p>
                 @endif
 
+                <!-- Hero Platter Photo -->
+                @if(!empty($data->hero_image))
+                <img src="{{ asset($data->hero_image) }}"
+                     alt="{{ $data->hero_title ?? $data->name ?? 'Offer Image' }}"
+                     class="hero-tray-img"
+                     loading="eager" />
+                @endif
+
                 <!-- 3-Column Trust Guarantee Grid -->
                 @if(!empty($data->trust_badges) && is_array($data->trust_badges) && count($data->trust_badges) > 0)
                 <div class="hero-trust-grid">
@@ -93,14 +101,6 @@
                         @endif
                     @endforeach
                 </div>
-                @endif
-
-                <!-- Hero Platter Photo -->
-                @if(!empty($data->hero_image))
-                <img src="{{ asset($data->hero_image) }}"
-                     alt="{{ $data->hero_title ?? $data->name ?? 'Offer Image' }}"
-                     class="hero-tray-img"
-                     loading="eager" />
                 @endif
 
                 <!-- Pricing Display -->
@@ -200,6 +200,17 @@
                     </div>
                     @endif
 
+                    <!-- Problem & Agitation Section Showcase Photo -->
+                    @php
+                        $problemSectionImg = !empty($data->problem_image) ? $data->problem_image : (!empty($data->hero_image) ? $data->hero_image : null);
+                    @endphp
+                    @if(!empty($problemSectionImg))
+                    <img src="{{ asset($problemSectionImg) }}"
+                        alt="{{ $data->problem_title ?? $data->hero_title ?? $data->name ?? 'Offer Image' }}"
+                        class="problem-showcase-img"
+                        loading="lazy" />
+                    @endif
+
                     <div class="my-3">
                         <a href="#comparison-section" class="landing-cta-btn">
                             <i class="fa-solid fa-arrow-down"></i> সমাধান দেখুন &bull; এখনই অফারটি নিন
@@ -227,7 +238,7 @@
                     <h2 class="landing-section-title">{{ $data->comparison_title }}</h2>
                 @endif
                 @if(!empty(trim($data->comparison_subtitle ?? '')))
-                    <p class="landing-section-subtitle">{{ $data->comparison_subtitle }}</p>
+                    <h3 class="landing-section-title">{{ $data->comparison_subtitle }}</h3>
                 @endif
 
                 @if($hasComparisonRows)

@@ -147,6 +147,13 @@
                             </div>
                         @endforeach
                     </div>
+
+                    @if(!empty($data->problem_image))
+                        <div class="mt-4 pt-3 border-top">
+                            <div class="info-label mb-2"><i class="fa fa-image text-danger me-1"></i> Problem Section Showcase Image:</div>
+                            <img src="{{ asset($data->problem_image) }}" alt="Problem Section Showcase" style="max-width: 380px; width: 100%; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 14px rgba(0,0,0,0.06);">
+                        </div>
+                    @endif
                 </div>
             </div>
 

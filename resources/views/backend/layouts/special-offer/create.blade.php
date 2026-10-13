@@ -494,6 +494,30 @@
                                         </div>
                                     @endforeach
                                 </div>
+
+                                <div class="mt-4 pt-3 border-top">
+                                    <div class="section-card-title mb-2">
+                                        <i class="fa fa-image text-danger"></i> Problem & Agitation Section Showcase Image
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8 col-lg-7">
+                                            <div class="form-group mb-3">
+                                                <label class="form-label fw-bold">Section Photo / Banner (Displayed right below the 3 problem cards):</label>
+                                                <input type="file" class="dropify @error('problem_image') is-invalid @enderror"
+                                                    name="problem_image" id="problem_image"
+                                                    data-height="220"
+                                                    data-default-file="">
+                                                @error('problem_image')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                                <small class="text-muted d-block mt-2">
+                                                    <i class="fa fa-info-circle text-primary me-1"></i>
+                                                    High-resolution banner or product photo displayed right below the 3 problem cards to visually connect the agitation to the solution.
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- ==========================================

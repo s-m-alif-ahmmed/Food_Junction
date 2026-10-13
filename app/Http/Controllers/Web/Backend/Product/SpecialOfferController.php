@@ -146,6 +146,7 @@ class SpecialOfferController extends Controller
                 'inside_dhaka_delivery_fee'  => 'required|numeric|min:0',
                 'outside_dhaka_delivery_fee' => 'required|numeric|min:0',
                 'hero_image'                 => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+                'problem_image'              => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
                 'collage_image'              => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
                 'why_image'                  => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
                 'video_file'                 => 'nullable|mimes:mp4,mov,ogg,qt|max:51200',
@@ -274,6 +275,11 @@ class SpecialOfferController extends Controller
                 $offer->why_image = Helper::fileUpload($request->file('why_image'), 'special-offers', uniqid('why_'));
             } else {
                 $offer->why_image = 'frontend/images/landing/baklava/why_platter.jpg';
+            }
+
+            // Problem Agitation image upload
+            if ($request->hasFile('problem_image')) {
+                $offer->problem_image = Helper::fileUpload($request->file('problem_image'), 'special-offers', uniqid('problem_'));
             }
 
             // Video upload
@@ -469,6 +475,7 @@ class SpecialOfferController extends Controller
                 'inside_dhaka_delivery_fee'  => 'required|numeric|min:0',
                 'outside_dhaka_delivery_fee' => 'required|numeric|min:0',
                 'hero_image'                 => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+                'problem_image'              => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
                 'collage_image'              => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
                 'why_image'                  => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
                 'video_file'                 => 'nullable|mimes:mp4,mov,ogg,qt|max:51200',
@@ -606,6 +613,17 @@ class SpecialOfferController extends Controller
                 $imagePath = Helper::fileUpload($request->file('why_image'), 'special-offers', uniqid('why_'));
                 if ($imagePath) {
                     $offer->why_image = $imagePath;
+                }
+            }
+
+            // Handle Problem Agitation Image
+            if ($request->hasFile('problem_image')) {
+                if ($offer->problem_image && str_starts_with($offer->problem_image, 'uploads/') && file_exists(public_path($offer->problem_image))) {
+                    Helper::fileDelete(public_path($offer->problem_image));
+                }
+                $imagePath = Helper::fileUpload($request->file('problem_image'), 'special-offers', uniqid('problem_'));
+                if ($imagePath) {
+                    $offer->problem_image = $imagePath;
                 }
             }
 

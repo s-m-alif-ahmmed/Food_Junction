@@ -217,6 +217,7 @@ class BaklavaOffer extends Model
                 'problem_title'              => 'আপনার কি মিষ্টি কিনতে এই সমস্যাগুলো হয়?',
                 'problem_subtitle'           => 'কেন সাধারণ মিষ্টি নয়, এখনই সঠিক সিদ্ধান্ত নেবেন',
                 'problem_cards'              => self::getDefaultProblemCards(),
+                'problem_image'              => null,
                 'comparison_title'           => 'সাধারণ মিষ্টি বা বাকলাভা কেন সমাধান নয়?',
                 'comparison_subtitle'        => 'Food Junction এর প্রিমিয়াম প্যাকেজ কেন অন্যদের চেয়ে সম্পূর্ণ আলাদা ও অনন্য',
                 'comparison_bad_header'      => 'সাধারণ রেগুলার মিষ্টি',
