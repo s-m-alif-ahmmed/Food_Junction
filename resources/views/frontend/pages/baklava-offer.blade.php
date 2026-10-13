@@ -889,9 +889,9 @@
 
                     <div class="landing-legal-links">
                         <a href="{{ url('/') }}">Home</a>
-                        <a href="{{ url('/privacy-policy') }}">Privacy Policy</a>
-                        <a href="{{ url('/terms-and-conditions') }}">Terms and Conditions</a>
-                        <a href="{{ url('/return-refund-policy') }}">Return & Refund Policy</a>
+                        <a href="{{ url('/page/privacy-policy') }}">Privacy Policy</a>
+                        <a href="{{ url('/page/terms-and-conditions') }}">Terms and Conditions</a>
+                        <a href="{{ url('/page/payment-return-policy') }}">Return & Refund Policy</a>
                     </div>
                 </div>
             </section>
