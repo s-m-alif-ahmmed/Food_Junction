@@ -108,6 +108,7 @@ Route::controller(SpecialOfferController::class)->group(function () {
     Route::get('/special-offers/status/{id}', 'status')->name('special-offers.status');
     Route::delete('/special-offers/delete/{id}', 'destroy')->name('special-offers.destroy');
     Route::delete('/special-offers/{id}/delete-review/{index}', 'deleteReview')->name('special-offers.delete-review');
+    Route::delete('/special-offers/{id}/delete-collage-image/{index}', 'deleteCollageImage')->name('special-offers.delete-collage-image');
 });
 
 //! Route for Category

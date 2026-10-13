@@ -253,7 +253,7 @@
             let phone = $('#number').val() ? $('#number').val().trim() : '';
             let address = $('#address').val() ? $('#address').val().trim() : '';
             let deliveryZone = $('#delivery_zone').val();
-            let terms = $('#all_terms').is(':checked');
+            let terms = $('#all_terms').length ? ($('#all_terms').is(':checkbox') ? $('#all_terms').is(':checked') : Boolean($('#all_terms').val())) : true;
 
             if (!name) {
                 if (typeof window.showErrorToast === 'function') {

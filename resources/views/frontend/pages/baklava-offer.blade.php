@@ -2,15 +2,23 @@
 
 @section('meta_infos')
     <meta name="author" content="Food Junction">
-    <meta name="description" content="{{ $data->offer_headline ?? '২০ পিস টার্কিশ বাকলাভার সাথে হাফকেজি পাবনার পেরা সন্দেশ ফ্রী!' }} {{ $data->offer_subtext ?? 'প্রিমিয়াম টার্কিশ ডেজার্ট এখন আপনার ঘরে।' }}">
+    @if(!empty(trim($data->offer_headline ?? '')) || !empty(trim($data->offer_subtext ?? '')))
+        <meta name="description" content="{{ trim(($data->offer_headline ?? '') . ' ' . ($data->offer_subtext ?? '')) }}">
+    @endif
     <meta name="keywords" content="Baklava Offer, Turkish Baklava, Pera Sandesh, Food Junction, Sweets Dhaka, Special Offer">
-    <meta property="og:title" content="{{ $data->hero_title ?? 'Baklava Special Offer' }} | Food Junction">
-    <meta property="og:description" content="{{ $data->offer_headline ?? '২০ পিস বাকলাভার সাথে হাফকেজি পাবনার পেরা সন্দেশ ফ্রী!' }}">
-    <meta property="og:image" content="{{ !empty($data->hero_image) ? asset($data->hero_image) : asset('frontend/images/landing/baklava/hero_tray.png') }}">
+    @if(!empty(trim($data->hero_title ?? '')) || !empty(trim($data->name ?? '')))
+        <meta property="og:title" content="{{ $data->hero_title ?? $data->name }} | Food Junction">
+    @endif
+    @if(!empty(trim($data->offer_headline ?? '')))
+        <meta property="og:description" content="{{ $data->offer_headline }}">
+    @endif
+    @if(!empty($data->hero_image))
+        <meta property="og:image" content="{{ asset($data->hero_image) }}">
+    @endif
 @endsection
 
 @section('title')
-    {{ $data->hero_title ?? 'Baklava Special Offer' }} | Food Junction
+    {{ !empty(trim($data->hero_title ?? '')) ? $data->hero_title . ' | Food Junction' : (!empty(trim($data->name ?? '')) ? $data->name . ' | Food Junction' : 'Special Offer | Food Junction') }}
 @endsection
 
 @section('content')
@@ -42,52 +50,79 @@
                  ══════════════════════════════════════════════════ -->
             <section class="baklava-hero-section">
                 <!-- Tagline Badge -->
+                @if(!empty(trim($data->badge_text ?? '')))
                 <div>
                     <span class="offer-tag-pill">
-                        <i class="fa-solid fa-fire text-danger"></i> {{ $data->badge_text ?? '★ স্পেশাল ধামাকা অফার — সীমিত সময়ের জন্য ★' }}
+                        <i class="fa-solid fa-fire text-danger"></i> {{ $data->badge_text }}
                     </span>
                 </div>
+                @endif
 
                 <!-- Main Hook Title -->
+                @if(!empty(trim($data->hero_title ?? '')) || !empty(trim($data->offer_headline ?? '')))
                 <h1 class="hero-main-title">
-                    {{ $data->hero_title ?? 'তুরস্কের খাঁটি বাকলাভার সাথে পাচ্ছেন' }} <span class="fj-highlight-text">{{ $data->offer_headline ?? 'হাফকেজি পাবনার পেরা সন্দেশ ফ্রী!' }}</span>
+                    @if(!empty(trim($data->hero_title ?? '')))
+                        {{ $data->hero_title }}
+                    @endif
+                    @if(!empty(trim($data->offer_headline ?? '')))
+                        <span class="fj-highlight-text">{{ $data->offer_headline }}</span>
+                    @endif
                 </h1>
+                @endif
 
+                @if(!empty(trim($data->offer_subtext ?? '')))
                 <p class="landing-section-subtitle">
-                    {{ $data->offer_subtext ?? 'তুরস্কের অথেন্টিক এবং গ্রাম বাংলার ঐতিহ্যবাহী ১০০% খাঁটি স্বাদ — সবচেয়ে নরম ও মুচমুচে স্বাদে সেরা' }}
+                    {{ $data->offer_subtext }}
                 </p>
+                @endif
 
                 <!-- 3-Column Trust Guarantee Grid -->
-                @php
-                    $trustBadges = !empty($data->trust_badges) ? $data->trust_badges : \App\Models\BaklavaOffer::getDefaultTrustBadges();
-                @endphp
+                @if(!empty($data->trust_badges) && is_array($data->trust_badges) && count($data->trust_badges) > 0)
                 <div class="hero-trust-grid">
-                    @foreach($trustBadges as $badge)
+                    @foreach($data->trust_badges as $badge)
+                        @if(!empty(trim($badge['title'] ?? '')) || !empty(trim($badge['subtitle'] ?? '')))
                         <div class="hero-trust-item">
                             <div class="hero-trust-icon"><i class="{{ $getIconClass($badge['icon'] ?? '', 'fa-solid fa-shield-halved') }}"></i></div>
-                            <div class="hero-trust-text">{{ $badge['title'] ?? '' }}<br><small class="text-muted fw-normal">{{ $badge['subtitle'] ?? '' }}</small></div>
+                            <div class="hero-trust-text">
+                                {{ $badge['title'] ?? '' }}
+                                @if(!empty(trim($badge['subtitle'] ?? '')))
+                                    <br><small class="text-muted fw-normal">{{ $badge['subtitle'] }}</small>
+                                @endif
+                            </div>
                         </div>
+                        @endif
                     @endforeach
                 </div>
+                @endif
 
                 <!-- Hero Platter Photo -->
-                <img src="{{ !empty($data->hero_image) ? asset($data->hero_image) : asset('frontend/images/landing/baklava/hero_tray.png') }}"
-                     alt="Turkish Baklava and Pabna Pera Sandesh on Brass Tray"
+                @if(!empty($data->hero_image))
+                <img src="{{ asset($data->hero_image) }}"
+                     alt="{{ $data->hero_title ?? $data->name ?? 'Offer Image' }}"
                      class="hero-tray-img"
                      loading="eager" />
+                @endif
 
                 <!-- Pricing Display -->
+                @if(!empty($data->offer_price) || !empty($data->regular_price))
                 <div class="hero-price-container">
-                    <span class="hero-price-current">৳{{ $data->offer_price ?? 1350 }}</span>
-                    <span class="hero-price-old">
-                        ৳{{ $data->regular_price ?? 1850 }}
-                        <svg class="strike-svg" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
-                            <path d="M1,46 C24,32 44,36 64,25 C76,18 88,15 99,10" fill="none" stroke="#DC2626" stroke-width="3" vector-effect="non-scaling-stroke" stroke-linecap="round" />
-                            <path d="M4,13 C26,26 48,31 70,39 C81,43 91,46 98,52" fill="none" stroke="#DC2626" stroke-width="2" stroke-opacity="0.7" vector-effect="non-scaling-stroke" stroke-linecap="round" />
-                        </svg>
-                    </span>
-                    <span class="save-badge">{{ $data->save_amount ?? '৫০০ টাকা ছাড়' }}</span>
+                    @if(!empty($data->offer_price))
+                        <span class="hero-price-current">৳{{ $data->offer_price }}</span>
+                    @endif
+                    @if(!empty($data->regular_price))
+                        <span class="hero-price-old">
+                            ৳{{ $data->regular_price }}
+                            <svg class="strike-svg" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
+                                <path d="M1,46 C24,32 44,36 64,25 C76,18 88,15 99,10" fill="none" stroke="#DC2626" stroke-width="3" vector-effect="non-scaling-stroke" stroke-linecap="round" />
+                                <path d="M4,13 C26,26 48,31 70,39 C81,43 91,46 98,52" fill="none" stroke="#DC2626" stroke-width="2" stroke-opacity="0.7" vector-effect="non-scaling-stroke" stroke-linecap="round" />
+                            </svg>
+                        </span>
+                    @endif
+                    @if(!empty(trim($data->save_amount ?? '')))
+                        <span class="save-badge">{{ $data->save_amount }}</span>
+                    @endif
                 </div>
+                @endif
 
                 <!-- Primary Action Button -->
                 <div class="my-3">
@@ -100,45 +135,70 @@
             <!-- ══════════════════════════════════════════════════
                  2. VIDEO DEMO & PROBLEM AGITATION SECTION
                  ══════════════════════════════════════════════════ -->
-            <section class="bm-narrow-con my-4 text-center">
-                <div class="micro-trust-banner">
-                    <i class="fa-solid fa-truck-fast"></i> {{ $data->hero_video_banner ?? 'ক্যাশ অন ডেলিভারি · সারা দেশে দ্রুত হোম ডেলিভারি' }}
-                </div>
+            @php
+                $hasVideo = !empty(trim($data->video_url ?? ''));
+                $hasVideoHeader = !empty(trim($data->hero_video_banner ?? '')) || !empty(trim($data->hero_video_title ?? '')) || !empty(trim($data->hero_video_subtitle ?? ''));
+                $hasProblemCards = !empty($data->problem_cards) && is_array($data->problem_cards) && count($data->problem_cards) > 0;
+                $hasProblem = !empty(trim($data->problem_title ?? '')) || $hasProblemCards;
+            @endphp
 
+            @if($hasVideo || $hasVideoHeader || $hasProblem)
+            <section class="bm-narrow-con my-4 text-center">
+                @if(!empty(trim($data->hero_video_banner ?? '')))
+                <div class="micro-trust-banner">
+                    <i class="fa-solid fa-truck-fast"></i> {{ $data->hero_video_banner }}
+                </div>
+                @endif
+
+                @if(!empty(trim($data->hero_video_title ?? '')))
                 <h2 class="landing-section-title mt-2">
-                    {{ $data->hero_video_title ?? 'ভিডিওতে দেখে নিন আমাদের খাঁটি বাকলাভা তৈরির রূপ' }}
+                    {{ $data->hero_video_title }}
                 </h2>
+                @endif
+
+                @if(!empty(trim($data->hero_video_subtitle ?? '')))
                 <p class="landing-section-subtitle">
-                    {{ $data->hero_video_subtitle ?? '৬০ সেকেন্ডে দেখে নিন কীভাবে দেশি গাওয়া ঘি ও প্রিমিয়াম পেস্তা-কাজু দিয়ে তৈরি হয় আমাদের প্রতিটি বাকলাভা' }}
+                    {{ $data->hero_video_subtitle }}
                 </p>
+                @endif
 
                 <!-- Video Showcase Box -->
-                @if(!empty($data->video_url))
+                @if($hasVideo)
                 <div class="video-showcase-box">
-                    <video controls preload="metadata" playsinline class="landing-video-player" poster="{{ !empty($data->hero_image) ? asset($data->hero_image) : asset('frontend/images/landing/baklava/hero_tray.png') }}">
+                    <video controls preload="metadata" playsinline class="landing-video-player" @if(!empty($data->hero_image)) poster="{{ asset($data->hero_image) }}" @endif>
                         <source src="{{ $data->video_url }}" type="video/mp4" />
                         আপনার ব্রাউজারে ভিডিওটি প্লে হচ্ছে না।
                     </video>
                 </div>
                 @endif
 
-                <!-- Problem Agitation Cards ("আপনার কি মিষ্টি কিনতে এই সমস্যাগুলো হয়?") -->
+                <!-- Problem Agitation Cards -->
+                @if($hasProblem)
                 <div class="mt-5">
-                    <h3 class="landing-section-title fs-22 mb-1">{{ $data->problem_title ?? 'আপনার কি মিষ্টি কিনতে এই সমস্যাগুলো হয়?' }}</h3>
-                    <p class="landing-section-subtitle mb-3">{{ $data->problem_subtitle ?? 'কেন সাধারণ মিষ্টি নয়, এখনই সঠিক সিদ্ধান্ত নেবেন' }}</p>
+                    @if(!empty(trim($data->problem_title ?? '')))
+                        <h3 class="landing-section-title fs-22 mb-1">{{ $data->problem_title }}</h3>
+                    @endif
+                    @if(!empty(trim($data->problem_subtitle ?? '')))
+                        <p class="landing-section-subtitle mb-3">{{ $data->problem_subtitle }}</p>
+                    @endif
 
-                    @php
-                        $problemCards = !empty($data->problem_cards) ? $data->problem_cards : \App\Models\BaklavaOffer::getDefaultProblemCards();
-                    @endphp
+                    @if($hasProblemCards)
                     <div class="problem-cards-grid">
-                        @foreach($problemCards as $pCard)
+                        @foreach($data->problem_cards as $pCard)
+                            @if(!empty(trim($pCard['title'] ?? '')) || !empty(trim($pCard['desc'] ?? '')))
                             <div class="problem-card">
                                 <div class="problem-icon-wrap"><i class="{{ $getIconClass($pCard['icon'] ?? '', 'fa-solid fa-triangle-exclamation') }}"></i></div>
-                                <h4 class="problem-card-title">{{ $pCard['title'] ?? '' }}</h4>
-                                <p class="problem-card-desc">{{ $pCard['desc'] ?? '' }}</p>
+                                @if(!empty(trim($pCard['title'] ?? '')))
+                                    <h4 class="problem-card-title">{{ $pCard['title'] }}</h4>
+                                @endif
+                                @if(!empty(trim($pCard['desc'] ?? '')))
+                                    <p class="problem-card-desc">{{ $pCard['desc'] }}</p>
+                                @endif
                             </div>
+                            @endif
                         @endforeach
                     </div>
+                    @endif
 
                     <div class="my-3">
                         <a href="#comparison-section" class="landing-cta-btn">
@@ -146,42 +206,71 @@
                         </a>
                     </div>
                 </div>
+                @endif
             </section>
+            @endif
 
             <!-- ══════════════════════════════════════════════════
                  3. COMPARISON MATRIX SECTION (Ordinary vs FJ)
                  ══════════════════════════════════════════════════ -->
+            @php
+                $hasComparisonRows = !empty($data->comparison_rows) && is_array($data->comparison_rows) && count($data->comparison_rows) > 0;
+                $hasComparison = !empty(trim($data->comparison_title ?? '')) || $hasComparisonRows;
+            @endphp
+
+            @if($hasComparison)
             <section id="comparison-section" class="bm-narrow-con my-5">
-                <span class="d-block text-center offer-tag-pill">{{ $data->comparison_badge ?? 'পার্থক্য নিজেই যাচাই করুন' }}</span>
-                <h2 class="landing-section-title">{{ $data->comparison_title ?? 'সাধারণ মিষ্টি বা বাকলাভা কেন সমাধান নয়?' }}</h2>
-                <p class="landing-section-subtitle">{{ $data->comparison_subtitle ?? 'Food Junction এর প্রিমিয়াম প্যাকেজ কেন অন্যদের চেয়ে সম্পূর্ণ আলাদা ও অনন্য' }}</p>
+                @if(!empty(trim($data->comparison_badge ?? '')))
+                    <span class="d-block text-center offer-tag-pill">{{ $data->comparison_badge }}</span>
+                @endif
+                @if(!empty(trim($data->comparison_title ?? '')))
+                    <h2 class="landing-section-title">{{ $data->comparison_title }}</h2>
+                @endif
+                @if(!empty(trim($data->comparison_subtitle ?? '')))
+                    <p class="landing-section-subtitle">{{ $data->comparison_subtitle }}</p>
+                @endif
 
+                @if($hasComparisonRows)
                 <div class="comparison-section-box">
+                    @if(!empty(trim($data->comparison_bad_header ?? '')) || !empty(trim($data->comparison_good_header ?? '')))
                     <div class="comparison-header-row">
+                        @if(!empty(trim($data->comparison_bad_header ?? '')))
                         <div class="comp-col-header bad">
-                            <i class="fa-solid fa-circle-xmark text-danger"></i> {{ $data->comparison_bad_header ?? 'সাধারণ রেগুলার মিষ্টি' }}
+                            <i class="fa-solid fa-circle-xmark text-danger"></i> {{ $data->comparison_bad_header }}
                         </div>
+                        @endif
+                        @if(!empty(trim($data->comparison_good_header ?? '')))
                         <div class="comp-col-header good">
-                            <i class="fa-solid fa-circle-check text-success"></i> {{ $data->comparison_good_header ?? 'Food Junction বাকলাভা' }}
+                            <i class="fa-solid fa-circle-check text-success"></i> {{ $data->comparison_good_header }}
                         </div>
+                        @endif
                     </div>
+                    @endif
 
-                    @php
-                        $comparisonRows = !empty($data->comparison_rows) ? $data->comparison_rows : \App\Models\BaklavaOffer::getDefaultComparisonRows();
-                    @endphp
-                    @foreach($comparisonRows as $cRow)
+                    @foreach($data->comparison_rows as $cRow)
+                        @if(!empty(trim($cRow['bad'] ?? '')) || !empty(trim($cRow['good'] ?? '')) || !empty(trim($cRow['label'] ?? '')))
                         <div class="comparison-body-row">
                             <div class="comp-cell bad">
-                                <span class="comp-feature-label">{{ $cRow['label'] ?? '' }}</span>
-                                <div><span class="comp-icon-cross">✕</span> {{ $cRow['bad'] ?? '' }}</div>
+                                @if(!empty(trim($cRow['label'] ?? '')))
+                                    <span class="comp-feature-label">{{ $cRow['label'] }}</span>
+                                @endif
+                                @if(!empty(trim($cRow['bad'] ?? '')))
+                                    <div><span class="comp-icon-cross">✕</span> {{ $cRow['bad'] }}</div>
+                                @endif
                             </div>
                             <div class="comp-cell good">
-                                <span class="comp-feature-label">{{ $cRow['label'] ?? '' }}</span>
-                                <div><span class="comp-icon-check">✓</span> {{ $cRow['good'] ?? '' }}</div>
+                                @if(!empty(trim($cRow['label'] ?? '')))
+                                    <span class="comp-feature-label">{{ $cRow['label'] }}</span>
+                                @endif
+                                @if(!empty(trim($cRow['good'] ?? '')))
+                                    <div><span class="comp-icon-check">✓</span> {{ $cRow['good'] }}</div>
+                                @endif
                             </div>
                         </div>
+                        @endif
                     @endforeach
                 </div>
+                @endif
 
                 <div class="text-center my-3">
                     <a href="#order-section" class="landing-cta-btn">
@@ -189,68 +278,141 @@
                     </a>
                 </div>
             </section>
+            @endif
 
             <!-- ══════════════════════════════════════════════════
                  4. 3-STEP EXPERIENCE & FEATURE SHOWCASE
                  ══════════════════════════════════════════════════ -->
+            @php
+                $hasFeaturePills = !empty($data->feature_pills) && is_array($data->feature_pills) && count(array_filter($data->feature_pills)) > 0;
+                $hasProcessSteps = !empty($data->process_steps) && is_array($data->process_steps) && count($data->process_steps) > 0;
+                $hasStepsHeader = !empty(trim($data->step_badge ?? '')) || !empty(trim($data->step_section_title ?? '')) || !empty(trim($data->step_section_subtitle ?? ''));
+
+                $rawCollageImages = [];
+                if (!empty($data->collage_images) && is_array($data->collage_images)) {
+                    $rawCollageImages = array_values(array_filter($data->collage_images));
+                } elseif (!empty($data->collage_image)) {
+                    $rawCollageImages = [$data->collage_image];
+                }
+                $collageCount = count($rawCollageImages);
+
+                $hasIngredients = !empty($data->ingredients) && is_array($data->ingredients) && count($data->ingredients) > 0;
+                $hasChecklist = !empty($data->checklist_items) && is_array($data->checklist_items) && count(array_filter($data->checklist_items)) > 0;
+
+                $hasSection4 = $hasStepsHeader || $hasFeaturePills || $hasProcessSteps || ($collageCount > 0) || $hasIngredients || $hasChecklist;
+            @endphp
+
+            @if($hasSection4)
             <section class="bm-narrow-con my-5 text-center">
-                <span class="offer-tag-pill">{{ $data->step_badge ?? '100% AUTHENTIC QUALITY' }}</span>
-                <h2 class="landing-section-title">{{ $data->step_section_title ?? '৩০ সেকেন্ডে মুগ্ধ হবেন সেরা স্বাদে' }}</h2>
-                <p class="landing-section-subtitle">{{ $data->step_section_subtitle ?? 'খাঁটি স্বাদ ও রাজকীয় আভিজাত্য — প্রতিটি কামড়ে তুর্কি ঐতিহ্যের অনন্য অনুভূতি' }}</p>
+                @if(!empty(trim($data->step_badge ?? '')))
+                    <span class="offer-tag-pill">{{ $data->step_badge }}</span>
+                @endif
+                @if(!empty(trim($data->step_section_title ?? '')))
+                    <h2 class="landing-section-title">{{ $data->step_section_title }}</h2>
+                @endif
+                @if(!empty(trim($data->step_section_subtitle ?? '')))
+                    <p class="landing-section-subtitle">{{ $data->step_section_subtitle }}</p>
+                @endif
 
                 <!-- Quick Feature Pills -->
-                @php
-                    $featurePills = !empty($data->feature_pills) ? $data->feature_pills : \App\Models\BaklavaOffer::getDefaultFeaturePills();
-                @endphp
+                @if($hasFeaturePills)
                 <div class="quick-feature-pills-wrap">
-                    @foreach($featurePills as $pill)
-                        <div class="feature-pill-item"><i class="fa-solid fa-check"></i> {{ $pill }}</div>
+                    @foreach($data->feature_pills as $pill)
+                        @if(!empty(trim($pill ?? '')))
+                            <div class="feature-pill-item"><i class="fa-solid fa-check"></i> {{ $pill }}</div>
+                        @endif
                     @endforeach
                 </div>
+                @endif
 
                 <!-- 3-Step Numbered Cards -->
+                @if($hasProcessSteps)
                 @php
-                    $processSteps = !empty($data->process_steps) ? $data->process_steps : \App\Models\BaklavaOffer::getDefaultProcessSteps();
+                    $validProcessSteps = array_values(array_filter($data->process_steps ?? [], function($st) {
+                        return !empty(trim($st['title'] ?? '')) || !empty(trim($st['desc'] ?? ''));
+                    }));
+                    $stepCount = count($validProcessSteps);
                 @endphp
-                <div class="steps-grid-3">
-                    @foreach($processSteps as $st)
-                        <div class="step-card-item">
-                            <div class="step-number-badge">{{ $st['num'] ?? '০১' }}</div>
-                            <h3 class="step-card-title"><i class="{{ $getIconClass($st['icon'] ?? '', 'fa-solid fa-wand-magic-sparkles text-warning') }}"></i> {{ $st['title'] ?? '' }}</h3>
-                            <p class="step-card-desc">{{ $st['desc'] ?? '' }}</p>
+                @if($stepCount > 0)
+                <div class="steps-grid-3"
+                     @if($stepCount === 1) style="display: flex; justify-content: center;"
+                     @elseif($stepCount === 2) style="display: flex; justify-content: center; flex-wrap: wrap;"
+                     @endif>
+                    @foreach($validProcessSteps as $stIdx => $st)
+                        <div class="step-card-item"
+                             @if($stepCount === 1) style="max-width: 480px; width: 100%;"
+                             @elseif($stepCount === 2) style="flex: 1 1 320px; max-width: 410px; width: 100%;"
+                             @endif>
+                            <div class="step-number-badge">{{ $st['num'] ?? sprintf('%02d', $stIdx + 1) }}</div>
+                            @if(!empty(trim($st['title'] ?? '')))
+                                <h3 class="step-card-title"><i class="{{ $getIconClass($st['icon'] ?? '', 'fa-solid fa-wand-magic-sparkles text-warning') }}"></i> {{ $st['title'] }}</h3>
+                            @endif
+                            @if(!empty(trim($st['desc'] ?? '')))
+                                <p class="step-card-desc">{{ $st['desc'] }}</p>
+                            @endif
                         </div>
                     @endforeach
                 </div>
+                @endif
+                @endif
 
                 <!-- Collage Presentation Visual -->
-                <div class="landing-collage-box">
-                    <img src="{{ !empty($data->collage_image) ? asset($data->collage_image) : asset('frontend/images/landing/baklava/collage_box.jpg') }}"
-                         alt="Royal Turkish dessert and pera sandesh gift box"
-                         class="landing-collage-img"
-                         loading="lazy" />
+                @if($collageCount > 0)
+                <div class="landing-collage-box collage-count-{{ min($collageCount, 6) }}">
+                    @if($collageCount === 1)
+                        <a href="javascript:void(0)" class="landing-collage-single" onclick="openReviewModal('{{ asset($rawCollageImages[0]) }}')" title="ট্যাপ করে বড় করে দেখুন">
+                            <img src="{{ asset($rawCollageImages[0]) }}"
+                                 alt="{{ $data->name ?? 'Product Showcase' }}"
+                                 class="landing-collage-img"
+                                 loading="lazy" />
+                            <span class="collage-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> বড় করে দেখুন</span>
+                        </a>
+                    @else
+                        <div class="landing-collage-grid collage-grid-{{ min($collageCount, 6) }}">
+                            @foreach($rawCollageImages as $cIdx => $cImg)
+                                <a href="javascript:void(0)"
+                                   class="landing-collage-item collage-item-{{ $cIdx + 1 }}"
+                                   onclick="openReviewModal('{{ asset($cImg) }}')"
+                                   title="ট্যাপ করে বড় করে দেখুন">
+                                    <img src="{{ asset($cImg) }}"
+                                         alt="{{ $data->name ?? 'Showcase' }} - Photo {{ $cIdx + 1 }}"
+                                         class="landing-collage-img"
+                                         loading="lazy" />
+                                    <span class="collage-item-overlay">
+                                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                    </span>
+                                </a>
+                            @endforeach
+                        </div>
+                        <div class="landing-collage-footer-hint">
+                            <i class="fa-solid fa-expand"></i> প্রতিটি ছবিতে ট্যাপ করে ফুল স্ক্রিনে স্পষ্ট করে দেখুন
+                        </div>
+                    @endif
                 </div>
+                @endif
 
                 <!-- Ingredients Scroll Gallery -->
+                @if($hasIngredients)
                 <div class="my-4">
-                    <h3 class="landing-section-title fs-22 mb-1">{{ $data->ingredient_title ?? '১০০% খাঁটি ও সেরা উপাদানসমূহ' }}</h3>
-                    <p class="landing-section-subtitle mb-2">{{ $data->ingredient_subtitle ?? 'আমাদের প্রতিটি মিষ্টি প্রস্তুত হয় প্রাকৃতিক ও হাইজেনিক উপাদান দিয়ে' }}</p>
-
-                    @php
-                        $ingredients = !empty($data->ingredients) ? $data->ingredients : [
-                            ['name' => 'দেশী গাওয়া ঘি', 'image' => 'frontend/images/landing/baklava/ing_ghee.jpg'],
-                            ['name' => 'প্রিমিয়াম পেস্তা', 'image' => 'frontend/images/landing/baklava/ing_pista.jpg'],
-                            ['name' => 'জাম্বু কাজু', 'image' => 'frontend/images/landing/baklava/ing_kaju.jpg'],
-                            ['name' => 'প্রাকৃতিক মধু', 'image' => 'frontend/images/landing/baklava/ing_honey.jpg'],
-                            ['name' => 'প্রিমিয়াম ফ্লাওয়ার', 'image' => 'frontend/images/landing/baklava/ing_flour.jpg'],
-                        ];
-                    @endphp
+                    @if(!empty(trim($data->ingredient_title ?? '')))
+                        <h3 class="landing-section-title fs-22 mb-1">{{ $data->ingredient_title }}</h3>
+                    @endif
+                    @if(!empty(trim($data->ingredient_subtitle ?? '')))
+                        <p class="landing-section-subtitle mb-2">{{ $data->ingredient_subtitle }}</p>
+                    @endif
 
                     <div class="ingredients-scroll-container">
-                        @foreach($ingredients as $ing)
+                        @foreach($data->ingredients as $ing)
+                            @if(!empty(trim($ing['name'] ?? '')) || !empty($ing['image']))
                             <div class="ingredient-card">
-                                <img src="{{ asset($ing['image']) }}" alt="{{ $ing['name'] }}" class="ingredient-img" loading="lazy">
-                                <div class="ingredient-caption">{{ $ing['name'] }}</div>
+                                @if(!empty($ing['image']))
+                                    <img src="{{ asset($ing['image']) }}" alt="{{ $ing['name'] ?? '' }}" class="ingredient-img" loading="lazy">
+                                @endif
+                                @if(!empty(trim($ing['name'] ?? '')))
+                                    <div class="ingredient-caption">{{ $ing['name'] }}</div>
+                                @endif
                             </div>
+                            @endif
                         @endforeach
                     </div>
 
@@ -260,16 +422,18 @@
                         <i class="fa-solid fa-chevron-right"></i>
                     </div>
                 </div>
+                @endif
 
                 <!-- Checklist Highlight Bar -->
-                @php
-                    $checklistItems = !empty($data->checklist_items) ? $data->checklist_items : \App\Models\BaklavaOffer::getDefaultChecklistItems();
-                @endphp
+                @if($hasChecklist)
                 <div class="checklist-pills-bar">
-                    @foreach($checklistItems as $chk)
-                        <div class="checklist-pill-item"><i class="fa-solid fa-circle-check"></i> <span>{{ $chk }}</span></div>
+                    @foreach($data->checklist_items as $chk)
+                        @if(!empty(trim($chk ?? '')))
+                            <div class="checklist-pill-item"><i class="fa-solid fa-circle-check"></i> <span>{{ $chk }}</span></div>
+                        @endif
                     @endforeach
                 </div>
+                @endif
 
                 <div class="my-3">
                     <a href="#order-section" class="landing-cta-btn">
@@ -277,57 +441,122 @@
                     </a>
                 </div>
             </section>
+            @endif
 
             <!-- ══════════════════════════════════════════════════
                  5. DUAL BENEFIT + RATING STATS + REVIEWS + TIMER
                  ══════════════════════════════════════════════════ -->
+            @php
+                $hasBenefit1 = !empty(trim($data->dual_benefit_1_title ?? '')) || !empty(trim($data->dual_benefit_1_neg ?? '')) || !empty(trim($data->dual_benefit_1_pos ?? ''));
+                $hasBenefit2 = !empty(trim($data->dual_benefit_2_title ?? '')) || !empty(trim($data->dual_benefit_2_neg ?? '')) || !empty(trim($data->dual_benefit_2_pos ?? ''));
+                $hasDualBenefits = $hasBenefit1 || $hasBenefit2;
+
+                $hasRatingStats = !empty(trim($data->rating_score ?? '')) || !empty(trim($data->total_reviews_count ?? '')) || (!empty($data->rating_breakdown) && is_array($data->rating_breakdown) && count($data->rating_breakdown) > 0) || !empty(trim($data->delivered_orders_text ?? ''));
+                $hasTestimonials = !empty($data->testimonials) && is_array($data->testimonials) && count($data->testimonials) > 0;
+
+                $reviewsList = !empty($data->reviews) && is_array($data->reviews) ? array_values(array_filter($data->reviews)) : [];
+                $hasReviews = count($reviewsList) > 0;
+
+                $hasTimer = false;
+                $initTotalSeconds = 0;
+                $endTimeIso = '';
+                $calcDays = 0; $calcHours = 0; $calcMinutes = 0; $calcSeconds = 0;
+                if (!empty($data->countdown_end_time)) {
+                    $targetCarbon = \Carbon\Carbon::parse($data->countdown_end_time);
+                    $initTotalSeconds = max(0, now()->diffInSeconds($targetCarbon, false));
+                    if ($initTotalSeconds > 0) {
+                        $hasTimer = true;
+                        $endTimeIso = $targetCarbon->toIso8601String();
+                        $calcDays = (int)floor($initTotalSeconds / 86400);
+                        $calcHours = (int)floor(($initTotalSeconds % 86400) / 3600);
+                        $calcMinutes = (int)floor(($initTotalSeconds % 3600) / 60);
+                        $calcSeconds = (int)($initTotalSeconds % 60);
+                    }
+                }
+
+                $hasSection5 = $hasDualBenefits || $hasRatingStats || $hasTestimonials || $hasReviews || $hasTimer;
+            @endphp
+
+            @if($hasSection5)
             <section class="bm-narrow-con my-5 text-center">
-                <!-- Dual Benefit Box (Baklava vs Pera Sandesh) -->
-                <h2 class="landing-section-title">{{ $data->benefit_section_title ?? 'স্বাদ ও সন্তুষ্টির অনন্য অভিজ্ঞতা' }}</h2>
-                <p class="landing-section-subtitle">{{ $data->benefit_section_subtitle ?? 'দুটি অনন্য ঐতিহ্যের রাজকীয় স্বাদ একসাথে উপভোগ করুন' }}</p>
+                <!-- Dual Benefit Box -->
+                @if($hasDualBenefits)
+                    @php
+                        $isSingleBenefit = !($hasBenefit1 && $hasBenefit2);
+                    @endphp
+                    @if(!empty(trim($data->benefit_section_title ?? '')))
+                        <h2 class="landing-section-title">{{ $data->benefit_section_title }}</h2>
+                    @endif
+                    @if(!empty(trim($data->benefit_section_subtitle ?? '')))
+                        <p class="landing-section-subtitle">{{ $data->benefit_section_subtitle }}</p>
+                    @endif
 
-                <div class="dual-benefit-grid">
-                    <div class="dual-benefit-card">
-                        <div class="dual-benefit-header">
-                            <span class="fs-22">👑</span>
-                            <h4>{{ $data->dual_benefit_1_title ?? 'টার্কিশ বাকলাভা' }}</h4>
+                    <div class="dual-benefit-grid" @if($isSingleBenefit) style="display: flex; justify-content: center;" @endif>
+                        @if($hasBenefit1)
+                        <div class="dual-benefit-card" @if($isSingleBenefit) style="max-width: 520px; width: 100%;" @endif>
+                            @if(!empty(trim($data->dual_benefit_1_title ?? '')))
+                            <div class="dual-benefit-header">
+                                <span class="fs-22">👑</span>
+                                <h4>{{ $data->dual_benefit_1_title }}</h4>
+                            </div>
+                            @endif
+                            @if(!empty(trim($data->dual_benefit_1_neg ?? '')))
+                            <div class="benefit-item-row neg">
+                                <i class="fa-solid fa-xmark text-danger"></i> <span>{{ $data->dual_benefit_1_neg }}</span>
+                            </div>
+                            @endif
+                            @if(!empty(trim($data->dual_benefit_1_pos ?? '')))
+                            <div class="benefit-item-row pos">
+                                <i class="fa-solid fa-check text-success"></i> <span>{{ $data->dual_benefit_1_pos }}</span>
+                            </div>
+                            @endif
                         </div>
-                        <div class="benefit-item-row neg">
-                            <i class="fa-solid fa-xmark text-danger"></i> <span>{{ $data->dual_benefit_1_neg ?? 'সাধারণ মিষ্টির মতো অতিরিক্ত কড়া বা ভারী লাগে না' }}</span>
+                        @endif
+
+                        @if($hasBenefit2)
+                        <div class="dual-benefit-card" @if($isSingleBenefit) style="max-width: 520px; width: 100%;" @endif>
+                            @if(!empty(trim($data->dual_benefit_2_title ?? '')))
+                            <div class="dual-benefit-header">
+                                <span class="fs-22">🍯</span>
+                                <h4>{{ $data->dual_benefit_2_title }}</h4>
+                            </div>
+                            @endif
+                            @if(!empty(trim($data->dual_benefit_2_neg ?? '')))
+                            <div class="benefit-item-row neg">
+                                <i class="fa-solid fa-xmark text-danger"></i> <span>{{ $data->dual_benefit_2_neg }}</span>
+                            </div>
+                            @endif
+                            @if(!empty(trim($data->dual_benefit_2_pos ?? '')))
+                            <div class="benefit-item-row pos">
+                                <i class="fa-solid fa-check text-success"></i> <span>{{ $data->dual_benefit_2_pos }}</span>
+                            </div>
+                            @endif
                         </div>
-                        <div class="benefit-item-row pos">
-                            <i class="fa-solid fa-check text-success"></i> <span>{{ $data->dual_benefit_1_pos ?? 'পেস্তা-কাজুর মুচমুচে ক্রাঞ্চ ও খাঁটি ঘৃত সুবাসে ভরপুর' }}</span>
-                        </div>
+                        @endif
                     </div>
+                @endif
 
-                    <div class="dual-benefit-card">
-                        <div class="dual-benefit-header">
-                            <span class="fs-22">🍯</span>
-                            <h4>{{ $data->dual_benefit_2_title ?? 'পাবনার পেরা সন্দেশ' }}</h4>
-                        </div>
-                        <div class="benefit-item-row neg">
-                            <i class="fa-solid fa-xmark text-danger"></i> <span>{{ $data->dual_benefit_2_neg ?? 'বাজারে পাউডার দুধের কৃত্রিম ক্ষীর নয়' }}</span>
-                        </div>
-                        <div class="benefit-item-row pos">
-                            <i class="fa-solid fa-check text-success"></i> <span>{{ $data->dual_benefit_2_pos ?? 'খাঁটি তরল দুধ ঘণ্টার পর ঘণ্টা জ্বাল দিয়ে তৈরি শতাব্দী প্রাচীন ঐতিহ্য' }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Customer Trust Stats Widget (bedamanush dark style) -->
+                <!-- Customer Trust Stats Widget -->
+                @if($hasRatingStats || $hasTestimonials)
                 <div class="custom-review-widget">
+                    @if($hasRatingStats)
                     <div class="review-summary-card">
                         <div class="summary-top">
+                            @if(!empty(trim($data->rating_score ?? '')) || !empty(trim($data->total_reviews_count ?? '')))
                             <div class="rating-big-box">
-                                <div class="big-rating">{{ $data->rating_score ?? '৪.৯' }}</div>
-                                <div class="stars-gold">★★★★★</div>
-                                <div class="total-reviews">{{ $data->total_reviews_count ?? '৫,২৩০+ রিভিউ' }}</div>
+                                @if(!empty(trim($data->rating_score ?? '')))
+                                    <div class="big-rating">{{ $data->rating_score }}</div>
+                                    <div class="stars-gold">★★★★★</div>
+                                @endif
+                                @if(!empty(trim($data->total_reviews_count ?? '')))
+                                    <div class="total-reviews">{{ $data->total_reviews_count }}</div>
+                                @endif
                             </div>
-                            @php
-                                $breakdown = !empty($data->rating_breakdown) ? $data->rating_breakdown : \App\Models\BaklavaOffer::getDefaultRatingBreakdown();
-                            @endphp
+                            @endif
+
+                            @if(!empty($data->rating_breakdown) && is_array($data->rating_breakdown) && count($data->rating_breakdown) > 0)
                             <div class="progress-bars-container">
-                                @foreach($breakdown as $bRow)
+                                @foreach($data->rating_breakdown as $bRow)
                                     <div class="bar-row">
                                         <span class="star-num">{{ $bRow['star'] ?? 5 }}</span>
                                         <span class="star-icon">★</span>
@@ -336,52 +565,61 @@
                                     </div>
                                 @endforeach
                             </div>
+                            @endif
                         </div>
+
+                        @if(!empty(trim($data->delivered_orders_text ?? '')))
                         <div class="summary-divider"></div>
                         <div class="delivery-text">
-                            <i class="fa-solid fa-box-open text-warning me-1"></i> {{ $data->delivered_orders_text ?? 'সারা বাংলাদেশে ৬,০০০+ সফল ডেলিভার্ড অর্ডার' }}
+                            <i class="fa-solid fa-box-open text-warning me-1"></i> {{ $data->delivered_orders_text }}
                         </div>
+                        @endif
                     </div>
+                    @endif
 
                     <!-- Verified Customer Testimonial Cards -->
-                    @php
-                        $testimonials = !empty($data->testimonials) ? $data->testimonials : \App\Models\BaklavaOffer::getDefaultTestimonials();
-                    @endphp
-                    @foreach($testimonials as $t)
-                        <div class="single-review-card">
-                            <div class="user-avatar-circle">{{ $t['avatar_letter'] ?? 'ক' }}</div>
-                            <div class="review-content">
-                                <div class="user-header">
-                                    <span class="user-name">{{ $t['name'] ?? '' }}</span>
-                                    @if(!empty($t['location']))
-                                        <span class="user-location">· {{ $t['location'] }}</span>
+                    @if($hasTestimonials)
+                        @foreach($data->testimonials as $t)
+                            @if(!empty(trim($t['text'] ?? '')) || !empty(trim($t['name'] ?? '')))
+                            <div class="single-review-card">
+                                <div class="user-avatar-circle">{{ $t['avatar_letter'] ?? (!empty(trim($t['name'] ?? '')) ? mb_substr(trim($t['name']), 0, 1) : '✓') }}</div>
+                                <div class="review-content">
+                                    <div class="user-header">
+                                        @if(!empty(trim($t['name'] ?? '')))
+                                            <span class="user-name">{{ $t['name'] }}</span>
+                                        @endif
+                                        @if(!empty(trim($t['location'] ?? '')))
+                                            <span class="user-location">· {{ $t['location'] }}</span>
+                                        @endif
+                                        <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> ভেরিফায়েড ক্রেতা</span>
+                                    </div>
+                                    @if(!empty($t['stars']))
+                                        <div class="user-stars">{{ is_numeric($t['stars']) ? str_repeat('★', (int)$t['stars']) : $t['stars'] }}</div>
                                     @endif
-                                    <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> ভেরিফায়েড ক্রেতা</span>
+                                    @if(!empty(trim($t['text'] ?? '')))
+                                        <p class="review-text">“{{ $t['text'] }}”</p>
+                                    @endif
                                 </div>
-                                <div class="user-stars">{{ $t['stars'] ?? '★★★★★' }}</div>
-                                <p class="review-text">“{{ $t['text'] ?? '' }}”</p>
                             </div>
-                        </div>
-                    @endforeach
+                            @endif
+                        @endforeach
+                    @endif
                 </div>
+                @endif
 
                 <!-- Customer Real Screenshot Reviews -->
-                @php
-                    $reviews = $data->reviews ?? [];
-                    if (empty($reviews)) {
-                        for ($i = 1; $i <= 15; $i++) {
-                            $reviews[] = "frontend/images/landing/baklava/review_{$i}.jpg";
-                        }
-                    }
-                @endphp
-
+                @if($hasReviews)
                 <div class="my-4">
                     <span class="offer-tag-pill">গ্রাহক সন্তুষ্টি আমাদের অহংকার</span>
-                    <h3 class="landing-section-title fs-22 mb-1">{{ $data->reviews_title ?? 'বাস্তব গ্রাহকদের পাঠানো রিভিউসমূহ' }}</h3>
-                    <p class="landing-section-subtitle mb-2">{{ $data->reviews_subtitle ?? 'ছবিতে ট্যাপ করে বড় করে দেখুন' }}</p>
+                    @if(!empty(trim($data->reviews_title ?? '')))
+                        <h3 class="landing-section-title fs-22 mb-1">{{ $data->reviews_title }}</h3>
+                    @endif
+                    @if(!empty(trim($data->reviews_subtitle ?? '')))
+                        <p class="landing-section-subtitle mb-2">{{ $data->reviews_subtitle }}</p>
+                    @endif
 
                     <div class="reviews-scroll-container">
-                        @foreach($reviews as $revIdx => $revPath)
+                        @foreach($reviewsList as $revIdx => $revPath)
                             <a href="javascript:void(0)" class="review-screenshot-card" onclick="openReviewModal('{{ asset($revPath) }}')">
                                 <img src="{{ asset($revPath) }}"
                                      alt="Customer review screenshot {{ $revIdx + 1 }}"
@@ -393,34 +631,17 @@
 
                     <div class="scroll-hint-bar">
                         <i class="fa-solid fa-chevron-left"></i>
-                        <span>{{ count($reviews) }}টি স্ক্রিনশট — সাইডে স্ক্রল করে দেখুন</span>
+                        <span>{{ count($reviewsList) }}টি স্ক্রিনশট — সাইডে স্ক্রল করে দেখুন</span>
                         <i class="fa-solid fa-chevron-right"></i>
                     </div>
                 </div>
+                @endif
 
                 <!-- Live Countdown Timer Widget -->
-                @php
-                    $endTimeIso = !empty($data->countdown_end_time) ? \Carbon\Carbon::parse($data->countdown_end_time)->toIso8601String() : '';
-
-                    // Calculate initial remaining values for server-side render
-                    $initTotalSeconds = 0;
-                    if (!empty($data->countdown_end_time)) {
-                        $targetCarbon = \Carbon\Carbon::parse($data->countdown_end_time);
-                        $initTotalSeconds = max(0, now()->diffInSeconds($targetCarbon, false));
-                    } else {
-                        // Default fallback: 24-hour urgency countdown
-                        $initTotalSeconds = 86400;
-                    }
-
-                    $calcDays = (int)floor($initTotalSeconds / 86400);
-                    $calcHours = (int)floor(($initTotalSeconds % 86400) / 3600);
-                    $calcMinutes = (int)floor(($initTotalSeconds % 3600) / 60);
-                    $calcSeconds = (int)($initTotalSeconds % 60);
-                @endphp
-                <div class="custom-timer-widget"
-                     data-end-time="{{ $endTimeIso }}">
+                @if($hasTimer)
+                <div class="custom-timer-widget" data-end-time="{{ $endTimeIso }}">
                     <div class="timer-badge">
-                        <i class="fa-solid fa-stopwatch"></i> {{ $data->timer_badge ?? 'অফার শেষ হতে বাকি' }}
+                        <i class="fa-solid fa-stopwatch"></i> {{ !empty(trim($data->timer_badge ?? '')) ? $data->timer_badge : 'অফার শেষ হতে বাকি' }}
                     </div>
                     <div class="timer-countdown">
                         <div class="time-box" id="timer-days-box" style="{{ $calcDays > 0 ? '' : 'display: none;' }}">
@@ -444,6 +665,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <div class="my-3">
                     <a href="#order-section" class="landing-cta-btn">
@@ -451,6 +673,7 @@
                     </a>
                 </div>
             </section>
+            @endif
 
             <!-- ══════════════════════════════════════════════════
                  6. FAST DIRECT CHECKOUT / ORDER FORM SECTION
@@ -468,24 +691,42 @@
                     
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                         <div class="package-media-flex">
-                            <img src="{{ !empty($data->hero_image) ? asset($data->hero_image) : asset('frontend/images/landing/baklava/hero_tray.png') }}"
-                                 alt="Package Thumbnail"
+                            @php
+                                $pkgImg = !empty($data->hero_image) ? $data->hero_image : ($baklavaProduct?->image_url ?? $defaultProduct?->image_url ?? null);
+                            @endphp
+                            @if(!empty($pkgImg))
+                            <img src="{{ asset($pkgImg) }}"
+                                 alt="{{ $data->package_title ?? $data->name ?? 'Package Thumbnail' }}"
                                  class="package-thumb-img">
+                            @endif
                             <div>
-                                <h4 class="fw-bold text-dark mb-1 fs-16">
-                                    {{ $data->package_title ?? '২০ পিস টার্কিশ বাকলাভা + হাফকেজি পাবনার পেরা সন্দেশ (ফ্রী)' }}
-                                </h4>
-                                <p class="text-muted mb-0 fs-13">
-                                    {{ $data->package_subtitle ?? 'সম্পূর্ণ প্রিমিয়াম গিফট বক্স প্যাকেজিং সহ' }}
-                                </p>
+                                @if(!empty(trim($data->package_title ?? '')))
+                                    <h4 class="fw-bold text-dark mb-1 fs-16">
+                                        {{ $data->package_title }}
+                                    </h4>
+                                @elseif(!empty(trim($data->name ?? '')))
+                                    <h4 class="fw-bold text-dark mb-1 fs-16">
+                                        {{ $data->name }}
+                                    </h4>
+                                @endif
+
+                                @if(!empty(trim($data->package_subtitle ?? '')))
+                                    <p class="text-muted mb-0 fs-13">
+                                        {{ $data->package_subtitle }}
+                                    </p>
+                                @endif
                             </div>
                         </div>
 
                         <div class="text-end ms-auto">
+                            @if(!empty($data->offer_price))
                             <div class="fs-22 fw-bold" style="color: var(--fj-amber);">
-                                ৳ <span id="unit-price-display">{{ $data->offer_price ?? 1350 }}</span>
+                                ৳ <span id="unit-price-display">{{ $data->offer_price }}</span>
                             </div>
-                            <del class="text-muted fs-13">৳ {{ $data->regular_price ?? 1850 }}</del>
+                            @endif
+                            @if(!empty($data->regular_price))
+                            <del class="text-muted fs-13">৳ {{ $data->regular_price }}</del>
+                            @endif
                         </div>
                     </div>
 
@@ -501,13 +742,14 @@
                 </div>
 
                 <!-- Order Form -->
-                <form id="baklava-direct-order-form" action="{{ route('special-offer.direct-order') }}" method="POST" data-unit-price="{{ $data->offer_price ?? 1350 }}" data-whatsapp="{{ $data->whatsapp_number ?? '8801672756634' }}" data-package-name="{{ $data->package_title ?? '২০ পিস বাকলাভা + হাফকেজি পেরা সন্দেশ ফ্রী' }}" data-default-delivery="{{ $data->inside_dhaka_delivery_fee ?? 80 }}">
+                <form id="baklava-direct-order-form" action="{{ route('special-offer.direct-order') }}" method="POST" data-unit-price="{{ $data->offer_price ?? 0 }}" data-whatsapp="{{ $data->whatsapp_number ?? '' }}" data-package-name="{{ $data->package_title ?? $data->name ?? 'Special Offer' }}" data-default-delivery="{{ $data->inside_dhaka_delivery_fee ?? 80 }}">
                     @csrf
                     <input type="hidden" name="offer_id" value="{{ $data->id ?? '' }}">
                     <input type="hidden" name="offer_slug" value="{{ $data->slug ?? 'baklava-offer' }}">
                     <input type="hidden" name="product_id" value="{{ $data->product_id ?? $baklavaProduct?->id ?? $defaultProduct?->id ?? '' }}">
                     <input type="hidden" name="variant_id" value="{{ $data->variant_id ?? $baklavaProduct?->variants?->first()?->id ?? $defaultProduct?->variants?->first()?->id ?? '' }}">
                     <input type="hidden" id="form-quantity" name="quantity" value="1">
+                    <input type="hidden" name="all_terms" id="all_terms" value="yes">
 
                     <div class="row g-3">
                         <!-- Name (Mandatory) -->
@@ -530,8 +772,6 @@
                                 <p class="text-sm text-danger mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-
-
 
                         <!-- Full Delivery Address (Mandatory) -->
                         <div class="col-12 form-floating-custom">
@@ -568,26 +808,13 @@
                                 <p class="text-sm text-danger mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-
-                        <!-- Terms & Conditions Checkbox -->
-                        <div class="col-12 mt-2">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input @error('all_terms') is-invalid @enderror" name="all_terms" id="all_terms" value="yes" checked required>
-                                <label for="all_terms" class="form-check-label fw-semibold text-dark fs-13">
-                                    আমি সকল শর্তাবলী এবং রিটার্ন পলিসিতে সম্মতি প্রদান করছি <span class="text-danger">*</span>
-                                </label>
-                            </div>
-                            @error('all_terms')
-                                <p class="text-sm text-danger mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
                     </div>
 
                     <!-- Live Order Summary Box -->
                     <div class="order-summary-box">
                         <div class="order-summary-row">
                             <span class="text-muted">প্যাকেজ মূল্য (<span id="summary-qty">১</span> টি):</span>
-                            <span class="fw-bold">৳ <span id="summary-subtotal">{{ $data->offer_price ?? 1350 }}</span></span>
+                            <span class="fw-bold">৳ <span id="summary-subtotal">{{ $data->offer_price ?? 0 }}</span></span>
                         </div>
                         <div class="order-summary-row">
                             <span class="text-muted">ডেলিভারি চার্জ:</span>
@@ -595,7 +822,7 @@
                         </div>
                         <div class="order-summary-total">
                             <span>সর্বমোট পরিশোধযোগ্য:</span>
-                            <span>৳ <span id="summary-grand-total">{{ ($data->offer_price ?? 1350) + ($data->inside_dhaka_delivery_fee ?? 80) }}</span></span>
+                            <span>৳ <span id="summary-grand-total">{{ ($data->offer_price ?? 0) + ($data->inside_dhaka_delivery_fee ?? 80) }}</span></span>
                         </div>
                     </div>
 
@@ -608,15 +835,17 @@
                 </form>
 
                 <!-- WhatsApp Direct Order Option -->
+                @if(!empty(trim($data->whatsapp_number ?? '')))
                 <div class="mt-3 text-center">
                     <p class="text-muted fs-13 mb-1">অথবা সরাসরি হোয়াটসঅ্যাপে অর্ডার করতে চান?</p>
-                    <a id="whatsapp-order-link" href="https://wa.me/{{ $data->whatsapp_number ?? '8801672756634' }}?text=Hello%20Food%20Junction,%20I%20want%20to%20order%20the%20Baklava%20Special%20Offer."
+                    <a id="whatsapp-order-link" href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $data->whatsapp_number) }}?text={{ urlencode('Hello Food Junction, I want to order ' . ($data->package_title ?? $data->name ?? 'Special Offer')) }}"
                        target="_blank"
                        rel="noopener noreferrer"
                        class="whatsapp-order-btn">
                         <i class="fa-brands fa-whatsapp fs-20"></i> হোয়াটসঅ্যাপে অর্ডার করুন
                     </a>
                 </div>
+                @endif
             </section>
 
             <!-- ══════════════════════════════════════════════════
@@ -627,17 +856,30 @@
                     <h3 class="fs-20 fw-bold mb-2">কোনো কিছু জানতে কিংবা সরাসরি অর্ডার করতে যোগাযোগ করুন</h3>
                     <p class="text-muted fs-13 mb-3" style="color: #A89587 !important;">আমরা সপ্তাহে ৭ দিন সকাল ৯টা থেকে রাত ১১টা পর্যন্ত আপনার সেবায় নিয়োজিত</p>
 
+                    @php
+                        $contactPhone = !empty(trim($data->phone_number ?? '')) ? $data->phone_number : (!empty(trim($data->whatsapp_number ?? '')) ? $data->whatsapp_number : null);
+                        $hasContactPills = !empty(trim($data->whatsapp_number ?? '')) || !empty($contactPhone) || !empty(trim($data->facebook_url ?? ''));
+                    @endphp
+
+                    @if($hasContactPills)
                     <div class="social-contact-btns-wrap">
-                        <a href="https://wa.me/{{ $data->whatsapp_number ?? '8801672756634' }}" target="_blank" rel="noopener noreferrer" class="social-contact-pill social-pill-wa">
+                        @if(!empty(trim($data->whatsapp_number ?? '')))
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $data->whatsapp_number) }}" target="_blank" rel="noopener noreferrer" class="social-contact-pill social-pill-wa">
                             <i class="fa-brands fa-whatsapp fs-18"></i> WhatsApp
                         </a>
-                        <a href="tel:{{ $data->phone_number ?? $data->whatsapp_number ?? '8801672756634' }}" class="social-contact-pill social-pill-phone">
+                        @endif
+                        @if(!empty($contactPhone))
+                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', $contactPhone) }}" class="social-contact-pill social-pill-phone">
                             <i class="fa-solid fa-phone fs-16"></i> Call Now
                         </a>
-                        <a href="{{ $data->facebook_url ?? 'https://www.facebook.com' }}" target="_blank" rel="noopener noreferrer" class="social-contact-pill social-pill-fb">
+                        @endif
+                        @if(!empty(trim($data->facebook_url ?? '')))
+                        <a href="{{ $data->facebook_url }}" target="_blank" rel="noopener noreferrer" class="social-contact-pill social-pill-fb">
                             <i class="fa-brands fa-facebook-f fs-16"></i> Facebook
                         </a>
+                        @endif
                     </div>
+                    @endif
 
                     <div class="summary-divider" style="background-color: rgba(255,255,255,0.1); margin: 18px 0 12px;"></div>
 
@@ -658,12 +900,12 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════
-         8. STICKY BOTTOM FLOATING ORDER BAR (bedamanush style)
+         8. STICKY BOTTOM FLOATING ORDER BAR
          ══════════════════════════════════════════════════ -->
     <div id="stickyBottomBar" class="sticky-bottom-bar">
         <div class="sticky-bar-left">
             <span class="sticky-bar-label">স্পেশাল প্যাকেজ মূল্য</span>
-            <span class="sticky-bar-price">৳<span id="sticky-price-display">{{ $data->offer_price ?? 1350 }}</span></span>
+            <span class="sticky-bar-price">৳<span id="sticky-price-display">{{ $data->offer_price ?? 0 }}</span></span>
         </div>
         <a href="#order-section" class="sticky-buy-btn">
             <i class="fa-solid fa-cart-shopping"></i> এখনই কিনুন
@@ -683,4 +925,3 @@
     </div>
 
 @endsection
-

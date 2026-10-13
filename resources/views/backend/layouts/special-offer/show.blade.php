@@ -383,11 +383,16 @@
             <!-- Showcase Image Preview -->
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-bottom">
-                    <h5 class="card-title fw-bold mb-0">Gift Box Showcase Image</h5>
+                    <h5 class="card-title fw-bold mb-0">Showcase / Collage Images ({{ count($data->collage_images_list) }})</h5>
                 </div>
-                <div class="card-body text-center p-3">
-                    <img src="{{ !empty($data->collage_image) ? asset($data->collage_image) : asset('frontend/images/landing/baklava/collage_box.jpg') }}"
-                        class="img-fluid rounded border shadow-sm" style="max-height: 200px; object-fit: contain;">
+                <div class="card-body p-3">
+                    <div class="d-flex flex-wrap gap-2 justify-content-center">
+                        @foreach($data->collage_images_list as $cImg)
+                            <a href="{{ asset($cImg) }}" target="_blank" class="d-inline-block">
+                                <img src="{{ asset($cImg) }}" class="rounded border shadow-sm" style="width: 100px; height: 100px; object-fit: cover;">
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>

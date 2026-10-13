@@ -150,6 +150,7 @@ class SpecialOfferController extends Controller
                 'why_image'                  => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
                 'video_file'                 => 'nullable|mimes:mp4,mov,ogg,qt|max:51200',
                 'new_review_images.*'        => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+                'new_collage_images.*'       => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
             ]);
 
             if ($validator->fails()) {
@@ -245,12 +246,28 @@ class SpecialOfferController extends Controller
                 $offer->hero_image = 'frontend/images/landing/baklava/hero_tray.png';
             }
 
-            // Collage image upload
-            if ($request->hasFile('collage_image')) {
-                $offer->collage_image = Helper::fileUpload($request->file('collage_image'), 'special-offers', uniqid('collage_'));
-            } else {
-                $offer->collage_image = 'frontend/images/landing/baklava/collage_box.jpg';
+            // Collage image(s) upload
+            $collageImages = [];
+            if ($request->hasFile('new_collage_images')) {
+                foreach ($request->file('new_collage_images') as $cIdx => $cImg) {
+                    $cPath = Helper::fileUpload($cImg, 'special-offers/collage', uniqid("collage_{$cIdx}_"));
+                    if ($cPath) {
+                        $collageImages[] = $cPath;
+                    }
+                }
+            } elseif ($request->hasFile('collage_image')) {
+                $singlePath = Helper::fileUpload($request->file('collage_image'), 'special-offers', uniqid('collage_'));
+                if ($singlePath) {
+                    $collageImages[] = $singlePath;
+                }
             }
+
+            if (empty($collageImages)) {
+                $collageImages = ['frontend/images/landing/baklava/collage_box.jpg'];
+            }
+
+            $offer->collage_images = $collageImages;
+            $offer->collage_image = $collageImages[0] ?? 'frontend/images/landing/baklava/collage_box.jpg';
 
             // Why platter image upload
             if ($request->hasFile('why_image')) {
@@ -456,6 +473,7 @@ class SpecialOfferController extends Controller
                 'why_image'                  => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
                 'video_file'                 => 'nullable|mimes:mp4,mov,ogg,qt|max:51200',
                 'new_review_images.*'        => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+                'new_collage_images.*'       => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
             ]);
 
             if ($validator->fails()) {
@@ -549,14 +567,34 @@ class SpecialOfferController extends Controller
                 }
             }
 
-            // Handle Collage Image
-            if ($request->hasFile('collage_image')) {
+            // Handle Collage Images (multiple + single fallback)
+            $collageImages = $offer->collage_images ?? [];
+            if (empty($collageImages) && !empty($offer->collage_image)) {
+                $collageImages = [$offer->collage_image];
+            }
+
+            if ($request->hasFile('new_collage_images')) {
+                foreach ($request->file('new_collage_images') as $cIdx => $cImg) {
+                    $cPath = Helper::fileUpload($cImg, 'special-offers/collage', uniqid("collage_{$cIdx}_"));
+                    if ($cPath) {
+                        $collageImages[] = $cPath;
+                    }
+                }
+                $offer->collage_images = array_values($collageImages);
+                $offer->collage_image = $collageImages[0] ?? $offer->collage_image;
+            } elseif ($request->hasFile('collage_image')) {
                 if ($offer->collage_image && str_starts_with($offer->collage_image, 'uploads/') && file_exists(public_path($offer->collage_image))) {
                     Helper::fileDelete(public_path($offer->collage_image));
                 }
                 $imagePath = Helper::fileUpload($request->file('collage_image'), 'special-offers', uniqid('collage_'));
                 if ($imagePath) {
                     $offer->collage_image = $imagePath;
+                    if (empty($collageImages)) {
+                        $collageImages = [$imagePath];
+                    } else {
+                        $collageImages[0] = $imagePath;
+                    }
+                    $offer->collage_images = array_values($collageImages);
                 }
             }
 
@@ -750,6 +788,13 @@ class SpecialOfferController extends Controller
             if ($offer->hero_image && str_starts_with($offer->hero_image, 'uploads/') && file_exists(public_path($offer->hero_image))) {
                 Helper::fileDelete(public_path($offer->hero_image));
             }
+            if (!empty($offer->collage_images) && is_array($offer->collage_images)) {
+                foreach ($offer->collage_images as $cImg) {
+                    if ($cImg && str_starts_with($cImg, 'uploads/') && file_exists(public_path($cImg))) {
+                        Helper::fileDelete(public_path($cImg));
+                    }
+                }
+            }
             if ($offer->collage_image && str_starts_with($offer->collage_image, 'uploads/') && file_exists(public_path($offer->collage_image))) {
                 Helper::fileDelete(public_path($offer->collage_image));
             }
@@ -823,6 +868,47 @@ class SpecialOfferController extends Controller
                 return response()->json(['success' => false, 'message' => 'Review not found.'], 404);
             }
             return redirect()->back()->with('t-error', 'Review not found.');
+        } catch (Exception $e) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
+            return redirect()->back()->with('t-error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Delete a single collage image by index for a specific offer.
+     */
+    public function deleteCollageImage(Request $request, int $id, int $index): JsonResponse | RedirectResponse
+    {
+        try {
+            $offer = BaklavaOffer::findOrFail($id);
+            $images = $offer->collage_images ?? [];
+            if (empty($images) && !empty($offer->collage_image)) {
+                $images = [$offer->collage_image];
+            }
+
+            if (isset($images[$index])) {
+                $imgPath = $images[$index];
+                if (str_starts_with($imgPath, 'uploads/') && file_exists(public_path($imgPath))) {
+                    Helper::fileDelete(public_path($imgPath));
+                }
+
+                array_splice($images, $index, 1);
+                $offer->collage_images = array_values($images);
+                $offer->collage_image = $images[0] ?? null;
+                $offer->save();
+
+                if ($request->ajax()) {
+                    return response()->json(['success' => true, 'message' => 'Collage image removed successfully.']);
+                }
+                return redirect()->back()->with('t-success', 'Collage image removed successfully.');
+            }
+
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Collage image not found.'], 404);
+            }
+            return redirect()->back()->with('t-error', 'Collage image not found.');
         } catch (Exception $e) {
             if ($request->ajax()) {
                 return response()->json(['success' => false, 'message' => $e->getMessage()], 500);

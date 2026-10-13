@@ -131,6 +131,105 @@
             width: 20%;
         }
     }
+    /* Multi Image Dropzone */
+    .multi-dropzone-box {
+        position: relative;
+        border: 2px dashed #94a3b8;
+        border-radius: 12px;
+        background-color: #f8fafc;
+        padding: 24px 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s ease-in-out;
+    }
+    .multi-dropzone-box:hover,
+    .multi-dropzone-box.dragover {
+        border-color: #0d6efd;
+        background-color: #eff6ff;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+    }
+    .multi-dropzone-box .icon-wrap {
+        font-size: 36px;
+        color: #0d6efd;
+        margin-bottom: 8px;
+        line-height: 1;
+    }
+    .multi-dropzone-box .primary-text {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 4px;
+    }
+    .multi-dropzone-box .sub-text {
+        font-size: 12px;
+        color: #64748b;
+    }
+    .multi-preview-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 12px;
+    }
+    .multi-preview-item {
+        position: relative;
+        width: 105px;
+        height: 105px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1.5px solid #cbd5e1;
+        background: #ffffff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+    }
+    .multi-preview-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+    .multi-preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .multi-preview-item .remove-file-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(220, 53, 69, 0.95);
+        color: #ffffff;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+        transition: background 0.2s, transform 0.15s;
+    }
+    .multi-preview-item .remove-file-btn:hover {
+        background: #b02a37;
+        transform: scale(1.1);
+    }
+    .multi-preview-item .file-size-badge {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(2px);
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 600;
+        text-align: center;
+        padding: 2px 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 </style>
 @endpush
 
@@ -611,20 +710,70 @@
                                 <hr class="my-4">
 
                                 <div class="section-card-title">
-                                    <i class="fa fa-image text-primary"></i> Showcase Photo & 5 Ingredients
+                                    <i class="fa fa-image text-primary"></i> Showcase / Collage Photos & 5 Ingredients
                                 </div>
 
                                 <div class="row mb-4">
                                     <div class="col-md-6">
-                                        <div class="form-group mb-3">
-                                            <label class="form-label fw-bold">Showcase / Gift Box Image:</label>
-                                            <input type="file" class="dropify @error('collage_image') is-invalid @enderror"
-                                                name="collage_image" id="collage_image"
-                                                data-height="180"
-                                                data-default-file="{{ !empty($data->collage_image) ? asset($data->collage_image) : asset('frontend/images/landing/baklava/collage_box.jpg') }}">
-                                            @error('collage_image')
-                                                <span class="text-danger">{{ $message }}</span>
+                                        <div class="form-group mb-3 p-3 bg-light border rounded">
+                                            <label class="form-label fw-bold">
+                                                <i class="fa fa-images me-1 text-primary"></i> Upload Showcase / Collage Images (Multiple):
+                                            </label>
+
+                                            <div class="multi-dropzone-box" id="collage-dropzone">
+                                                <div class="icon-wrap">
+                                                    <i class="fa fa-cloud-upload"></i>
+                                                </div>
+                                                <div class="primary-text">Drag & drop multiple images here, or <span class="text-primary text-decoration-underline">browse files</span></div>
+                                                <div class="sub-text">You can select multiple photos at once (JPG, PNG, WebP) · Click or Ctrl+Click</div>
+                                                <input type="file"
+                                                    name="new_collage_images[]"
+                                                    id="new_collage_images"
+                                                    multiple
+                                                    accept="image/*"
+                                                    class="d-none">
+                                            </div>
+
+                                            <div id="collage-preview-infobar"></div>
+                                            <div class="multi-preview-container" id="collage-previews"></div>
+
+                                            @error('new_collage_images')
+                                                <span class="text-danger d-block mt-1">{{ $message }}</span>
                                             @enderror
+                                            @error('new_collage_images.*')
+                                                <span class="text-danger d-block mt-1">{{ $message }}</span>
+                                            @enderror
+
+                                            <small class="text-muted d-block mt-2">
+                                                <i class="fa fa-info-circle me-1"></i> Select multiple photos to add to the showcase collage on the landing page. Newly uploaded photos will be added to the current collage list below.
+                                            </small>
+                                        </div>
+
+                                        @php
+                                            $collageList = $data->collage_images_list;
+                                        @endphp
+                                        <h6 class="fw-bold mb-2 text-dark">
+                                            Current Showcase Photos ({{ count($collageList) }} images):
+                                        </h6>
+                                        <div class="row g-2 mb-3" id="collage-grid">
+                                            @forelse($collageList as $cIdx => $cImg)
+                                                <div class="col-6 col-sm-4" id="collage-card-{{ $cIdx }}">
+                                                    <div class="review-thumb-card">
+                                                        <img src="{{ asset($cImg) }}" alt="Showcase #{{ $cIdx + 1 }}" class="review-thumb-img" style="height: 110px;">
+                                                        <button type="button" class="review-delete-btn" title="Delete this showcase image"
+                                                            onclick="confirmDeleteCollageImage({{ $cIdx }})">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                        <div class="p-1 text-center small text-muted">
+                                                            Photo #{{ $cIdx + 1 }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <div class="col-12 text-center text-muted py-2">
+                                                    No collage photos found. Upload above.
+                                                </div>
+                                            @endforelse
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -908,12 +1057,36 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group mb-4 p-3 bg-light border">
+                                <div class="form-group mb-4 p-3 bg-light border rounded">
                                     <label class="form-label fw-bold">
                                         <i class="fa fa-cloud-upload me-1 text-primary"></i> Upload New Customer Review Screenshots (Multiple):
                                     </label>
-                                    <input type="file" class="dropify" name="new_review_images[]" multiple accept="image/*" data-height="120">
-                                    <small class="text-muted">You can select multiple JPEG/PNG/WebP review screenshots to add to the gallery.</small>
+
+                                    <div class="multi-dropzone-box" id="reviews-dropzone">
+                                        <div class="icon-wrap">
+                                            <i class="fa fa-cloud-upload"></i>
+                                        </div>
+                                        <div class="primary-text">Drag & drop review screenshots here, or <span class="text-primary text-decoration-underline">browse files</span></div>
+                                        <div class="sub-text">You can select multiple screenshot files at once (JPG, PNG, WebP)</div>
+                                        <input type="file"
+                                            name="new_review_images[]"
+                                            id="new_review_images"
+                                            multiple
+                                            accept="image/*"
+                                            class="d-none">
+                                    </div>
+
+                                    <div id="reviews-preview-infobar"></div>
+                                    <div class="multi-preview-container" id="reviews-previews"></div>
+
+                                    @error('new_review_images')
+                                        <span class="text-danger d-block mt-1">{{ $message }}</span>
+                                    @enderror
+                                    @error('new_review_images.*')
+                                        <span class="text-danger d-block mt-1">{{ $message }}</span>
+                                    @enderror
+
+                                    <small class="text-muted d-block mt-2">You can select multiple JPEG/PNG/WebP review screenshots to add to the gallery.</small>
                                 </div>
 
                                 <h6 class="fw-bold mb-3 text-dark">
@@ -1096,7 +1269,133 @@
 <script>
     $(document).ready(function() {
         $('.dropify').dropify();
+
+        // Multi Image Dropzones
+        setupMultiImageUploader('collage-dropzone', 'new_collage_images', 'collage-previews', 'collage-preview-infobar');
+        setupMultiImageUploader('reviews-dropzone', 'new_review_images', 'reviews-previews', 'reviews-preview-infobar');
     });
+
+    function setupMultiImageUploader(dropzoneId, inputId, previewContainerId, infoBarId) {
+        const dropzone = document.getElementById(dropzoneId);
+        const input = document.getElementById(inputId);
+        const previewContainer = document.getElementById(previewContainerId);
+        const infoBar = document.getElementById(infoBarId);
+        if (!dropzone || !input || !previewContainer) return;
+
+        let dataTransfer = new DataTransfer();
+
+        dropzone.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-file-btn') || e.target.closest('.clear-all-btn')) {
+                return;
+            }
+            input.click();
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.add('dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.remove('dragover');
+            });
+        });
+
+        dropzone.addEventListener('drop', function(e) {
+            if (e.dataTransfer && e.dataTransfer.files) {
+                handleNewFiles(e.dataTransfer.files);
+            }
+        });
+
+        input.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                handleNewFiles(this.files);
+            }
+        });
+
+        function handleNewFiles(files) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.startsWith('image/')) {
+                    dataTransfer.items.add(file);
+                }
+            }
+            input.files = dataTransfer.files;
+            renderPreviews();
+        }
+
+        function renderPreviews() {
+            previewContainer.innerHTML = '';
+            const files = dataTransfer.files;
+
+            if (files.length === 0) {
+                if (infoBar) infoBar.innerHTML = '';
+                return;
+            }
+
+            if (infoBar) {
+                infoBar.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mt-2 mb-1 p-2 bg-white rounded border">
+                        <span class="badge bg-primary fs-12">${files.length} image(s) selected</span>
+                        <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2 clear-all-btn">
+                            <i class="fa fa-trash me-1"></i> Clear Selection
+                        </button>
+                    </div>
+                `;
+                const clearBtn = infoBar.querySelector('.clear-all-btn');
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        dataTransfer = new DataTransfer();
+                        input.files = dataTransfer.files;
+                        renderPreviews();
+                    });
+                }
+            }
+
+            Array.from(files).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const item = document.createElement('div');
+                    item.className = 'multi-preview-item';
+                    item.innerHTML = `
+                        <img src="${e.target.result}" alt="${file.name}">
+                        <button type="button" class="remove-file-btn" title="Remove image">
+                            <i class="fa fa-times"></i>
+                        </button>
+                        <div class="file-size-badge">${(file.size / 1024).toFixed(0)} KB</div>
+                    `;
+
+                    item.querySelector('.remove-file-btn').addEventListener('click', function(ev) {
+                        ev.stopPropagation();
+                        removeFile(index);
+                    });
+
+                    previewContainer.appendChild(item);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function removeFile(indexToRemove) {
+            const newDt = new DataTransfer();
+            const files = dataTransfer.files;
+            for (let i = 0; i < files.length; i++) {
+                if (i !== indexToRemove) {
+                    newDt.items.add(files[i]);
+                }
+            }
+            dataTransfer = newDt;
+            input.files = dataTransfer.files;
+            renderPreviews();
+        }
+    }
 
     function loadProductVariants(select) {
         let selectedOption = select.options[select.selectedIndex];
@@ -1143,6 +1442,42 @@
                     },
                     error: function() {
                         toastr.error('Error occurred while deleting review.');
+                    }
+                });
+            }
+        });
+    }
+
+    function confirmDeleteCollageImage(index) {
+        Swal.fire({
+            title: 'Delete Showcase Photo?',
+            text: 'This image will be removed from the landing page collage presentation.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let url = '{{ route("special-offers.delete-collage-image", ["id" => $data->id, "index" => ":idx"]) }}';
+                url = url.replace(':idx', index);
+
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(resp) {
+                        if (resp.success) {
+                            $('#collage-card-' + index).fadeOut(300, function() { $(this).remove(); });
+                            toastr.success(resp.message || 'Collage photo removed successfully.');
+                        } else {
+                            toastr.error(resp.message || 'Failed to delete photo.');
+                        }
+                    },
+                    error: function() {
+                        toastr.error('Error occurred while deleting photo.');
                     }
                 });
             }

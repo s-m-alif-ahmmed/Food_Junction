@@ -18,6 +18,7 @@ class BaklavaOffer extends Model
         'ingredients'       => 'array',
         'trust_badges'      => 'array',
         'reviews'           => 'array',
+        'collage_images'    => 'array',
         'problem_cards'     => 'array',
         'comparison_rows'   => 'array',
         'feature_pills'     => 'array',
@@ -27,6 +28,18 @@ class BaklavaOffer extends Model
         'testimonials'      => 'array',
         'countdown_end_time'=> 'datetime',
     ];
+
+    public function getCollageImagesListAttribute(): array
+    {
+        if (!empty($this->collage_images) && is_array($this->collage_images)) {
+            return array_values(array_filter($this->collage_images));
+        }
+        if (!empty($this->collage_image)) {
+            return [$this->collage_image];
+        }
+        return [];
+    }
+
 
     public function product(): BelongsTo
     {
