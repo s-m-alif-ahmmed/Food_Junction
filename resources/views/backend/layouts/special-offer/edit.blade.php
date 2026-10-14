@@ -421,7 +421,7 @@
                                             <input type="file" class="dropify @error('hero_image') is-invalid @enderror"
                                                 name="hero_image" id="hero_image"
                                                 data-height="210"
-                                                data-default-file="{{ !empty($data->hero_image) ? asset($data->hero_image) : asset('frontend/images/landing/baklava/hero_tray.png') }}">
+                                                data-default-file="{{ !empty($data->hero_image) ? asset($data->hero_image) : '' }}">
                                             @error('hero_image')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -433,10 +433,15 @@
                                         </div>
 
                                         @php
-                                            $trustBadges = $data->trust_badges ?? \App\Models\BaklavaOffer::getDefaultTrustBadges();
+                                            $defaultTrustBadges = \App\Models\BaklavaOffer::getDefaultTrustBadges();
+                                            $savedTrustBadges = $data->trust_badges ?? [];
                                         @endphp
 
-                                        @foreach($trustBadges as $bIdx => $badge)
+                                        @for($bIdx = 0; $bIdx < 3; $bIdx++)
+                                            @php
+                                                $badge = $savedTrustBadges[$bIdx] ?? [];
+                                                $dBadge = $defaultTrustBadges[$bIdx] ?? [];
+                                            @endphp
                                             <div class="trust-badge-edit-box">
                                                 <h6 class="fw-bold text-dark mb-2">Badge #{{ $bIdx + 1 }}</h6>
                                                 <div class="row g-2">
@@ -444,23 +449,26 @@
                                                         <label class="form-label small">Title:</label>
                                                         <input type="text" class="form-control form-control-sm"
                                                             name="trust_badge_titles[{{ $bIdx }}]"
-                                                            value="{{ $badge['title'] ?? '' }}">
+                                                            value="{{ old('trust_badge_titles.' . $bIdx, $badge['title'] ?? '') }}"
+                                                            placeholder="e.g. {{ $dBadge['title'] ?? 'Title' }}">
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label small">Subtitle:</label>
                                                         <input type="text" class="form-control form-control-sm"
                                                             name="trust_badge_subtitles[{{ $bIdx }}]"
-                                                            value="{{ $badge['subtitle'] ?? '' }}">
+                                                            value="{{ old('trust_badge_subtitles.' . $bIdx, $badge['subtitle'] ?? '') }}"
+                                                            placeholder="e.g. {{ $dBadge['subtitle'] ?? 'Subtitle' }}">
                                                     </div>
                                                     <div class="col-md-3">
                                                         <label class="form-label small">Icon Class:</label>
                                                         <input type="text" class="form-control form-control-sm"
                                                             name="trust_badge_icons[{{ $bIdx }}]"
-                                                            value="{{ $badge['icon'] ?? 'fa-shield-halved' }}">
+                                                            value="{{ old('trust_badge_icons.' . $bIdx, $badge['icon'] ?? '') }}"
+                                                            placeholder="e.g. {{ $dBadge['icon'] ?? 'fa-shield-halved' }}">
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endforeach
+                                        @endfor
                                     </div>
                                 </div>
                             </div>
@@ -509,25 +517,32 @@
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">Section Title:</label>
                                             <input type="text" class="form-control" name="problem_title"
-                                                value="{{ old('problem_title', $data->problem_title ?? 'আপনার কি মিষ্টি কিনতে এই সমস্যাগুলো হয়?') }}">
+                                                value="{{ old('problem_title', $data->problem_title) }}"
+                                                placeholder="e.g. আপনার কি মিষ্টি কিনতে এই সমস্যাগুলো হয়?">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">Section Subtitle:</label>
                                             <input type="text" class="form-control" name="problem_subtitle"
-                                                value="{{ old('problem_subtitle', $data->problem_subtitle ?? 'কেন সাধারণ মিষ্টি নয়, এখনই সঠিক সিদ্ধান্ত নেবেন') }}">
+                                                value="{{ old('problem_subtitle', $data->problem_subtitle) }}"
+                                                placeholder="e.g. কেন সাধারণ মিষ্টি নয়, এখনই সঠিক সিদ্ধান্ত নেবেন">
                                         </div>
                                     </div>
                                 </div>
 
                                 @php
-                                    $problemCards = $data->problem_cards ?? \App\Models\BaklavaOffer::getDefaultProblemCards();
+                                    $defaultProblemCards = \App\Models\BaklavaOffer::getDefaultProblemCards();
+                                    $savedProblemCards = $data->problem_cards ?? [];
                                 @endphp
 
                                 <h6 class="fw-bold mb-3 text-dark">3 Problem Agitation Cards:</h6>
                                 <div class="row">
-                                    @foreach($problemCards as $pIdx => $pCard)
+                                    @for($pIdx = 0; $pIdx < 3; $pIdx++)
+                                        @php
+                                            $pCard = $savedProblemCards[$pIdx] ?? [];
+                                            $dpCard = $defaultProblemCards[$pIdx] ?? [];
+                                        @endphp
                                         <div class="col-md-4 mb-3">
                                             <div class="problem-card-edit-box">
                                                 <h6 class="fw-bold text-danger mb-2">Problem Card #{{ $pIdx + 1 }}</h6>
@@ -535,22 +550,25 @@
                                                     <label class="form-label small fw-bold">Card Title:</label>
                                                     <input type="text" class="form-control form-control-sm"
                                                         name="problem_card_titles[{{ $pIdx }}]"
-                                                        value="{{ $pCard['title'] ?? '' }}">
+                                                        value="{{ old('problem_card_titles.' . $pIdx, $pCard['title'] ?? '') }}"
+                                                        placeholder="e.g. {{ $dpCard['title'] ?? 'Title' }}">
                                                 </div>
                                                 <div class="form-group mb-2">
                                                     <label class="form-label small fw-bold">Card Description:</label>
                                                     <textarea class="form-control form-control-sm" rows="2"
-                                                        name="problem_card_descs[{{ $pIdx }}]">{{ $pCard['desc'] ?? '' }}</textarea>
+                                                        name="problem_card_descs[{{ $pIdx }}]"
+                                                        placeholder="e.g. {{ $dpCard['desc'] ?? 'Description' }}">{{ old('problem_card_descs.' . $pIdx, $pCard['desc'] ?? '') }}</textarea>
                                                 </div>
                                                 <div class="form-group mb-0">
                                                     <label class="form-label small fw-bold">FontAwesome Icon Class:</label>
                                                     <input type="text" class="form-control form-control-sm"
                                                         name="problem_card_icons[{{ $pIdx }}]"
-                                                        value="{{ $pCard['icon'] ?? 'fa-triangle-exclamation' }}">
+                                                        value="{{ old('problem_card_icons.' . $pIdx, $pCard['icon'] ?? '') }}"
+                                                        placeholder="e.g. {{ $dpCard['icon'] ?? 'fa-triangle-exclamation' }}">
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    @endfor
                                 </div>
 
                                 <div class="mt-4 pt-3 border-top">
@@ -591,64 +609,76 @@
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">Comparison Section Title:</label>
                                             <input type="text" class="form-control" name="comparison_title"
-                                                value="{{ old('comparison_title', $data->comparison_title ?? 'সাধারণ মিষ্টি বা বাকলাভা কেন সমাধান নয়?') }}">
+                                                value="{{ old('comparison_title', $data->comparison_title) }}"
+                                                placeholder="e.g. সাধারণ মিষ্টি বা বাকলাভা কেন সমাধান নয়?">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">Comparison Section Subtitle:</label>
                                             <input type="text" class="form-control" name="comparison_subtitle"
-                                                value="{{ old('comparison_subtitle', $data->comparison_subtitle ?? 'Food Junction এর প্রিমিয়াম প্যাকেজ কেন অন্যদের চেয়ে সম্পূর্ণ আলাদা ও অনন্য') }}">
+                                                value="{{ old('comparison_subtitle', $data->comparison_subtitle) }}"
+                                                placeholder="e.g. Food Junction এর প্রিমিয়াম প্যাকেজ কেন অন্যদের চেয়ে সম্পূর্ণ আলাদা ও অনন্য">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold text-danger">Ordinary / Competitor Column Header:</label>
                                             <input type="text" class="form-control" name="comparison_bad_header"
-                                                value="{{ old('comparison_bad_header', $data->comparison_bad_header ?? 'সাধারণ রেগুলার মিষ্টি') }}">
+                                                value="{{ old('comparison_bad_header', $data->comparison_bad_header) }}"
+                                                placeholder="e.g. সাধারণ রেগুলার মিষ্টি">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold text-success">Food Junction Column Header:</label>
                                             <input type="text" class="form-control" name="comparison_good_header"
-                                                value="{{ old('comparison_good_header', $data->comparison_good_header ?? 'Food Junction বাকলাভা') }}">
+                                                value="{{ old('comparison_good_header', $data->comparison_good_header) }}"
+                                                placeholder="e.g. Food Junction বাকলাভা">
                                         </div>
                                     </div>
                                 </div>
 
                                 @php
-                                    $compRows = $data->comparison_rows ?? \App\Models\BaklavaOffer::getDefaultComparisonRows();
+                                    $defaultComparisonRows = \App\Models\BaklavaOffer::getDefaultComparisonRows();
+                                    $savedCompRows = $data->comparison_rows ?? [];
                                 @endphp
 
                                 <h6 class="fw-bold mb-3 text-dark">Comparison Rows:</h6>
                                 <div class="row">
-                                    @foreach($compRows as $cIdx => $cRow)
+                                    @for($cIdx = 0; $cIdx < 4; $cIdx++)
+                                        @php
+                                            $cRow = $savedCompRows[$cIdx] ?? [];
+                                            $dcRow = $defaultComparisonRows[$cIdx] ?? [];
+                                        @endphp
                                         <div class="col-md-6 mb-3">
                                             <div class="comparison-edit-box">
                                                 <div class="form-group mb-2">
                                                     <label class="form-label small fw-bold">Row #{{ $cIdx + 1 }} Feature / Criteria Label:</label>
                                                     <input type="text" class="form-control form-control-sm"
                                                         name="comp_row_labels[{{ $cIdx }}]"
-                                                        value="{{ $cRow['label'] ?? '' }}">
+                                                        value="{{ old('comp_row_labels.' . $cIdx, $cRow['label'] ?? '') }}"
+                                                        placeholder="e.g. {{ $dcRow['label'] ?? 'Criteria' }}">
                                                 </div>
                                                 <div class="row g-2">
                                                     <div class="col-md-6">
                                                         <label class="form-label small text-danger fw-semibold">Ordinary / Bad Point (✕):</label>
                                                         <input type="text" class="form-control form-control-sm"
                                                             name="comp_row_bads[{{ $cIdx }}]"
-                                                            value="{{ $cRow['bad'] ?? '' }}">
+                                                            value="{{ old('comp_row_bads.' . $cIdx, $cRow['bad'] ?? '') }}"
+                                                            placeholder="e.g. {{ $dcRow['bad'] ?? 'Ordinary' }}">
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label class="form-label small text-success fw-semibold">Food Junction Point (✓):</label>
                                                         <input type="text" class="form-control form-control-sm"
                                                             name="comp_row_goods[{{ $cIdx }}]"
-                                                            value="{{ $cRow['good'] ?? '' }}">
+                                                            value="{{ old('comp_row_goods.' . $cIdx, $cRow['good'] ?? '') }}"
+                                                            placeholder="e.g. {{ $dcRow['good'] ?? 'Food Junction' }}">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    @endfor
                                 </div>
                             </div>
 
@@ -665,70 +695,83 @@
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">3-Step Section Title:</label>
                                             <input type="text" class="form-control" name="step_section_title"
-                                                value="{{ old('step_section_title', $data->step_section_title ?? '৩০ সেকেন্ডে মুগ্ধ হবেন সেরা স্বাদে') }}">
+                                                value="{{ old('step_section_title', $data->step_section_title) }}"
+                                                placeholder="e.g. ৩০ সেকেন্ডে মুগ্ধ হবেন সেরা স্বাদে">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">3-Step Section Subtitle:</label>
                                             <input type="text" class="form-control" name="step_section_subtitle"
-                                                value="{{ old('step_section_subtitle', $data->step_section_subtitle ?? 'খাঁটি স্বাদ ও রাজকীয় আভিজাত্য — প্রতিটি কামড়ে তুর্কি ঐতিহ্যের অনন্য অনুভূতি') }}">
+                                                value="{{ old('step_section_subtitle', $data->step_section_subtitle) }}"
+                                                placeholder="e.g. খাঁটি স্বাদ ও রাজকীয় আভিজাত্য — প্রতিটি কামড়ে তুর্কি ঐতিহ্যের অনন্য অনুভূতি">
                                         </div>
                                     </div>
                                 </div>
 
                                 @php
-                                    $featurePills = $data->feature_pills ?? \App\Models\BaklavaOffer::getDefaultFeaturePills();
+                                    $defaultFeaturePills = \App\Models\BaklavaOffer::getDefaultFeaturePills();
+                                    $savedFeaturePills = $data->feature_pills ?? [];
                                 @endphp
 
                                 <div class="p-3 bg-light border mb-4">
                                     <label class="form-label fw-bold mb-2">4 Quick Feature Pills (Top Badges):</label>
                                     <div class="row g-2">
-                                        @foreach($featurePills as $fIdx => $pill)
+                                        @for($fIdx = 0; $fIdx < 4; $fIdx++)
                                             <div class="col-md-3">
                                                 <input type="text" class="form-control form-control-sm"
                                                     name="feature_pills[{{ $fIdx }}]"
-                                                    value="{{ $pill }}">
+                                                    value="{{ old('feature_pills.' . $fIdx, $savedFeaturePills[$fIdx] ?? '') }}"
+                                                    placeholder="e.g. {{ $defaultFeaturePills[$fIdx] ?? 'Pill' }}">
                                             </div>
-                                        @endforeach
+                                        @endfor
                                     </div>
                                 </div>
 
                                 @php
-                                    $processSteps = $data->process_steps ?? \App\Models\BaklavaOffer::getDefaultProcessSteps();
+                                    $defaultProcessSteps = \App\Models\BaklavaOffer::getDefaultProcessSteps();
+                                    $savedProcessSteps = $data->process_steps ?? [];
                                 @endphp
 
                                 <h6 class="fw-bold mb-3 text-dark">3 Numbered Step Cards:</h6>
                                 <div class="row mb-4">
-                                    @foreach($processSteps as $sIdx => $step)
+                                    @for($sIdx = 0; $sIdx < 3; $sIdx++)
+                                        @php
+                                            $step = $savedProcessSteps[$sIdx] ?? [];
+                                            $dStep = $defaultProcessSteps[$sIdx] ?? [];
+                                        @endphp
                                         <div class="col-md-4 mb-3">
                                             <div class="step-edit-box">
                                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                                     <h6 class="fw-bold text-dark mb-0">Step Card #{{ $sIdx + 1 }}</h6>
                                                     <input type="text" style="width: 60px;" class="form-control form-control-sm text-center fw-bold"
                                                         name="step_nums[{{ $sIdx }}]"
-                                                        value="{{ $step['num'] ?? '0' . ($sIdx + 1) }}">
+                                                        value="{{ old('step_nums.' . $sIdx, $step['num'] ?? '') }}"
+                                                        placeholder="{{ $dStep['num'] ?? '0' . ($sIdx + 1) }}">
                                                 </div>
                                                 <div class="form-group mb-2">
                                                     <label class="form-label small fw-bold">Step Title:</label>
                                                     <input type="text" class="form-control form-control-sm"
                                                         name="step_titles[{{ $sIdx }}]"
-                                                        value="{{ $step['title'] ?? '' }}">
+                                                        value="{{ old('step_titles.' . $sIdx, $step['title'] ?? '') }}"
+                                                        placeholder="e.g. {{ $dStep['title'] ?? '' }}">
                                                 </div>
                                                 <div class="form-group mb-2">
                                                     <label class="form-label small fw-bold">Step Description:</label>
                                                     <textarea class="form-control form-control-sm" rows="2"
-                                                        name="step_descs[{{ $sIdx }}]">{{ $step['desc'] ?? '' }}</textarea>
+                                                        name="step_descs[{{ $sIdx }}]"
+                                                        placeholder="e.g. {{ $dStep['desc'] ?? '' }}">{{ old('step_descs.' . $sIdx, $step['desc'] ?? '') }}</textarea>
                                                 </div>
                                                 <div class="form-group mb-0">
                                                     <label class="form-label small fw-bold">Icon Class:</label>
                                                     <input type="text" class="form-control form-control-sm"
                                                         name="step_icons[{{ $sIdx }}]"
-                                                        value="{{ $step['icon'] ?? 'fa-wand-magic-sparkles' }}">
+                                                        value="{{ old('step_icons.' . $sIdx, $step['icon'] ?? '') }}"
+                                                        placeholder="e.g. {{ $dStep['icon'] ?? 'fa-wand-magic-sparkles' }}">
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    @endfor
                                 </div>
 
                                 <hr class="my-4">
@@ -804,23 +847,30 @@
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">Ingredients Section Title:</label>
                                             <input type="text" class="form-control" name="ingredient_title"
-                                                value="{{ old('ingredient_title', $data->ingredient_title ?? '১০০% খাঁটি ও সেরা উপাদানসমূহ') }}">
+                                                value="{{ old('ingredient_title', $data->ingredient_title) }}"
+                                                placeholder="e.g. ১০০% খাঁটি ও সেরা উপাদানসমূহ">
                                         </div>
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">Ingredients Section Subtitle:</label>
                                             <input type="text" class="form-control" name="ingredient_subtitle"
-                                                value="{{ old('ingredient_subtitle', $data->ingredient_subtitle ?? 'আমাদের প্রতিটি মিষ্টি প্রস্তুত হয় প্রাকৃতিক ও হাইজেনিক উপাদান দিয়ে') }}">
+                                                value="{{ old('ingredient_subtitle', $data->ingredient_subtitle) }}"
+                                                placeholder="e.g. আমাদের প্রতিটি মিষ্টি প্রস্তুত হয় প্রাকৃতিক ও হাইজেনিক উপাদান দিয়ে">
                                         </div>
                                     </div>
                                 </div>
 
                                 @php
-                                    $ingredients = $data->ingredients ?? \App\Models\BaklavaOffer::getDefaultIngredients();
+                                    $defaultIngredients = \App\Models\BaklavaOffer::getDefaultIngredients();
+                                    $savedIngredients = $data->ingredients ?? [];
                                 @endphp
 
                                 <h6 class="fw-bold mb-3 text-dark">5 Premium Ingredients:</h6>
                                 <div class="row mb-4">
-                                    @foreach($ingredients as $idx => $ing)
+                                    @for($idx = 0; $idx < 5; $idx++)
+                                        @php
+                                            $ing = $savedIngredients[$idx] ?? [];
+                                            $dIng = $defaultIngredients[$idx] ?? [];
+                                        @endphp
                                         <div class="col-md-4 col-lg-2-4 mb-3">
                                             <div class="ingredient-edit-box">
                                                 <div class="form-group mb-2">
@@ -835,27 +885,30 @@
                                                     <label class="form-label small fw-bold">Item #{{ $idx + 1 }} Name:</label>
                                                     <input type="text" class="form-control form-control-sm text-center"
                                                         name="ingredient_names[{{ $idx }}]"
-                                                        value="{{ $ing['name'] ?? '' }}">
+                                                        value="{{ old('ingredient_names.' . $idx, $ing['name'] ?? '') }}"
+                                                        placeholder="e.g. {{ $dIng['name'] ?? '' }}">
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    @endfor
                                 </div>
 
                                 @php
-                                    $checklistItems = $data->checklist_items ?? \App\Models\BaklavaOffer::getDefaultChecklistItems();
+                                    $defaultChecklistItems = \App\Models\BaklavaOffer::getDefaultChecklistItems();
+                                    $savedChecklistItems = $data->checklist_items ?? [];
                                 @endphp
 
                                 <div class="p-3 bg-light border rounded">
                                     <label class="form-label fw-bold mb-2">3 Highlight Checklist Items (Under Ingredients):</label>
                                     <div class="row g-2">
-                                        @foreach($checklistItems as $kIdx => $chk)
+                                        @for($kIdx = 0; $kIdx < 3; $kIdx++)
                                             <div class="col-md-4">
                                                 <input type="text" class="form-control form-control-sm"
                                                     name="checklist_items[{{ $kIdx }}]"
-                                                    value="{{ $chk }}">
+                                                    value="{{ old('checklist_items.' . $kIdx, $savedChecklistItems[$kIdx] ?? '') }}"
+                                                    placeholder="e.g. {{ $defaultChecklistItems[$kIdx] ?? 'Checklist item' }}">
                                             </div>
-                                        @endforeach
+                                        @endfor
                                     </div>
                                 </div>
                             </div>
@@ -876,19 +929,22 @@
                                                 <label class="form-label small fw-bold">Title:</label>
                                                 <input type="text" class="form-control form-control-sm"
                                                     name="dual_benefit_1_title"
-                                                    value="{{ old('dual_benefit_1_title', $data->dual_benefit_1_title ?? 'টার্কিশ বাকলাভা') }}">
+                                                    value="{{ old('dual_benefit_1_title', $data->dual_benefit_1_title) }}"
+                                                    placeholder="e.g. টার্কিশ বাকলাভা">
                                             </div>
                                             <div class="form-group mb-2">
                                                 <label class="form-label small text-danger fw-bold">Negative Point (✕):</label>
                                                 <input type="text" class="form-control form-control-sm"
                                                     name="dual_benefit_1_neg"
-                                                    value="{{ old('dual_benefit_1_neg', $data->dual_benefit_1_neg ?? 'সাধারণ মিষ্টির মতো অতিরিক্ত কড়া বা ভারী লাগে না') }}">
+                                                    value="{{ old('dual_benefit_1_neg', $data->dual_benefit_1_neg) }}"
+                                                    placeholder="e.g. সাধারণ মিষ্টির মতো অতিরিক্ত কড়া বা ভারী লাগে না">
                                             </div>
                                             <div class="form-group mb-0">
                                                 <label class="form-label small text-success fw-bold">Positive Point (✓):</label>
                                                 <input type="text" class="form-control form-control-sm"
                                                     name="dual_benefit_1_pos"
-                                                    value="{{ old('dual_benefit_1_pos', $data->dual_benefit_1_pos ?? 'পেস্তা-কাজুর মুচমুচে ক্রাঞ্চ ও খাঁটি ঘৃত সুবাসে ভরপুর') }}">
+                                                    value="{{ old('dual_benefit_1_pos', $data->dual_benefit_1_pos) }}"
+                                                    placeholder="e.g. পেস্তা-কাজুর মুচমুচে ক্রাঞ্চ ও খাঁটি ঘৃত সুবাসে ভরপুর">
                                             </div>
                                         </div>
                                     </div>
@@ -900,19 +956,22 @@
                                                 <label class="form-label small fw-bold">Title:</label>
                                                 <input type="text" class="form-control form-control-sm"
                                                     name="dual_benefit_2_title"
-                                                    value="{{ old('dual_benefit_2_title', $data->dual_benefit_2_title ?? 'পাবনার পেরা সন্দেশ') }}">
+                                                    value="{{ old('dual_benefit_2_title', $data->dual_benefit_2_title) }}"
+                                                    placeholder="e.g. পাবনার পেরা সন্দেশ">
                                             </div>
                                             <div class="form-group mb-2">
                                                 <label class="form-label small text-danger fw-bold">Negative Point (✕):</label>
                                                 <input type="text" class="form-control form-control-sm"
                                                     name="dual_benefit_2_neg"
-                                                    value="{{ old('dual_benefit_2_neg', $data->dual_benefit_2_neg ?? 'বাজারে পাউডার দুধের কৃত্রিম ক্ষীর নয়') }}">
+                                                    value="{{ old('dual_benefit_2_neg', $data->dual_benefit_2_neg) }}"
+                                                    placeholder="e.g. বাজারে পাউডার দুধের কৃত্রিম ক্ষীর নয়">
                                             </div>
                                             <div class="form-group mb-0">
                                                 <label class="form-label small text-success fw-bold">Positive Point (✓):</label>
                                                 <input type="text" class="form-control form-control-sm"
                                                     name="dual_benefit_2_pos"
-                                                    value="{{ old('dual_benefit_2_pos', $data->dual_benefit_2_pos ?? 'খাঁটি তরল দুধ ঘণ্টার পর ঘণ্টা জ্বাল দিয়ে তৈরি শতাব্দী প্রাচীন ঐতিহ্য') }}">
+                                                    value="{{ old('dual_benefit_2_pos', $data->dual_benefit_2_pos) }}"
+                                                    placeholder="e.g. খাঁটি তরল দুধ ঘণ্টার পর ঘণ্টা জ্বাল দিয়ে তৈরি শতাব্দী প্রাচীন ঐতিহ্য">
                                             </div>
                                         </div>
                                     </div>
@@ -929,29 +988,34 @@
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">Overall Rating Score:</label>
                                             <input type="text" class="form-control" name="rating_score"
-                                                value="{{ old('rating_score', $data->rating_score ?? '৪.৯') }}">
+                                                value="{{ old('rating_score', $data->rating_score) }}"
+                                                placeholder="e.g. ৪.৯">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">Total Reviews Count Text:</label>
                                             <input type="text" class="form-control" name="total_reviews_count"
-                                                value="{{ old('total_reviews_count', $data->total_reviews_count ?? '৫,২৩০+ রিভিউ') }}">
+                                                value="{{ old('total_reviews_count', $data->total_reviews_count) }}"
+                                                placeholder="e.g. ৫,২৩০+ রিভিউ">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">Delivered Orders Text:</label>
                                             <input type="text" class="form-control" name="delivered_orders_text"
-                                                value="{{ old('delivered_orders_text', $data->delivered_orders_text ?? 'সারা বাংলাদেশে ৬,০০০+ সফল ডেলিভার্ড অর্ডার') }}">
+                                                value="{{ old('delivered_orders_text', $data->delivered_orders_text) }}"
+                                                placeholder="e.g. সারা বাংলাদেশে ৬,০০০+ সফল ডেলিভার্ড অর্ডার">
                                         </div>
                                     </div>
                                 </div>
 
                                 @php
                                     $ratingBreakdownMap = [];
-                                    foreach($data->rating_breakdown ?? \App\Models\BaklavaOffer::getDefaultRatingBreakdown() as $rb) {
-                                        $ratingBreakdownMap[$rb['star']] = $rb['percent'];
+                                    if (!empty($data->rating_breakdown)) {
+                                        foreach($data->rating_breakdown as $rb) {
+                                            $ratingBreakdownMap[$rb['star']] = $rb['percent'];
+                                        }
                                     }
                                 @endphp
 
@@ -960,23 +1024,23 @@
                                     <div class="row g-2">
                                         <div class="col">
                                             <label class="form-label small">5 Star (%):</label>
-                                            <input type="number" class="form-control form-control-sm" name="rating_percents[5]" value="{{ $ratingBreakdownMap[5] ?? 88 }}" min="0" max="100">
+                                            <input type="number" class="form-control form-control-sm" name="rating_percents[5]" value="{{ old('rating_percents.5', $ratingBreakdownMap[5] ?? '') }}" placeholder="88" min="0" max="100">
                                         </div>
                                         <div class="col">
                                             <label class="form-label small">4 Star (%):</label>
-                                            <input type="number" class="form-control form-control-sm" name="rating_percents[4]" value="{{ $ratingBreakdownMap[4] ?? 10 }}" min="0" max="100">
+                                            <input type="number" class="form-control form-control-sm" name="rating_percents[4]" value="{{ old('rating_percents.4', $ratingBreakdownMap[4] ?? '') }}" placeholder="10" min="0" max="100">
                                         </div>
                                         <div class="col">
                                             <label class="form-label small">3 Star (%):</label>
-                                            <input type="number" class="form-control form-control-sm" name="rating_percents[3]" value="{{ $ratingBreakdownMap[3] ?? 2 }}" min="0" max="100">
+                                            <input type="number" class="form-control form-control-sm" name="rating_percents[3]" value="{{ old('rating_percents.3', $ratingBreakdownMap[3] ?? '') }}" placeholder="2" min="0" max="100">
                                         </div>
                                         <div class="col">
                                             <label class="form-label small">2 Star (%):</label>
-                                            <input type="number" class="form-control form-control-sm" name="rating_percents[2]" value="{{ $ratingBreakdownMap[2] ?? 0 }}" min="0" max="100">
+                                            <input type="number" class="form-control form-control-sm" name="rating_percents[2]" value="{{ old('rating_percents.2', $ratingBreakdownMap[2] ?? '') }}" placeholder="0" min="0" max="100">
                                         </div>
                                         <div class="col">
                                             <label class="form-label small">1 Star (%):</label>
-                                            <input type="number" class="form-control form-control-sm" name="rating_percents[1]" value="{{ $ratingBreakdownMap[1] ?? 0 }}" min="0" max="100">
+                                            <input type="number" class="form-control form-control-sm" name="rating_percents[1]" value="{{ old('rating_percents.1', $ratingBreakdownMap[1] ?? '') }}" placeholder="0" min="0" max="100">
                                         </div>
                                     </div>
                                 </div>
@@ -988,11 +1052,16 @@
                                 </div>
 
                                 @php
-                                    $testimonials = $data->testimonials ?? \App\Models\BaklavaOffer::getDefaultTestimonials();
+                                    $defaultTestimonials = \App\Models\BaklavaOffer::getDefaultTestimonials();
+                                    $savedTestimonials = $data->testimonials ?? [];
                                 @endphp
 
                                 <div class="row mb-4">
-                                    @foreach($testimonials as $tIdx => $testi)
+                                    @for($tIdx = 0; $tIdx < 3; $tIdx++)
+                                        @php
+                                            $testi = $savedTestimonials[$tIdx] ?? [];
+                                            $dTesti = $defaultTestimonials[$tIdx] ?? [];
+                                        @endphp
                                         <div class="col-md-4 mb-3">
                                             <div class="testi-edit-box">
                                                 <h6 class="fw-bold text-dark mb-2">Testimonial #{{ $tIdx + 1 }}</h6>
@@ -1001,37 +1070,42 @@
                                                         <label class="form-label small fw-bold">Customer Name:</label>
                                                         <input type="text" class="form-control form-control-sm"
                                                             name="testi_names[{{ $tIdx }}]"
-                                                            value="{{ $testi['name'] ?? '' }}">
+                                                            value="{{ old('testi_names.' . $tIdx, $testi['name'] ?? '') }}"
+                                                            placeholder="e.g. {{ $dTesti['name'] ?? '' }}">
                                                     </div>
                                                     <div class="col-4">
                                                         <label class="form-label small fw-bold">Location:</label>
                                                         <input type="text" class="form-control form-control-sm"
                                                             name="testi_locations[{{ $tIdx }}]"
-                                                            value="{{ $testi['location'] ?? '' }}">
+                                                            value="{{ old('testi_locations.' . $tIdx, $testi['location'] ?? '') }}"
+                                                            placeholder="e.g. {{ $dTesti['location'] ?? '' }}">
                                                     </div>
                                                 </div>
                                                 <div class="form-group mb-2">
                                                     <label class="form-label small fw-bold">Review Text:</label>
                                                     <textarea class="form-control form-control-sm" rows="3"
-                                                        name="testi_texts[{{ $tIdx }}]">{{ $testi['text'] ?? '' }}</textarea>
+                                                        name="testi_texts[{{ $tIdx }}]"
+                                                        placeholder="e.g. {{ $dTesti['text'] ?? '' }}">{{ old('testi_texts.' . $tIdx, $testi['text'] ?? '') }}</textarea>
                                                 </div>
                                                 <div class="row g-2">
                                                     <div class="col-6">
                                                         <label class="form-label small">Avatar Letter:</label>
                                                         <input type="text" class="form-control form-control-sm"
                                                             name="testi_letters[{{ $tIdx }}]"
-                                                            value="{{ $testi['avatar_letter'] ?? '' }}">
+                                                            value="{{ old('testi_letters.' . $tIdx, $testi['avatar_letter'] ?? '') }}"
+                                                            placeholder="e.g. {{ $dTesti['avatar_letter'] ?? '' }}">
                                                     </div>
                                                     <div class="col-6">
                                                         <label class="form-label small">Stars (1-5):</label>
                                                         <input type="number" class="form-control form-control-sm"
                                                             name="testi_stars[{{ $tIdx }}]"
-                                                            value="{{ $testi['stars'] ?? 5 }}" min="1" max="5">
+                                                            value="{{ old('testi_stars.' . $tIdx, $testi['stars'] ?? '') }}"
+                                                            placeholder="5" min="1" max="5">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    @endfor
                                 </div>
 
                                 <hr class="my-3">
@@ -1045,7 +1119,7 @@
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">Timer Badge Text:</label>
                                             <input type="text" class="form-control" name="timer_badge"
-                                                value="{{ old('timer_badge', $data->timer_badge ?? 'অফার শেষ হতে বাকি') }}" placeholder="অফার শেষ হতে বাকি">
+                                                value="{{ old('timer_badge', $data->timer_badge) }}" placeholder="e.g. অফার শেষ হতে বাকি">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -1069,14 +1143,16 @@
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">Reviews Title:</label>
                                             <input type="text" class="form-control" name="reviews_title"
-                                                value="{{ old('reviews_title', $data->reviews_title ?? 'বাস্তব গ্রাহকদের পাঠানো রিভিউসমূহ') }}">
+                                                value="{{ old('reviews_title', $data->reviews_title) }}"
+                                                placeholder="e.g. বাস্তব গ্রাহকদের পাঠানো রিভিউসমূহ">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label class="form-label fw-bold">Reviews Subtitle:</label>
                                             <input type="text" class="form-control" name="reviews_subtitle"
-                                                value="{{ old('reviews_subtitle', $data->reviews_subtitle ?? 'ছবিতে ট্যাপ করে বড় করে দেখুন') }}">
+                                                value="{{ old('reviews_subtitle', $data->reviews_subtitle) }}"
+                                                placeholder="e.g. ছবিতে ট্যাপ করে বড় করে দেখুন">
                                         </div>
                                     </div>
                                 </div>
@@ -1184,7 +1260,7 @@
                                             <label class="form-label fw-bold">Package Name / Title in Order Box:</label>
                                             <input type="text" class="form-control" name="package_title"
                                                 value="{{ old('package_title', $data->package_title) }}"
-                                                placeholder="২০ পিস টার্কিশ বাকলাভা + হাফকেজি পাবনার পেরা সন্দেশ (ফ্রী)">
+                                                placeholder="e.g. ২০ পিস টার্কিশ বাকলাভা + হাফকেজি পাবনার পেরা সন্দেশ (ফ্রী)">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -1192,7 +1268,7 @@
                                             <label class="form-label fw-bold">Package Subtitle / Note:</label>
                                             <input type="text" class="form-control" name="package_subtitle"
                                                 value="{{ old('package_subtitle', $data->package_subtitle) }}"
-                                                placeholder="সম্পূর্ণ প্রিমিয়াম গিফট বক্স প্যাকেজিং সহ">
+                                                placeholder="e.g. সম্পূর্ণ প্রিমিয়াম গিফট বক্স প্যাকেজিং সহ">
                                         </div>
                                     </div>
 
@@ -1201,7 +1277,7 @@
                                             <label class="form-label fw-bold">Inside Dhaka Delivery Fee (৳): <span class="text-danger">*</span></label>
                                             <input type="number" step="any" class="form-control @error('inside_dhaka_delivery_fee') is-invalid @enderror"
                                                 name="inside_dhaka_delivery_fee"
-                                                value="{{ old('inside_dhaka_delivery_fee', $data->inside_dhaka_delivery_fee) }}" required>
+                                                value="{{ old('inside_dhaka_delivery_fee', $data->inside_dhaka_delivery_fee) }}" placeholder="e.g. 80" required>
                                             @error('inside_dhaka_delivery_fee')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -1213,7 +1289,7 @@
                                             <label class="form-label fw-bold">Outside Dhaka Delivery Fee (৳): <span class="text-danger">*</span></label>
                                             <input type="number" step="any" class="form-control @error('outside_dhaka_delivery_fee') is-invalid @enderror"
                                                 name="outside_dhaka_delivery_fee"
-                                                value="{{ old('outside_dhaka_delivery_fee', $data->outside_dhaka_delivery_fee) }}" required>
+                                                value="{{ old('outside_dhaka_delivery_fee', $data->outside_dhaka_delivery_fee) }}" placeholder="e.g. 150" required>
                                             @error('outside_dhaka_delivery_fee')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -1226,7 +1302,7 @@
                                             <input type="text" class="form-control @error('whatsapp_number') is-invalid @enderror"
                                                 name="whatsapp_number"
                                                 value="{{ old('whatsapp_number', $data->whatsapp_number) }}"
-                                                placeholder="8801672756634">
+                                                placeholder="e.g. 8801672756634">
                                             @error('whatsapp_number')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -1238,8 +1314,8 @@
                                             <label class="form-label fw-bold">Direct Phone Number (Call):</label>
                                             <input type="text" class="form-control @error('phone_number') is-invalid @enderror"
                                                 name="phone_number"
-                                                value="{{ old('phone_number', $data->phone_number ?? '8801672756634') }}"
-                                                placeholder="8801672756634">
+                                                value="{{ old('phone_number', $data->phone_number) }}"
+                                                placeholder="e.g. 8801672756634">
                                             @error('phone_number')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -1251,7 +1327,7 @@
                                             <label class="form-label fw-bold">Facebook Page / Chat URL:</label>
                                             <input type="text" class="form-control @error('facebook_url') is-invalid @enderror"
                                                 name="facebook_url"
-                                                value="{{ old('facebook_url', $data->facebook_url ?? 'https://www.facebook.com') }}"
+                                                value="{{ old('facebook_url', $data->facebook_url) }}"
                                                 placeholder="https://www.facebook.com">
                                             @error('facebook_url')
                                                 <span class="text-danger">{{ $message }}</span>
