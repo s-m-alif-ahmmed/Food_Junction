@@ -205,10 +205,13 @@
                         $problemSectionImg = !empty($data->problem_image) ? $data->problem_image : (!empty($data->hero_image) ? $data->hero_image : null);
                     @endphp
                     @if(!empty($problemSectionImg))
-                    <img src="{{ asset($problemSectionImg) }}"
-                        alt="{{ $data->problem_title ?? $data->hero_title ?? $data->name ?? 'Offer Image' }}"
-                        class="problem-showcase-img"
-                        loading="lazy" />
+                    <div class="problem-showcase-wrap text-center my-3 w-100" style="max-width: 840px; margin-left: auto; margin-right: auto;">
+                        <img src="{{ asset($problemSectionImg) }}"
+                            alt="{{ $data->problem_title ?? $data->hero_title ?? $data->name ?? 'Offer Image' }}"
+                            class="problem-showcase-img img-fluid"
+                            style="width: 100% !important; max-width: 100% !important; height: auto !important; display: block !important; margin: 0 auto !important;"
+                            loading="lazy" />
+                    </div>
                     @endif
 
                     <div class="my-3">
@@ -794,17 +797,87 @@
                             @enderror
                         </div>
 
-                        <!-- Delivery Zone (Mandatory) -->
-                        <div class="col-12 form-floating-custom">
-                            <label for="delivery_zone" class="form-label fw-bold fs-14">ডেলিভারি এরিয়া নির্বাচন করুন <span class="text-danger">*</span></label>
-                            <select class="form-select @error('delivery_zone') is-invalid @enderror" id="delivery_zone" name="delivery_zone" onchange="calculateOrderTotal()" required>
-                                <option value="inside_dhaka" data-fee="{{ $data->inside_dhaka_delivery_fee ?? 80 }}" selected>
-                                    ঢাকার ভেতরে হোম ডেলিভারি — ৳ {{ $data->inside_dhaka_delivery_fee ?? 80 }}
+                        <!-- Delivery Zone (Mandatory - Side-by-Side Selectable Cards) -->
+                        <div class="col-12 delivery-zone-wrapper">
+                            <label class="form-label fw-bold fs-14 mb-2 d-flex align-items-center justify-content-between">
+                                <span><i class="fa-solid fa-truck-fast text-danger me-1"></i> ডেলিভারি এরিয়া নির্বাচন করুন <span class="text-danger">*</span></span>
+                                <span class="fs-12 text-muted fw-normal">যেকোনো একটি সিলেক্ট করুন</span>
+                            </label>
+
+                            @php
+                                $selectedZone = old('delivery_zone', 'inside_dhaka');
+                                $insideFee = $data->inside_dhaka_delivery_fee ?? 80;
+                                $outsideFee = $data->outside_dhaka_delivery_fee ?? 150;
+                            @endphp
+
+                            <!-- Hidden select to guarantee 100% backward compatibility with existing scripts -->
+                            <select id="delivery_zone" class="d-none" aria-hidden="true" tabindex="-1">
+                                <option value="inside_dhaka" data-fee="{{ $insideFee }}" {{ $selectedZone === 'inside_dhaka' ? 'selected' : '' }}>
+                                    ঢাকার ভেতরে হোম ডেলিভারি — ৳ {{ $insideFee }}
                                 </option>
-                                <option value="outside_dhaka" data-fee="{{ $data->outside_dhaka_delivery_fee ?? 150 }}">
-                                    ঢাকার বাইরে সারা বাংলাদেশ হোম ডেলিভারি — ৳ {{ $data->outside_dhaka_delivery_fee ?? 150 }}
+                                <option value="outside_dhaka" data-fee="{{ $outsideFee }}" {{ $selectedZone === 'outside_dhaka' ? 'selected' : '' }}>
+                                    ঢাকার বাইরে সারা বাংলাদেশ হোম ডেলিভারি — ৳ {{ $outsideFee }}
                                 </option>
                             </select>
+
+                            <div class="row g-2 g-sm-3 delivery-zone-grid">
+                                <!-- Option 1: Inside Dhaka -->
+                                <div class="col-6">
+                                    <div class="delivery-zone-option-wrap">
+                                        <input type="radio"
+                                               class="delivery-zone-radio @error('delivery_zone') is-invalid @enderror"
+                                               name="delivery_zone"
+                                               id="delivery_zone_inside"
+                                               value="inside_dhaka"
+                                               data-fee="{{ $insideFee }}"
+                                               {{ $selectedZone === 'inside_dhaka' ? 'checked' : '' }}
+                                               onchange="selectDeliveryZone(this)"
+                                               required>
+                                        <label class="delivery-zone-card" for="delivery_zone_inside">
+                                            <div class="delivery-zone-top">
+                                                <span class="delivery-zone-indicator"></span>
+                                                <div class="delivery-zone-header-text">
+                                                    <span class="delivery-zone-title">ঢাকার ভেতরে</span>
+                                                    <span class="delivery-zone-desc">হোম ডেলিভারি</span>
+                                                </div>
+                                            </div>
+                                            <div class="delivery-zone-bottom">
+                                                <span class="delivery-zone-fee-label">চার্জ:</span>
+                                                <span class="delivery-zone-price">৳ {{ $insideFee }}</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Option 2: Outside Dhaka -->
+                                <div class="col-6">
+                                    <div class="delivery-zone-option-wrap">
+                                        <input type="radio"
+                                               class="delivery-zone-radio @error('delivery_zone') is-invalid @enderror"
+                                               name="delivery_zone"
+                                               id="delivery_zone_outside"
+                                               value="outside_dhaka"
+                                               data-fee="{{ $outsideFee }}"
+                                               {{ $selectedZone === 'outside_dhaka' ? 'checked' : '' }}
+                                               onchange="selectDeliveryZone(this)"
+                                               required>
+                                        <label class="delivery-zone-card" for="delivery_zone_outside">
+                                            <div class="delivery-zone-top">
+                                                <span class="delivery-zone-indicator"></span>
+                                                <div class="delivery-zone-header-text">
+                                                    <span class="delivery-zone-title">ঢাকার বাইরে</span>
+                                                    <span class="delivery-zone-desc">সারা বাংলাদেশ</span>
+                                                </div>
+                                            </div>
+                                            <div class="delivery-zone-bottom">
+                                                <span class="delivery-zone-fee-label">চার্জ:</span>
+                                                <span class="delivery-zone-price">৳ {{ $outsideFee }}</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
                             @error('delivery_zone')
                                 <p class="text-sm text-danger mt-1">{{ $message }}</p>
                             @enderror
@@ -936,3 +1009,18 @@
     </div>
 
 @endsection
+
+@push('scripts')
+<script>
+    function selectDeliveryZone(radio) {
+        if (!radio) return;
+        let hiddenSelect = document.getElementById('delivery_zone');
+        if (hiddenSelect) {
+            hiddenSelect.value = radio.value;
+        }
+        if (typeof window.calculateOrderTotal === 'function') {
+            window.calculateOrderTotal();
+        }
+    }
+</script>
+@endpush

@@ -79,9 +79,16 @@
         let qtyInput = document.getElementById('order-qty');
         let qty = parseInt(qtyInput ? qtyInput.value : 1, 10) || 1;
 
-        let zoneSelect = document.getElementById('delivery_zone');
         let deliveryFee = defaultDeliveryFee;
-        if (zoneSelect && zoneSelect.selectedIndex >= 0) {
+        let checkedZoneRadio = document.querySelector('input[name="delivery_zone"]:checked');
+        let zoneSelect = document.getElementById('delivery_zone');
+
+        if (checkedZoneRadio) {
+            let optFee = checkedZoneRadio.getAttribute('data-fee');
+            if (optFee !== null && !isNaN(parseFloat(optFee))) {
+                deliveryFee = parseFloat(optFee);
+            }
+        } else if (zoneSelect && zoneSelect.selectedIndex >= 0) {
             let selectedOption = zoneSelect.options[zoneSelect.selectedIndex];
             let optFee = selectedOption.getAttribute('data-fee');
             if (optFee !== null && !isNaN(parseFloat(optFee))) {
@@ -252,7 +259,7 @@
             let name = $('#name').val() ? $('#name').val().trim() : '';
             let phone = $('#number').val() ? $('#number').val().trim() : '';
             let address = $('#address').val() ? $('#address').val().trim() : '';
-            let deliveryZone = $('#delivery_zone').val();
+            let deliveryZone = $('input[name="delivery_zone"]:checked').val() || $('#delivery_zone').val();
             let terms = $('#all_terms').length ? ($('#all_terms').is(':checkbox') ? $('#all_terms').is(':checked') : Boolean($('#all_terms').val())) : true;
 
             if (!name) {
@@ -301,7 +308,11 @@
                 } else {
                     alert('Please select your delivery zone (ডেলিভারি এরিয়া নির্বাচন করুন)।');
                 }
-                $('#delivery_zone').focus();
+                if ($('input[name="delivery_zone"]').length) {
+                    $('input[name="delivery_zone"]').first().focus();
+                } else {
+                    $('#delivery_zone').focus();
+                }
                 return;
             }
 

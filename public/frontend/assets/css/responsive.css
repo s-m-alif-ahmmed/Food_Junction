@@ -2104,6 +2104,17 @@
         gap: 10px;
         padding: 12px 14px;
     }
+    .problem-showcase-wrap {
+        max-width: 100% !important;
+        margin: 14px auto !important;
+    }
+    .problem-showcase-img {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        border-radius: 14px !important;
+        margin: 0 auto !important;
+    }
 }
 
 @media screen and (max-width: 650px) {
@@ -2115,8 +2126,11 @@
 @media screen and (max-width: 540px) {
     .hero-tray-img,
     .problem-showcase-img {
-        border-radius: 14px;
-        margin: 14px auto;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        border-radius: 12px !important;
+        margin: 10px auto !important;
     }
     .hero-trust-grid {
         grid-template-columns: 1fr;
