@@ -101,7 +101,7 @@
                                     <td>Tk {{ number_format($item->unit_price, 2) }}</td>
                                     <td>
                                         @if($item->unit_value && $item->unit_type)
-                                            {{ $item->quantity }} x {{ floatval($item->unit_value) }} {{ ucfirst($item->unit_type) }}
+                                            {{ $item->quantity }} {{ ucfirst($item->unit_type) }}
                                         @else
                                             {{ $item->quantity }} {{ ucfirst($item->unit_type ?? 'pcs') }}
                                         @endif
