@@ -49,3 +49,21 @@
     </section>
 
 @endsection
+
+@push('scripts')
+    @php
+        $isAdmin = Auth::check() && in_array(Auth::user()->role, ['Admin', 'Super Admin']);
+        $excludeAdmin = config('tracking.exclude_admin', true);
+    @endphp
+
+    @if(!empty($purchase) && !($isAdmin && $excludeAdmin))
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      dataLayer.push({ ecommerce: null });
+      dataLayer.push({
+        event: 'purchase',
+        ecommerce: @json($purchase)
+      });
+    </script>
+    @endif
+@endpush

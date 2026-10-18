@@ -252,8 +252,14 @@
         let orderForm = $('#baklava-direct-order-form');
         if (!orderForm.length) return;
 
+        let isSubmitting = false;
+
         orderForm.on('submit', function (e) {
             e.preventDefault();
+
+            if (isSubmitting) {
+                return false;
+            }
 
             let form = $(this);
             let name = $('#name').val() ? $('#name').val().trim() : '';
@@ -326,6 +332,7 @@
                 return;
             }
 
+            isSubmitting = true;
             let submitBtn = $('#submit-order-btn');
             submitBtn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-2"></i> Placing Order... / অর্ডার প্রসেস হচ্ছে...');
 
@@ -343,6 +350,7 @@
                             window.location.href = res.redirect_url || '/order-confirmed';
                         }, 500);
                     } else {
+                        isSubmitting = false;
                         submitBtn.prop('disabled', false).html('<i class="fa-solid fa-circle-check me-1"></i> Place Order — অর্ডার কনফার্ম করুন (ক্যাশ অন ডেলিভারি)');
                         if (typeof window.showErrorToast === 'function') {
                             window.showErrorToast(res.message || 'Failed to place order. Please try again.');
@@ -352,6 +360,7 @@
                     }
                 },
                 error: function (xhr) {
+                    isSubmitting = false;
                     submitBtn.prop('disabled', false).html('<i class="fa-solid fa-circle-check me-1"></i> Place Order — অর্ডার কনফার্ম করুন (ক্যাশ অন ডেলিভারি)');
                     let errMsg = 'Failed to place order. Please check all required fields.';
                     if (xhr.responseJSON && xhr.responseJSON.message) {

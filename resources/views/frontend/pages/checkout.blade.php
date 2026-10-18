@@ -436,6 +436,12 @@
         @if (session('t-error'))
         showErrorToast("{{ session('t-error') }}");
         @endif
+
+        // Prevent double order submission on checkout
+        $('form[action="{{ route('new.order') }}"]').on('submit', function () {
+            let btn = $(this).find('button[type="submit"]');
+            btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-2"></i> Placing Order...');
+        });
     </script>
 
 @endpush

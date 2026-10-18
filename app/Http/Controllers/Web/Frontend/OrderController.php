@@ -251,6 +251,7 @@ class OrderController extends Controller
 
             // Store tracking ID in session for the thank-you page
             session(['order' => $order->id]);
+            session()->flash('purchase_event', $this->buildPurchasePayload($order));
 
             return redirect('/order-complete');
 
@@ -421,15 +422,18 @@ class OrderController extends Controller
 
             DB::commit();
 
+            $purchasePayload = $this->buildPurchasePayload($order);
             session(['order' => $order->id]);
+            session()->flash('purchase_event', $purchasePayload);
             session()->flash('t-success', 'আপনার অর্ডারটি সফলভাবে গৃহীত হয়েছে!');
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
-                    'success'      => true,
-                    'message'      => 'অর্ডারটি সফলভাবে সম্পন্ন হয়েছে!',
-                    'redirect_url' => route('order.confirm'),
-                    'tracking_id'  => $order->tracking_id,
+                    'success'        => true,
+                    'message'        => 'অর্ডারটি সফলভাবে সম্পন্ন হয়েছে!',
+                    'redirect_url'   => route('order.confirm'),
+                    'tracking_id'    => $order->tracking_id,
+                    'purchase_event' => $purchasePayload,
                 ]);
             }
 
@@ -459,7 +463,9 @@ class OrderController extends Controller
             return redirect('/')->withErrors(['error' => 'Order not found.']);
         }
 
-        return view('frontend.pages.confirm-order', compact('order'));
+        $purchase = session('purchase_event');
+
+        return view('frontend.pages.confirm-order', compact('order', 'purchase'));
     }
 
     // ----------------------------------------------------------------
@@ -483,5 +489,31 @@ class OrderController extends Controller
         } while (Order::where('tracking_id', $id)->exists());
 
         return $id;
+    }
+
+    /**
+     * Build GA4/GTM compliant purchase payload from saved order.
+     */
+    private function buildPurchasePayload(Order $order): array
+    {
+        $order->loadMissing('items');
+
+        $items = [];
+        foreach ($order->items as $item) {
+            $items[] = [
+                'item_id'   => (string) ($item->product_id ?? $item->variant_id ?? $item->id),
+                'item_name' => (string) ($item->product_name ?? 'Product'),
+                'price'     => (float) $item->unit_price,
+                'quantity'  => (int) $item->quantity,
+            ];
+        }
+
+        return [
+            'transaction_id' => (string) $order->tracking_id,
+            'value'          => (float) $order->final_total,
+            'shipping'       => (float) $order->delivery_fee,
+            'currency'       => 'BDT',
+            'items'          => $items,
+        ];
     }
 }
