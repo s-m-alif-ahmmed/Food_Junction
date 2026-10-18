@@ -62,7 +62,9 @@
       dataLayer.push({ ecommerce: null });
       dataLayer.push({
         event: 'purchase',
-        ecommerce: @json($purchase)
+        ecommerce:     @json($purchase['ecommerce']),
+        order_details: @json($purchase['order_details']),
+        customer:      @json($purchase['customer'])
       });
     </script>
     @endif

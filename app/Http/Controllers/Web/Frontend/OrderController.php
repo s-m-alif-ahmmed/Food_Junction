@@ -500,20 +500,72 @@ class OrderController extends Controller
 
         $items = [];
         foreach ($order->items as $item) {
-            $items[] = [
+            $unitPrice = (float) $item->unit_price;
+            $origPrice = $item->original_price !== null ? (float) $item->original_price : $unitPrice;
+            $discount = max(0.0, (float) ($item->discount_amount ?? ($origPrice - $unitPrice)));
+
+            $itemPayload = [
                 'item_id'   => (string) ($item->product_id ?? $item->variant_id ?? $item->id),
-                'item_name' => (string) ($item->product_name ?? 'Product'),
-                'price'     => (float) $item->unit_price,
+                'item_name' => trim((string) ($item->product_name ?? 'Product')),
+                'price'     => $unitPrice,
                 'quantity'  => (int) $item->quantity,
+                'discount'  => (float) $discount,
             ];
+
+            $items[] = array_filter($itemPayload, fn($v) => !is_null($v));
         }
 
-        return [
-            'transaction_id' => (string) $order->tracking_id,
+        $ecommerce = array_filter([
+            'transaction_id' => (string) ($order->tracking_id ?? $order->id),
             'value'          => (float) $order->final_total,
             'shipping'       => (float) $order->delivery_fee,
             'currency'       => 'BDT',
             'items'          => $items,
+        ], fn($v) => !is_null($v));
+
+        $zone = strtolower(trim((string) ($order->delivery_zone ?? '')));
+        $deliveryArea = str_contains($zone, 'outside') ? 'outside_dhaka' : 'inside_dhaka';
+
+        $orderDetails = array_filter([
+            'delivery_area'   => $deliveryArea,
+            'delivery_charge' => (float) $order->delivery_fee,
+            'total_price'     => (float) $order->final_total,
+        ], fn($v) => !is_null($v));
+
+        $customer = array_filter([
+            'name'    => trim((string) ($order->name ?? '')),
+            'phone'   => $this->formatE164Phone($order->number),
+            'address' => trim((string) ($order->address ?? '')),
+            'note'    => trim((string) ($order->note ?? '')),
+        ], fn($v) => !is_null($v));
+
+        return [
+            'ecommerce'     => $ecommerce,
+            'order_details' => $orderDetails,
+            'customer'      => $customer,
         ];
+    }
+
+    /**
+     * Normalize Bangladesh phone number to E.164 (+8801XXXXXXXXX).
+     */
+    private function formatE164Phone(?string $phone): string
+    {
+        $phone = trim((string) $phone);
+        if ($phone === '') {
+            return '';
+        }
+
+        $digits = preg_replace('/\D/', '', $phone);
+
+        if (str_starts_with($digits, '880')) {
+            return '+' . $digits;
+        }
+
+        if (str_starts_with($digits, '0')) {
+            return '+88' . $digits;
+        }
+
+        return '+880' . $digits;
     }
 }
