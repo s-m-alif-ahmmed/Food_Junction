@@ -62,10 +62,21 @@
       dataLayer.push({ ecommerce: null });
       dataLayer.push({
         event: 'purchase',
-        ecommerce:     @json($purchase['ecommerce']),
-        order_details: @json($purchase['order_details']),
-        customer:      @json($purchase['customer'])
+        ecommerce:     @json($purchase['ecommerce'] ?? []),
+        order_details: @json($purchase['order_details'] ?? []),
+        customer:      @json($purchase['customer'] ?? []),
+        Customer:      @json($purchase['customer'] ?? []),
+        customer_data: @json($purchase['customer'] ?? []),
+        @if(!empty($purchase['user_data']))
+        user_data:     @json($purchase['user_data']),
+        @endif
       });
+
+      @if(!empty($purchase['user_data']))
+      if (typeof gtag === 'function') {
+        gtag('set', 'user_data', @json($purchase['user_data']));
+      }
+      @endif
     </script>
     @endif
 @endpush

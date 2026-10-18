@@ -496,7 +496,7 @@ class OrderController extends Controller
      */
     private function buildPurchasePayload(Order $order): array
     {
-        $order->loadMissing('items');
+        $order->loadMissing('items.product');
 
         $items = [];
         foreach ($order->items as $item) {
@@ -504,8 +504,10 @@ class OrderController extends Controller
             $origPrice = $item->original_price !== null ? (float) $item->original_price : $unitPrice;
             $discount = max(0.0, (float) ($item->discount_amount ?? ($origPrice - $unitPrice)));
 
+            $itemId = (string) ($item->product?->product_slug ?: ($item->product_id ?? $item->variant_id ?? $item->id));
+
             $itemPayload = [
-                'item_id'   => (string) ($item->product_id ?? $item->variant_id ?? $item->id),
+                'item_id'   => $itemId,
                 'item_name' => trim((string) ($item->product_name ?? 'Product')),
                 'price'     => $unitPrice,
                 'quantity'  => (int) $item->quantity,
@@ -515,16 +517,60 @@ class OrderController extends Controller
             $items[] = array_filter($itemPayload, fn($v) => !is_null($v));
         }
 
+        $zone = strtolower(trim((string) ($order->delivery_zone ?? '')));
+        $deliveryArea = str_contains($zone, 'outside') ? 'outside_dhaka' : 'inside_dhaka';
+        $city = ($deliveryArea === 'inside_dhaka') ? 'Dhaka' : 'Outside Dhaka';
+
+        $fullName = trim((string) ($order->name ?? ''));
+        $nameParts = preg_split('/\s+/', $fullName, 2);
+        $firstName = $nameParts[0] ?? '';
+        $lastName  = $nameParts[1] ?? '';
+
+        $email    = trim((string) ($order->email ?? ''));
+        $phone    = $this->formatE164Phone($order->number);
+        $whatsapp = $order->whatsapp_number ? $this->formatE164Phone($order->whatsapp_number) : null;
+        $address  = trim((string) ($order->address ?? ''));
+        $note     = trim((string) ($order->note ?? ''));
+
+        $customer = array_filter([
+            'name'            => $fullName !== '' ? $fullName : null,
+            'first_name'      => $firstName !== '' ? $firstName : null,
+            'last_name'       => $lastName !== '' ? $lastName : null,
+            'email'           => $email !== '' ? strtolower($email) : null,
+            'phone'           => $phone !== '' ? $phone : null,
+            'phone_number'    => $phone !== '' ? $phone : null,
+            'whatsapp_number' => $whatsapp ?: null,
+            'address'         => $address !== '' ? $address : null,
+            'city'            => $city,
+            'country'         => 'BD',
+            'delivery_area'   => $deliveryArea,
+            'note'            => $note !== '' ? $note : null,
+        ], fn($v) => !is_null($v) && $v !== '');
+
+        $addressPayload = array_filter([
+            'first_name'  => $firstName !== '' ? $firstName : null,
+            'last_name'   => $lastName !== '' ? $lastName : null,
+            'street'      => $address !== '' ? $address : null,
+            'city'        => $city,
+            'region'      => 'Dhaka',
+            'postal_code' => null,
+            'country'     => 'BD',
+        ], fn($v) => !is_null($v) && $v !== '');
+
+        $userData = array_filter([
+            'email'        => $email !== '' ? strtolower($email) : null,
+            'phone_number' => $phone !== '' ? $phone : null,
+            'address'      => !empty($addressPayload) ? $addressPayload : null,
+        ], fn($v) => !is_null($v) && $v !== '');
+
         $ecommerce = array_filter([
             'transaction_id' => (string) ($order->tracking_id ?? $order->id),
             'value'          => (float) $order->final_total,
             'shipping'       => (float) $order->delivery_fee,
             'currency'       => 'BDT',
             'items'          => $items,
+            'customer'       => !empty($customer) ? $customer : null,
         ], fn($v) => !is_null($v));
-
-        $zone = strtolower(trim((string) ($order->delivery_zone ?? '')));
-        $deliveryArea = str_contains($zone, 'outside') ? 'outside_dhaka' : 'inside_dhaka';
 
         $orderDetails = array_filter([
             'delivery_area'   => $deliveryArea,
@@ -532,22 +578,17 @@ class OrderController extends Controller
             'total_price'     => (float) $order->final_total,
         ], fn($v) => !is_null($v));
 
-        $customer = array_filter([
-            'name'    => trim((string) ($order->name ?? '')),
-            'phone'   => $this->formatE164Phone($order->number),
-            'address' => trim((string) ($order->address ?? '')),
-            'note'    => trim((string) ($order->note ?? '')),
-        ], fn($v) => !is_null($v));
-
         return [
             'ecommerce'     => $ecommerce,
             'order_details' => $orderDetails,
             'customer'      => $customer,
+            'user_data'     => $userData,
         ];
     }
 
     /**
      * Normalize Bangladesh phone number to E.164 (+8801XXXXXXXXX).
+     * Supports both English and Bengali numerals.
      */
     private function formatE164Phone(?string $phone): string
     {
@@ -556,7 +597,15 @@ class OrderController extends Controller
             return '';
         }
 
+        // Convert Bengali digits to English digits
+        $bengali = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        $english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        $phone = str_replace($bengali, $english, $phone);
+
         $digits = preg_replace('/\D/', '', $phone);
+        if ($digits === '') {
+            return '';
+        }
 
         if (str_starts_with($digits, '880')) {
             return '+' . $digits;
