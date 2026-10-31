@@ -481,27 +481,82 @@
                                     <i class="fa fa-video-camera text-danger"></i> Video Showcase & Problem Agitation
                                 </div>
 
-                                <div class="row mb-4">
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-3">
-                                            <label class="form-label fw-bold">Promo Video Direct MP4 URL:</label>
-                                            <input type="text" class="form-control @error('video_url') is-invalid @enderror"
-                                                name="video_url" value="{{ old('video_url', $data->video_url) }}"
-                                                placeholder="https://...">
-                                            @error('video_url')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
+                                <!-- Video Showcase Module Card -->
+                                <div class="card border border-primary-subtle shadow-sm mb-4" style="border-radius: 12px; background: #fafbff;">
+                                    <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                        <div class="fw-bold text-dark fs-16 d-flex align-items-center">
+                                            <i class="fa fa-play-circle text-danger fs-18 me-2"></i> Promo Video Showcase Setup
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">
+                                                <i class="fa fa-youtube-play me-1"></i> YouTube Supported
+                                            </span>
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
+                                                <i class="fa fa-file-video-o me-1"></i> Direct MP4 / Upload
+                                            </span>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-3">
-                                            <label class="form-label fw-bold">Or Upload Promo Video File (Max 50MB):</label>
-                                            <input type="file" class="dropify @error('video_file') is-invalid @enderror"
-                                                name="video_file" id="video_file" accept="video/mp4,video/quicktime,video/ogg"
-                                                data-height="110">
-                                            @error('video_file')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
+                                    <div class="card-body p-3 p-md-4">
+                                        <div class="row g-3">
+                                            <div class="col-lg-7">
+                                                <div class="form-group mb-2">
+                                                    <label class="form-label fw-bold d-flex align-items-center justify-content-between">
+                                                        <span><i class="fa fa-link text-primary me-1"></i> Video Link (YouTube or Direct Video URL):</span>
+                                                        <span id="video_type_badge" class="badge bg-secondary">Checking URL...</span>
+                                                    </label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text bg-white"><i class="fa fa-globe text-muted"></i></span>
+                                                        <input type="text"
+                                                            class="form-control @error('video_url') is-invalid @enderror"
+                                                            id="video_url_input"
+                                                            name="video_url"
+                                                            value="{{ old('video_url', $data->video_url) }}"
+                                                            placeholder="e.g. https://www.youtube.com/watch?v=... or https://youtu.be/... or .mp4">
+                                                        <button type="button" class="btn btn-outline-secondary" id="clear_video_btn" title="Clear video link">
+                                                            <i class="fa fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                    @error('video_url')
+                                                        <span class="text-danger small">{{ $message }}</span>
+                                                    @enderror
+                                                    <div class="form-text text-muted small mt-1">
+                                                        <i class="fa fa-info-circle text-info me-1"></i>
+                                                        Paste any YouTube link (Standard, Shorts, Share link <code>youtu.be</code>, or Embed iframe) or direct <code>.mp4</code> URL.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-5">
+                                                <div class="form-group mb-2">
+                                                    <label class="form-label fw-bold">
+                                                        <i class="fa fa-cloud-upload text-success me-1"></i> Or Upload Promo Video File (Max 50MB):
+                                                    </label>
+                                                    <input type="file" class="dropify @error('video_file') is-invalid @enderror"
+                                                        name="video_file" id="video_file" accept="video/mp4,video/quicktime,video/ogg"
+                                                        data-height="110">
+                                                    @error('video_file')
+                                                        <span class="text-danger small">{{ $message }}</span>
+                                                    @enderror
+                                                    <div class="form-text text-muted small mt-1">
+                                                        Uploading a new video file will replace the current video URL automatically.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Live Video Showcase Preview Box -->
+                                        <div class="mt-3 pt-3 border-top">
+                                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                                <span class="fw-semibold small text-dark"><i class="fa fa-television me-1 text-secondary"></i> Live Video Showcase Preview:</span>
+                                                <span class="text-muted small" id="preview_status_text">Interactive preview</span>
+                                            </div>
+                                            <div id="video_preview_container" style="max-width: 560px; background: #0f172a; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.12); position: relative; margin: 0 auto;">
+                                                <div id="video_preview_placeholder" class="text-center p-4 text-white-50">
+                                                    <i class="fa fa-film fa-2x mb-2 d-block"></i>
+                                                    <span class="small">Enter a YouTube link or direct video URL above to preview here.</span>
+                                                </div>
+                                                <div id="video_preview_content" style="display: none;"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1602,5 +1657,106 @@
             toastr.success('Landing page URL copied to clipboard: ' + url);
         }
     }
+
+    // Video URL Live Preview & Type Detection Module
+    function initVideoPreviewModule() {
+        const input = document.getElementById('video_url_input');
+        const badge = document.getElementById('video_type_badge');
+        const previewContainer = document.getElementById('video_preview_content');
+        const placeholder = document.getElementById('video_preview_placeholder');
+        const statusText = document.getElementById('preview_status_text');
+        const clearBtn = document.getElementById('clear_video_btn');
+
+        if (!input) return;
+
+        function parseYouTube(url) {
+            if (!url) return null;
+            url = url.trim();
+            // If iframe was pasted, extract src
+            const iframeMatch = url.match(/<iframe.*?src=["'](.*?)["']/i);
+            if (iframeMatch) {
+                url = iframeMatch[1];
+            }
+            const match = url.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|v\/|shorts\/|live\/|watch\?v=|watch\?.+?&v=))([\w-]{11})/i);
+            if (match && match[1]) {
+                return {
+                    id: match[1],
+                    embedUrl: 'https://www.youtube.com/embed/' + match[1] + '?rel=0&modestbranding=1',
+                    cleanUrl: url
+                };
+            }
+            return null;
+        }
+
+        function updateVideoPreview() {
+            let rawVal = input.value.trim();
+
+            // Auto-clean if full iframe snippet was pasted into the input
+            const iframeMatch = rawVal.match(/<iframe.*?src=["'](.*?)["']/i);
+            if (iframeMatch) {
+                rawVal = iframeMatch[1];
+                input.value = rawVal;
+            }
+
+            if (!rawVal) {
+                if (badge) {
+                    badge.className = 'badge bg-secondary';
+                    badge.innerHTML = 'No URL entered';
+                }
+                if (placeholder) placeholder.style.display = 'block';
+                if (previewContainer) {
+                    previewContainer.style.display = 'none';
+                    previewContainer.innerHTML = '';
+                }
+                if (statusText) statusText.innerText = 'No video loaded';
+                return;
+            }
+
+            const yt = parseYouTube(rawVal);
+            if (yt) {
+                if (badge) {
+                    badge.className = 'badge bg-danger text-white';
+                    badge.innerHTML = '<i class="fa fa-youtube-play me-1"></i> YouTube Video';
+                }
+                if (statusText) statusText.innerText = 'YouTube Embed (Video ID: ' + yt.id + ')';
+                if (placeholder) placeholder.style.display = 'none';
+                if (previewContainer) {
+                    previewContainer.style.display = 'block';
+                    previewContainer.innerHTML = `<iframe src="${yt.embedUrl}" style="width: 100%; aspect-ratio: 16/9; border: 0; display: block;" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>`;
+                }
+            } else {
+                if (badge) {
+                    badge.className = 'badge bg-success text-white';
+                    badge.innerHTML = '<i class="fa fa-file-video-o me-1"></i> Direct Video URL';
+                }
+                if (statusText) statusText.innerText = 'Direct HTML5 Video';
+                if (placeholder) placeholder.style.display = 'none';
+                if (previewContainer) {
+                    previewContainer.style.display = 'block';
+                    previewContainer.innerHTML = `<video controls style="width: 100%; aspect-ratio: 16/9; display: block; background: #000;" preload="metadata"><source src="${rawVal}" type="video/mp4">Your browser does not support HTML5 video.</video>`;
+                }
+            }
+        }
+
+        input.addEventListener('input', updateVideoPreview);
+        input.addEventListener('change', updateVideoPreview);
+        input.addEventListener('paste', function() {
+            setTimeout(updateVideoPreview, 60);
+        });
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                input.value = '';
+                updateVideoPreview();
+            });
+        }
+
+        // Initialize preview on page load
+        updateVideoPreview();
+    }
+
+    $(document).ready(function() {
+        initVideoPreviewModule();
+    });
 </script>
 @endpush

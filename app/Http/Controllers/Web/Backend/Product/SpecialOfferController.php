@@ -179,7 +179,11 @@ class SpecialOfferController extends Controller
             $offer->regular_price              = $request->regular_price;
             $offer->offer_price                = $request->offer_price;
             $offer->save_amount                = $request->save_amount;
-            $offer->video_url                  = $request->video_url;
+            $rawVideoUrl                       = $request->video_url ? trim($request->video_url) : null;
+            if ($rawVideoUrl && preg_match('/<iframe.*?src=["\'](.*?)["\']/i', $rawVideoUrl, $iframeMatch)) {
+                $rawVideoUrl = $iframeMatch[1];
+            }
+            $offer->video_url                  = $rawVideoUrl;
 
             // Problem Agitation Section
             $offer->problem_title              = $request->problem_title;
@@ -493,7 +497,11 @@ class SpecialOfferController extends Controller
             $offer->regular_price              = $request->regular_price;
             $offer->offer_price                = $request->offer_price;
             $offer->save_amount                = $request->save_amount;
-            $offer->video_url                  = $request->video_url;
+            $rawVideoUrl                       = $request->video_url ? trim($request->video_url) : null;
+            if ($rawVideoUrl && preg_match('/<iframe.*?src=["\'](.*?)["\']/i', $rawVideoUrl, $iframeMatch)) {
+                $rawVideoUrl = $iframeMatch[1];
+            }
+            $offer->video_url                  = $rawVideoUrl;
 
             // Problem Agitation Section
             $offer->problem_title              = $request->problem_title;

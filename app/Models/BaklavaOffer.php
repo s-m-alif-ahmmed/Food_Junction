@@ -40,6 +40,49 @@ class BaklavaOffer extends Model
         return [];
     }
 
+    /**
+     * Determine if the video_url is a YouTube video link.
+     */
+    public function getIsYoutubeVideoAttribute(): bool
+    {
+        return !empty($this->youtube_embed_url);
+    }
+
+    /**
+     * Get the standardized YouTube embed URL if video_url points to YouTube.
+     */
+    public function getYoutubeEmbedUrlAttribute(): ?string
+    {
+        return static::parseYoutubeEmbedUrl($this->video_url);
+    }
+
+    /**
+     * Parse any YouTube URL (watch, youtu.be, shorts, embed, live, or iframe snippet)
+     * and return a standardized YouTube embed URL.
+     */
+    public static function parseYoutubeEmbedUrl(?string $url): ?string
+    {
+        if (empty($url)) {
+            return null;
+        }
+
+        $url = trim($url);
+
+        // If iframe HTML snippet was provided, extract the src URL
+        if (preg_match('/<iframe.*?src=["\'](.*?)["\']/i', $url, $iframeMatch)) {
+            $url = $iframeMatch[1];
+        }
+
+        // Match 11-char YouTube video ID
+        $pattern = '/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|v\/|shorts\/|live\/|watch\?v=|watch\?.+?&v=))([\w-]{11})/i';
+        if (preg_match($pattern, $url, $matches)) {
+            $videoId = $matches[1];
+            return "https://www.youtube.com/embed/{$videoId}?rel=0&modestbranding=1";
+        }
+
+        return null;
+    }
+
 
     public function product(): BelongsTo
     {

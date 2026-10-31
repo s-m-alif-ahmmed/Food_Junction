@@ -140,6 +140,7 @@
                 $hasVideoHeader = !empty(trim($data->hero_video_banner ?? '')) || !empty(trim($data->hero_video_title ?? '')) || !empty(trim($data->hero_video_subtitle ?? ''));
                 $hasProblemCards = !empty($data->problem_cards) && is_array($data->problem_cards) && count($data->problem_cards) > 0;
                 $hasProblem = !empty(trim($data->problem_title ?? '')) || $hasProblemCards;
+                $youtubeEmbedUrl = $hasVideo ? ($data->youtube_embed_url ?? \App\Models\BaklavaOffer::parseYoutubeEmbedUrl($data->video_url)) : null;
             @endphp
 
             @if($hasVideo || $hasVideoHeader || $hasProblem)
@@ -165,10 +166,24 @@
                 <!-- Video Showcase Box -->
                 @if($hasVideo)
                 <div class="video-showcase-box">
+                    @if(!empty($youtubeEmbedUrl))
+                    <iframe class="landing-video-player landing-video-iframe"
+                        src="{{ $youtubeEmbedUrl }}"
+                        title="{{ $data->hero_video_title ?? $data->name ?? 'Promo Video' }}"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen
+                        loading="lazy"
+                        style="width: 100%; aspect-ratio: 16 / 9; border: 0; display: block;">
+                    </iframe>
+                    @else
                     <video controls preload="metadata" playsinline class="landing-video-player" @if(!empty($data->hero_image)) poster="{{ asset($data->hero_image) }}" @endif>
                         <source src="{{ $data->video_url }}" type="video/mp4" />
+                        <source src="{{ $data->video_url }}" />
                         আপনার ব্রাউজারে ভিডিওটি প্লে হচ্ছে না।
                     </video>
+                    @endif
                 </div>
                 @endif
 

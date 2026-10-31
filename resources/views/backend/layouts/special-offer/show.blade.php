@@ -126,9 +126,36 @@
                     <h5 class="card-title fw-bold mb-0">2. Video Demo & Problem Agitation</h5>
                 </div>
                 <div class="card-body">
-                    <div class="mb-3">
-                        <span class="info-label">Promo Video URL:</span>
-                        <div class="text-primary fw-semibold">{{ $data->video_url ?? 'No video URL set' }}</div>
+                    <div class="mb-4 p-3 rounded border" style="background: #f8fafc;">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                            <span class="info-label mb-0"><i class="fa fa-video-camera text-danger me-1"></i> Promo Video Showcase:</span>
+                            @if(!empty($data->video_url))
+                                @if($data->is_youtube_video)
+                                    <span class="badge bg-danger"><i class="fa fa-youtube-play me-1"></i> YouTube Video</span>
+                                @else
+                                    <span class="badge bg-primary"><i class="fa fa-file-video-o me-1"></i> Direct Video / MP4</span>
+                                @endif
+                            @endif
+                        </div>
+                        @if(!empty($data->video_url))
+                            <div class="mb-3">
+                                <a href="{{ $data->video_url }}" target="_blank" class="text-primary fw-semibold text-break small">
+                                    <i class="fa fa-external-link me-1"></i> {{ $data->video_url }}
+                                </a>
+                            </div>
+                            <div style="max-width: 520px; border-radius: 12px; overflow: hidden; background: #000; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
+                                @if($data->is_youtube_video)
+                                    <iframe src="{{ $data->youtube_embed_url }}" style="width: 100%; aspect-ratio: 16/9; border: 0; display: block;" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                                @else
+                                    <video controls style="width: 100%; aspect-ratio: 16/9; display: block;" preload="metadata">
+                                        <source src="{{ $data->video_url }}" type="video/mp4">
+                                        Your browser does not support HTML5 video.
+                                    </video>
+                                @endif
+                            </div>
+                        @else
+                            <div class="text-muted fst-italic">No promo video configured for this offer.</div>
+                        @endif
                     </div>
 
                     <div class="section-title-divider mt-3">

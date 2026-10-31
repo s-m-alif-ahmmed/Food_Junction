@@ -1792,11 +1792,20 @@ textarea:focus {
     position: relative;
 }
 
-.landing-video-player {
+.landing-video-player,
+.landing-video-iframe {
     width: 100%;
     aspect-ratio: 16 / 9;
     max-height: 480px;
     object-fit: cover;
+    display: block;
+    border: 0;
+}
+
+.video-showcase-box iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
     display: block;
 }
 
