@@ -38,6 +38,7 @@ Route::get('/product/detail/{product_slug}', [HomeController::class, 'detail'])-
 Route::get('/offer/{id}', [HomeController::class, 'offerDetail'])->name('offer.detail');
 Route::get('/confirm-order', [HomeController::class, 'confirmOrder'])->name('confirm.order');
 Route::get('/baklava-offer', [HomeController::class, 'baklavaOffer'])->name('baklava.offer');
+Route::get('/special-offer/shutki-vorta-combo', [HomeController::class, 'shutkiVortaCombo'])->name('shutki-vorta.combo');
 Route::get('/special-offer/{slug}', [HomeController::class, 'specialOffer'])->name('special.offer.show');
 
 //blog
@@ -92,7 +93,6 @@ Route::middleware('auth')->group(function () {
     //Wishlist
     Route::post('/wishlist/add/{id}', [WishlistController::class, 'add'])->name('product.wishlist.add');
     Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('product.wishlist.remove');
-
 });
 
 Route::get('/migrate', function () {

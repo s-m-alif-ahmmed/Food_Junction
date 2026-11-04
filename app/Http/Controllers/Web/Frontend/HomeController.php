@@ -186,6 +186,21 @@ class HomeController extends Controller {
         return view('frontend.pages.baklava-offer', compact('data', 'baklavaProduct', 'defaultProduct'));
     }
 
+    public function shutkiVortaCombo(): View {
+        $data = BaklavaOffer::where('slug', 'shutki-vorta-combo')->first() ?? BaklavaOffer::first() ?? BaklavaOffer::getSettings();
+
+        $linkedProduct = $data->product_id ? Product::with('variants')->find($data->product_id) : null;
+        $shutkiProduct = $linkedProduct ?? Product::where('product_slug', 'like', '%shutki%')
+            ->orWhere('name', 'like', '%Shutki%')
+            ->orWhere('name', 'like', '%শুটকি%')
+            ->with('variants')
+            ->first();
+
+        $defaultProduct = $shutkiProduct ?? Product::with('variants')->first();
+
+        return view('frontend.pages.shutki-vorta-combo', compact('data', 'shutkiProduct', 'defaultProduct'));
+    }
+
     public function specialOffer(string $slug): View {
         $data = BaklavaOffer::where('slug', $slug)->firstOrFail();
 
